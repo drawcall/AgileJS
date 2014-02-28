@@ -1,6 +1,6 @@
 Agile
 ======
-#### Css3 Engine ####
+#### Using javascript generated pure CSS3 ####
 Agile is a engine Using javascript generated pure CSS3.Its simple, fast and easy to use.
 Check out examples at
 
