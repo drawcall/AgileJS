@@ -1,0 +1,150 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>panorama</title>
+		<meta charset="utf-8">
+		<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=1, maximum-scale=1">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<style type="text/css">
+			html, body {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+				background-color: #000;
+				overflow: hidden;
+			}
+			#container {
+				width: 100%;
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container"></div>
+		<script src="../lib/qrcode.min.js"></script>
+		<script src="../../build/agile.min.js"></script>
+		<script src="../../plus/agile_toolkit.js"></script>
+		<script>
+			var container, box, images, speed;
+
+			Main();
+
+			function Main() {
+				loadImage();
+				addQR();
+			}
+
+			function loadImage() {
+				var loader = new Agile.LoadManager();
+				var obj = {
+					'left' : 'image/left.jpg',
+					'front' : 'image/front.jpg',
+					'right' : 'image/right.jpg',
+					'back' : 'image/back.jpg',
+					'up' : 'image/up.jpg',
+					'down' : 'image/down.jpg'
+				}
+
+				loader.load(obj);
+				loader.addEventListener(Agile.GROUP_LOADED, function() {
+					index = 1;
+					images = loader.targetList;
+					addAgile();
+					tick();
+				});
+			}
+
+			function addAgile() {
+				Agile.lockTouch();
+				Agile.mode = '3d';
+				container = new Agile.Container('#container');
+				container.select = false;
+				container.perspective = 200;
+
+				box = addSkyBox();
+				box.x = container.width / 2;
+				box.y = container.height / 2;
+				container.addChild(box);
+
+				if (Agile.Device.isPC())
+					speed = .3;
+				else
+					speed = .6;
+			}
+
+			function tick() {
+				requestAnimationFrame(tick);
+				if (box) {
+					box.rotationY += speed;
+				}
+			}
+
+			function addSkyBox() {
+				var width = 512, height = 512, length = 512;
+				var box = new Agile.Container('3d');
+				//or set box.mode = '3d' it is important!;
+				box.backface = false;
+				var face1 = new Agile.Image(images['front'], width, height);
+				var face2 = new Agile.Image(images['back'], width, height);
+				var face3 = new Agile.Image(images['up'], width, length);
+				var face4 = new Agile.Image(images['down'], width, length);
+				var face5 = new Agile.Image(images['left'], length, height);
+				var face6 = new Agile.Image(images['right'], length, height);
+
+				face1.z = -length / 2;
+				face2.z = length / 2;
+				face2.rotationY = 180;
+				face3.y = -height / 2;
+				face3.rotationX = -90;
+				face4.y = height / 2;
+				face4.rotationX = 90;
+				face5.x = -width / 2;
+				face5.rotationY = 90;
+				face6.x = width / 2;
+				face6.rotationY = -90;
+
+				box.addChild(face1);
+				box.addChild(face2);
+				box.addChild(face3);
+				box.addChild(face4);
+				box.addChild(face5);
+				box.addChild(face6);
+				face1.width += 4;
+				face1.height += 4;
+				face2.width += 4;
+				face2.height += 4;
+				face3.width += 4;
+				face3.height += 4;
+				face4.width += 4;
+				face4.height += 4;
+				face5.width += 4;
+				face5.height += 4;
+				face6.width += 4;
+				face6.height += 4;
+				return box;
+			}
+
+			function addQR() {
+				if (Agile.Device.isPC()) {
+					var qrcode = document.createElement('div');
+					qrcode.style.position = 'absolute';
+					qrcode.style.left = '10px';
+					qrcode.style.top = '10px';
+					qrcode.style.zIndex = 9999;
+					qrcode.style.border = '10px solid #fff';
+					document.body.appendChild(qrcode);
+					var qrcode = new QRCode(qrcode, {
+						text : window.location.href,
+						width : 128,
+						height : 128,
+						colorDark : "#000000",
+						colorLight : "#fff",
+						correctLevel : QRCode.CorrectLevel.L
+					});
+				}
+			}
+		</script>
+	</body>
+</html>

@@ -1,79 +1,264 @@
 <!DOCTYPE html>
 <html>
+	<head>
+		<meta charset="utf-8">
+		<title>Agile Css3 Engine</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" type="text/css" href="css/main.css">
+		<script>
+			if (/mobile/i.test(navigator.userAgent))
+				document.documentElement.className += ' w-mobile';
+		</script>
+	</head>
 
-  <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Agile : Agile Css3 Engine" />
+	<body>
+		<footer class="section header" id="page-nav-top">
+			<div class="w-row header">
+				<a href="https://github.com/a-jie/Agile"><img style="position: absolute; z-index:10 ; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+				<div class="w-col w-col-3 logo-bar">
+					<a class="w-inline-block logolink" href="index.html#page-nav-top" target="_self"><img class="company-logo" src="image/logo.png" alt="logo"></a>
+				</div>
 
-    <title>Agile</title>
-  </head>
+				<div class="w-col w-col-9 nav-bar">
+					<a class="nav-links" href="index.html#page-nav-services" target="_self">HOME</a><a class="nav-links" href="index.html#page-nav-portfolio" target="_self">FEATURE</a><a class="nav-links" href="index.html#page-nav-demos" target="_self">DEMO</a><a class="nav-links" href="index.html#page-nav-contact" target="_self">About</a>
+				</div>
+			</div>
+			
+			<div class="w-container hero-text">
+				<h1 class="headtitle">Agile css3 engine</h1>
+				<span class="headtitle2"> <h2>Using javascript generated pure CSS3</h2> </span>
+			</div>
+		</footer>
 
-  <body>
+		<div class="section" id="page-nav-services">
+			<div class="w-container service-columns">
+				<div class="w-row">
+					<div class="w-col w-col-4 services"><img class="icon" src="image/i1.png" alt="i1.png"><h3>Generate pure css3</h3>
+						<p>
+							Agile uses javascript to generate pure CSS3. No canvas no webGL no svg.
+						</p>
+					</div>
+					<div class="w-col w-col-4 services"><img class="icon" src="image/i2.png" alt="i2.png"><h3>FOR&nbsp;Mobile devices</h3>
+						<p>
+							In mobile devices Agile's performance is perfect ,It really can cross platform.
+						</p>
+					</div>
+					<div class="w-col w-col-4 services"><img class="icon" src="image/i3.png" alt="i3.png"><h3>Easy to use</h3>
+						<p>
+							Agile’s API has high similar characteristic with actionscript3.0, you can learn it in 10 minites.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/a-jie/Agile">View on GitHub</a>
+		<div class="section dark web" id="page-nav-portfolio">
+			<div class="w-container">
+				<div class="w-row">
+					<div class="w-col w-col-8"><img src="image/pc2.jpg">
+					</div>
+					<div class="w-col w-col-4 portfolio-text">
+						<h3>cross platform</h3>
+						<p>
+							In modern browsers Agile can generate high-quality, high-end visual effects.
+							<br>
+							Especially for mobile devices Agile's performance is perfect,that helps you build great mobile apps, easy and fast.
+						</p><a class="button" href="https://github.com/a-jie/Agile" target="_blank">download</a>
+					</div>
+				</div>
+			</div>
+		</div>
 
-          <h1 id="project_title">Agile</h1>
-          <h2 id="project_tagline">Agile Css3 Engine</h2>
+		<div class="section">
+			<div class="w-container">
+				<div class="w-row">
+					<div class="w-col w-col-5">
+						<div class="w-container portfolio-text left-up">
+							<h3>Tween timeline and keyframes</h3>
+							<p>
+								Agile.Timeline and Agile.Tween encapsulates CSS3’s native animation and transition properties.
+								<br>
+								Different from traditional tween class, Agile.Tween’s performances is more quickly!
+								<br>
+								Agile.Timeline and Agile.Keyframes can help you to write forgetive animation effects.
+							</p><a class="button" href="https://github.com/a-jie/Agile" target="_blank">download</a>
+						</div>
+					</div>
+					<div class="w-col w-col-7 align-right">
+						<img src="image/rocket.png" alt="rocket">
+					</div>
+				</div>
+			</div>
+		</div>
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/a-jie/Agile/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/a-jie/Agile/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
+		<div class="section dark" id="page-nav-demos">
+			<div class="w-container">
+				<h3 class="center-tittle">AGILE DEMOS</h3>
+			</div>
+			<div class="w-container gallery">
+				<div class="w-row">
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/d_1.jpg">
+					</div>
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/d_2.jpg">
+					</div>
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/d_3.jpg">
+					</div>
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/d_4.jpg">
+					</div>
+				</div>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+				<div class="w-row">
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/a_1.jpg">
+					</div>
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/a_2.jpg">
+					</div>
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/a_3.jpg">
+					</div>
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/a_4.jpg">
+					</div>
+				</div>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+				<div class="w-row">
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/w_1.jpg">
+					</div>
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/w_2.jpg">
+					</div>
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/w_3.jpg">
+					</div>
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/w_4.jpg">
+					</div>
+				</div>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+				<div class="w-row">
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/3_1.jpg">
+					</div>
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/3_2.jpg">
+					</div>
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/3_3.jpg">
+					</div>
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/3_4.jpg">
+					</div>
+				</div>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+				<div class="w-row">
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/o_1.jpg">
+					</div>
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/o_2.jpg">
+					</div>
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/t_1.jpg">
+					</div>
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/t_2.jpg">
+					</div>
+				</div>
 
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+				<div class="w-row">
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/m_1.jpg">
+					</div>
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/m_2.jpg">
+					</div>
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/b_1.jpg">
+					</div>
+					<div class="w-col w-col-3 w-col-small-6">
+						<img class="gallery-img" src="image/example/l_1.jpg">
+					</div>
+				</div>
+			</div>
+		</div>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+		<div class="section bg-image" id="page-nav-about">
+			<div class="w-container hero-text about-text">
+				<h2>no canvas no webgl no svg</h2><h1>Faster &nbsp;simpler</h1>
+			</div>
+		</div>
 
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+		<div class="section">
+			<div class="w-container">
+				<div class="w-row">
+					<div class="w-col w-col-6">
+						<div class="w-container portfolio-text left-up">
+							<h3>Need to improve</h3>
+							<p>
+								Although they are difficult but I still want to finish it. Let Agile to compatible with ie7/8/9, this will be a great job.
+								<br>
+								<br>
+								CSS3's transition property is not friendly, I admit it was not perfect in my engine, can you help me fix it?
+							</p><a class="button" href="https://github.com/a-jie/Agile" target="_blank">download</a>
+						</div>
+					</div>
+					<div class="w-col w-col-6 align-right">
+						<img src="image/old_pc.png" alt="old_pc.png">
+					</div>
+				</div>
+			</div>
+		</div>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+		<div class="section dark" id="page-nav-contact">
+			<div class="w-container">
+				<div class="w-row">
+					<div class="w-col w-col-11 team-column">
+						<div class="image-wrapper"><img src="image/head.png" alt="head.png">
+						</div>
+						<div class="info-wrapper">
+							<h3 class="name">a-jie</h3>
+							<div class="job-title">
+								I am a Programmer
+							</div>
+							<p class="team-text">
+								I am a honest programmer live in a smoke-filled country.
+								<br>
+								I like things that short and lean.  Write this engine, because I'm not so fond of canvas.
+								<br>
+								You can find me in the following ways, tell me the engine’s bugs, thank you!
+							</p>
+							<div class="social-team">
+								<a class="w-inline-block social-icon" href="https://github.com/a-jie" target="_blank"><img src="image/gi.png" width="32" alt="gi.png"></a>
+								<a class="w-inline-block social-icon" href="mailto:ajiemath@gmail.com" target="_blank"><img src="image/ei.png" width="32" alt="ei.png"></a>
+								<a class="w-inline-block social-icon" href="http://weibo.com/ajiecn" target="_blank"><img src="image/si.png" width="32" alt="si.png"></a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Agile maintained by <a href="https://github.com/a-jie">a-jie</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
-
-  </body>
+		<footer class="footer">
+			<div class="w-container">
+				<div class="footer-logo"><img class="footlogo" src="image/logo.png" width="65" alt="logo.png">
+				</div>
+				<div class="social-wrapper">
+					<div>
+						© 2014, a-jie.cn, Inc. All Rights Reserved.
+					</div>
+				</div>
+			</div>
+		</footer>
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/main.js"></script>
+	</body>
 </html>

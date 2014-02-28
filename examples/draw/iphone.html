@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>iphone</title>
+		<meta charset="utf-8">
+		<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.7, maximum-scale=0.7">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<style type="text/css">
+			html, body {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+			}
+			#container {
+				width: 100%;
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container"></div>
+		<script src="../lib/qrcode.min.js"></script>
+		<script src="../../build/agile.min.js"></script>
+		<script src="../../plus/agile_toolkit.js"></script>
+		<script>
+			var container;
+			
+			Main();
+			function Main() {
+				addAgile();
+				addQR();
+			}
+
+			function addAgile() {
+				Agile.lockTouch();
+				Agile.mode = '3d';
+				container = new Agile.Dom('#container');
+				container.select = false;
+				container.color = '#bbb';
+				container.perspective = 500;
+				addIphone();
+			}
+
+			function addIphone() {
+				var phone = new Agile.Rect(270, 540, '#333');
+				phone.x = container.width / 2;
+				phone.y = container.height / 2;
+				phone.round = 30;
+				phone.addFilter(new Agile.Filter('3d', 8, '#111'))
+				container.addChild(phone);
+
+				var back = new Agile.Rect(266, 536, '#000');
+				back.round = 30;
+				phone.addChild(back);
+
+				var topButton = new Agile.Rect(45, 8, '#333');
+				topButton.x = phone.x + 76;
+				topButton.y = phone.y - 270;
+				container.addChild(topButton);
+				topButton.zIndex = 0;
+				topButton.round = 5;
+
+				var leftButton = new Agile.Rect(8, 30, '#222');
+				leftButton.x = phone.x - 135;
+				leftButton.y = phone.y - 184;
+				container.addChild(leftButton);
+				leftButton.zIndex = 1;
+				leftButton.round = 5;
+
+				var volume1 = new Agile.Rect(8, 15, '#222');
+				volume1.x = phone.x - 135;
+				volume1.y = phone.y - 145;
+				container.addChild(volume1);
+				volume1.zIndex = 2;
+				volume1.round = 5;
+
+				var volume2 = new Agile.Rect(8, 15, '#222');
+				volume2.x = phone.x - 135;
+				volume2.y = phone.y - 115;
+				container.addChild(volume2);
+				volume2.zIndex = 2;
+				volume2.round = 5;
+
+				var color = Agile.gradient('line', 45, '#222', '#232323');
+				var screen = new Agile.Rect(250, 380, color);
+				phone.addChild(screen);
+
+				color = Agile.gradient('line', 180, '#fff', Agile.Color.alpha0);
+				var light = new Agile.Rect(250, 50, color);
+				light.regY = 0;
+				light.alpha = 0.1;
+				light.y = -screen.height / 2;
+				screen.addChild(light);
+
+				color = Agile.gradient('line', 45, '#000', '#393939');
+				var button = new Agile.Circle(25, color);
+				button.y = 230;
+				phone.addChild(button);
+
+				var buttonSquer = new Agile.Rect(19, 19);
+				buttonSquer.round = 5;
+				buttonSquer.addFilter(new Agile.Filter('stroke', 1.6, '#888'));
+				buttonSquer.color = Agile.Color.alpha0;
+				button.addChild(buttonSquer);
+
+				color = Agile.gradient('line', 0, '#000', '#393939');
+				var microphone = new Agile.Rect(52, 6, color);
+				microphone.y = -220;
+				phone.addChild(microphone);
+				microphone.round = 10;
+
+				var camera = new Agile.Circle(5, '#333');
+				camera.y = -242;
+				phone.addChild(camera);
+
+				var shot = new Agile.Circle(2, '#111');
+				camera.addChild(shot);
+			}
+
+			function addQR() {
+				if (Agile.Device.isPC()) {
+					var qrcode = document.createElement('div');
+					qrcode.style.position = 'absolute';
+					qrcode.style.left = '10px';
+					qrcode.style.top = '10px';
+					qrcode.style.zIndex = 20;
+					document.body.appendChild(qrcode);
+					var qrcode = new QRCode(qrcode, {
+						text : window.location.href,
+						width : 128,
+						height : 128,
+						colorDark : "#000000",
+						colorLight : "rgba(0,0,0,0)",
+						correctLevel : QRCode.CorrectLevel.L
+					});
+				}
+			}
+		</script>
+	</body>
+</html>

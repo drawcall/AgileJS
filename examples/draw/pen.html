@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>line</title>
+		<meta charset="utf-8">
+		<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.8, maximum-scale=.8">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<style type="text/css">
+			html, body {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+			}
+			#container {
+				width: 100%;
+				height: 100%;
+			}
+			@font-face {
+				font-family: HelveticaNeue;
+				src: url(../font/HelveticaNeue-Light.otf);
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container"></div>
+		<script src="../lib/qrcode.min.js"></script>
+		<script src="../../build/agile.min.js"></script>
+		<script src="../../plus/agile_toolkit.js"></script>
+		<script>
+			Main();
+			function Main() {
+				addAgile();
+				addQR();
+			}
+
+			function addAgile() {
+				Agile.lockTouch();
+				Agile.mode = '3d';
+				var container = new Agile.Container('container');
+				container.color = '#ffcc00';
+				container.select = false;
+
+				var line = new Agile.Line(1.5, '#fff');
+				var move = false;
+				line.moveTo(container.width / 2, container.height / 2);
+				container.addChild(line);
+
+				//touchStart mehtod comes from agile_toolkit.js.You can write it easily!
+				container.touchStart(function(x, y) {
+					mousedown = true;
+					line.lineTo(x, y);
+				});
+
+				container.touchMove(function(x, y) {
+					if (!move) {
+						line.moveTo(x, y);
+						move = true;
+					}
+					line.lineTo(x, y);
+				});
+
+				var text = new Agile.Text();
+				text.size = 22;
+				text.x = text.y = 5;
+				container.addChild(text);
+				text.font = 'HelveticaNeue,Arial';
+				text.color = '#FFF';
+				text.text = 'Notice! This demo use pure css3,no canvas no webgl no svg!';
+			}
+
+			function addQR() {
+				if (Agile.Device.isPC()) {
+					var qrcode = document.createElement('div');
+					qrcode.style.position = 'absolute';
+					qrcode.style.right = '10px';
+					qrcode.style.top = '10px';
+					qrcode.style.zIndex = 20;
+					document.body.appendChild(qrcode);
+					var qrcode = new QRCode(qrcode, {
+						text : window.location.href,
+						width : 128,
+						height : 128,
+						colorDark : "#000000",
+						colorLight : "rgba(0,0,0,0)",
+						correctLevel : QRCode.CorrectLevel.L
+					});
+				}
+			}
+		</script>
+	</body>
+</html>
