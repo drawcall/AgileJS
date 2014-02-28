@@ -1,0 +1,19 @@
+/* ----------------------------------------------------
+   created with http://www.codeandweb.com/texturepacker 
+   ----------------------------------------------------
+   $TexturePacker:SmartUpdate:b75fdf64334f8a2d5f7ad52dbfa39e52:34b829b2de680ceff7919beea3fd5b37:c9936d4caae6c5e0454f05669b819b5a$
+   ----------------------------------------------------
+
+   usage: <span class="{-spritename-} sprite"></span>
+
+   replace {-spritename-} with the sprite you like to use
+
+*/
+
+.sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(agile.png);}
+
+.a1 {width:70px; height:70px; background-position: -114px -398px}
+.a2 {width:114px; height:166px; background-position: -2px -2px}
+.a3 {width:112px; height:213px; background-position: -118px -2px}
+.a4 {width:99px; height:179px; background-position: -114px -217px}
+.a5 {width:110px; height:302px; background-position: -2px -170px}

@@ -1,0 +1,255 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>alien</title>
+		<meta charset="utf-8">
+		<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.7, maximum-scale=.7">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<style type="text/css">
+			html, body {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+			}
+			#container {
+				width: 100%;
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container"></div>
+		<script src="../lib/qrcode.min.js"></script>
+		<script src="../../build/agile.min.js"></script>
+		<script src="../../plus/agile_toolkit.js"></script>
+		<script>
+			var container;
+			var faceColor;
+			var strokeSize;
+			var mouseX, mouseY;
+			var leftEye, rightEye, head;
+			
+			Main();
+			function Main() {
+				addAgile();
+				addQR();
+				addInteractive();
+			}
+
+			function addAgile() {
+				Agile.mode = '3d';
+				container = new Agile.Dom('container');
+				container.select = false;
+				container.perspective = 100;
+				container.color = '#dcf9a0';
+				addBaby(container.width / 2, container.height / 2);
+			}
+
+			function addInteractive() {
+				if (Agile.Device.isPC()) {
+					container.addEventListener('mousemove', function(e) {
+						eyeMove(e.pageX, e.pageY);
+					});
+				} else {
+					Agile.lockTouch();
+					window.addEventListener("deviceorientation", function(e) {
+						var angle = 39;
+						var y = (angle + e.beta) * (container.width / 2) / angle;
+						var x = (angle + e.gamma) * (container.height / 2) / angle;
+						eyeMove(x, y);
+					}, true);
+				}
+			}
+
+			function addBaby(x, y) {
+				faceColor = '#fbcdb4';
+				strokeSize = 6;
+
+				addHair(x, y);
+				head = new Agile.Ellipse(145, 138, faceColor);
+				container.addChild(head);
+				head.x = x;
+				head.y = y;
+
+				addChin(head, 110, 80, -35, 75);
+				addChin(head, 110, 80, 35, 75);
+				addChin(head, 50, 50, 0, 125);
+
+				leftEye = addEye(head, -70, 0);
+				rightEye = addEye(head, 70, 0);
+				addEar(head, 150, 0);
+				addEar(head, -150, 0);
+
+				var nose = new Agile.Ellipse(12, 7, Agile.Color.alpha0);
+				head.addChild(nose);
+				nose.x = 0;
+				nose.y = 65;
+
+				var noseBlack = new Agile.Circle(7, faceColor);
+				nose.addChild(noseBlack);
+				noseBlack.x = 14;
+				noseBlack.y = 1;
+
+				color = Agile.Color.gradient('radial', '#df7174', '#7a0b0e');
+				var mouth = new Agile.Semicircle(30, color);
+				head.addChild(mouth);
+				mouth.rotation = 180;
+				mouth.x = 0;
+				mouth.y = 120;
+
+				nose.addFilter(new Agile.Filter('stroke', 3));
+				mouth.addFilter(new Agile.Filter('stroke', 3));
+				head.addFilter(new Agile.Filter('stroke', strokeSize));
+			}
+
+			function addHair(x, y) {
+				var hair = new Agile.Ellipse(145, 155, '#000');
+				container.addChild(hair);
+				hair.x = x;
+				hair.y = y - 30;
+
+				var subhair = new Agile.Ellipse(100, 60, '#000');
+				container.addChild(subhair);
+				subhair.x = x;
+				subhair.y = y - 150;
+				subhair.zIndex = 1000;
+
+				subhair = new Agile.Ellipse(100, 60, '#000');
+				container.addChild(subhair);
+				subhair.x = x;
+				subhair.y = y - 150;
+				subhair.zIndex = 1000;
+
+				subhair = new Agile.Ellipse(100, 60, '#000');
+				container.addChild(subhair);
+				subhair.x = x;
+				subhair.y = y - 180;
+				subhair.zIndex = 1000;
+
+				subhair = new Agile.Ellipse(60, 50, '#000');
+				container.addChild(subhair);
+				subhair.x = x;
+				subhair.y = y - 130;
+
+				subhair = new Agile.Ellipse(60, 60, '#000');
+				container.addChild(subhair);
+				subhair.x = x - 100;
+				subhair.y = y - 140;
+				subhair.zIndex = 1000;
+
+				subhair = new Agile.Ellipse(60, 60, '#000');
+				container.addChild(subhair);
+				subhair.x = x + 100;
+				subhair.y = y - 140;
+				subhair.zIndex = 1000;
+
+				subhair = new Agile.Ellipse(35, 50, '#000');
+				container.addChild(subhair);
+				subhair.x = x - 150;
+				subhair.y = y - 80;
+				//subhair.zIndex = 1000;
+
+				subhair = new Agile.Ellipse(35, 50, '#000');
+				container.addChild(subhair);
+				subhair.x = x + 150;
+				subhair.y = y - 80;
+				//subhair.zIndex = 1000;
+			}
+
+			function addEye(head, x, y) {
+				var eye = new Agile.Ellipse(25, 48, '#fff');
+				head.addChild(eye);
+				eye.x = x;
+				eye.y = y;
+
+				var eyeball = new Agile.Ellipse(17, 26, '#000');
+				eyeball.x = 6;
+				eyeball.y = 12;
+				eye.addChild(eyeball);
+
+				var pupil = new Agile.Circle(3, '#fff');
+				pupil.x = 5;
+				pupil.y = 10;
+				eyeball.addChild(pupil);
+				//eye.addFilter(new Agile.Filter('stroke', 3));
+
+				var eyebrows = new Agile.Line(6, '#000');
+				eyebrows.x = -30;
+				eyebrows.y = -60;
+				eyebrows.curveTo(70, 0, 2);
+				eye.addChild(eyebrows);
+				return {
+					'eye' : eye,
+					'eyeball' : eyeball,
+					'pupil' : pupil,
+					'eyebrows' : eyebrows
+				}
+			}
+
+			function addEar(head, x, y) {
+				var ear = new Agile.Ellipse(20, 27, faceColor);
+				head.addChild(ear);
+				ear.x = x;
+				ear.y = y;
+				var earBack = new Agile.Ellipse(20, 27, faceColor);
+				container.addChild(earBack);
+				earBack.x = head.x + x;
+				earBack.y = head.y + y;
+				earBack.zIndex = 3;
+				earBack.addFilter(new Agile.Filter('stroke', strokeSize));
+			}
+
+			function addChin(head, width, height, x, y) {
+				var chin = new Agile.Ellipse(width, height, faceColor);
+				head.addChild(chin);
+				chin.x = x;
+				chin.y = y;
+
+				var chinBack = new Agile.Ellipse(width, height, faceColor);
+				container.addChild(chinBack);
+				chinBack.x = x + head.x;
+				chinBack.y = y + head.y;
+				chinBack.zIndex = 2;
+				chinBack.addFilter(new Agile.Filter('stroke', strokeSize));
+			}
+
+			function eyeMove(x, y) {
+				var r1 = 10;
+				var r2 = 7;
+				var angle = Math.atan2(y - head.y - leftEye.eye.y, x - head.x - leftEye.eye.x);
+				leftEye.eyeball.x += (r1 * Math.cos(angle) - leftEye.eyeball.x) * .5;
+				leftEye.eyeball.y += (r1 * Math.sin(angle) - leftEye.eyeball.y) * .5;
+				leftEye.pupil.x += (r2 * Math.cos(angle) - leftEye.pupil.x) * .5;
+				leftEye.pupil.y += (r2 * Math.sin(angle) - leftEye.pupil.y) * .5;
+
+				angle = Math.atan2(y - head.y - rightEye.eye.y, x - head.x - rightEye.eye.x);
+				rightEye.eyeball.x += (r1 * Math.cos(angle) - rightEye.eyeball.x) * .5;
+				rightEye.eyeball.y += (r1 * Math.sin(angle) - rightEye.eyeball.y) * .5;
+				rightEye.pupil.x += (r2 * Math.cos(angle) - rightEye.pupil.x) * .5;
+				rightEye.pupil.y += (r2 * Math.sin(angle) - rightEye.pupil.y) * .5;
+			}
+
+			function addQR() {
+				if (Agile.Device.isPC()) {
+					var qrcode = document.createElement('div');
+					qrcode.style.position = 'absolute';
+					qrcode.style.left = '10px';
+					qrcode.style.top = '10px';
+					qrcode.style.zIndex = 20;
+					document.body.appendChild(qrcode);
+					var qrcode = new QRCode(qrcode, {
+						text : window.location.href,
+						width : 128,
+						height : 128,
+						colorDark : "#000000",
+						colorLight : "rgba(0,0,0,0)",
+						correctLevel : QRCode.CorrectLevel.L
+					});
+				}
+			}
+		</script>
+	</body>
+</html>

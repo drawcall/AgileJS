@@ -1,0 +1,212 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>car</title>
+		<meta charset="utf-8">
+		<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.5, maximum-scale=.5">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<style type="text/css">
+			html, body {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+				background-color: #B3D4FC;
+			}
+			#container {
+				width: 100%;
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container"></div>
+		<script src="../../build/agile.min.js"></script>
+		<script src="../../plus/agile_toolkit.js"></script>
+		<script src="../lib/qrcode.min.js"></script>
+		<script>
+			var container, images;
+			
+			Main();
+			function Main() {
+				loadImage();
+				addQR();
+			}
+
+			function loadImage() {
+				var loader = new Agile.LoadManager();
+				var obj = {
+					'tree1' : 'image/tree1.png',
+					'tree2' : 'image/tree2.png',
+					'car1' : 'image/car1.png',
+					'car2' : 'image/car2.png',
+					'wheel' : 'image/wheel.png'
+				}
+				loader.load(obj);
+				loader.addEventListener(Agile.GROUP_LOADED, function() {
+					images = loader.targetList;
+					addAgile();
+				});
+			}
+
+			function addAgile() {
+				Agile.mode = '3d';
+				Agile.lockTouch();
+				container = new Agile.Container('container');
+				container.select = false;
+
+				Agile.Timeline.replace = true;
+
+				var road = new Agile.Rect(container.width, container.height / 2);
+				container.addChild(road);
+				road.regY = 0;
+				road.color = Agile.gradient('line', 0, '#000', '#002b5b');
+				road.x = container.width / 2;
+				road.y = container.height / 2 + 15;
+
+				addTree(road.y);
+
+				var car1 = addCar(1);
+				car1.y = container.height / 2;
+				car1.x = container.width / 2 + 100;
+				container.addChild(car1);
+
+				var car2 = addCar(2);
+				car2.y = container.height / 2;
+				car2.x = container.width / 2 - 100;
+				container.addChild(car2);
+
+				car1.addFrame(5, new Agile.Keyframes({
+					'100%' : {
+						x : car1.x - 100
+					}
+				}), {
+					delay : 2,
+					yoyo : true,
+					loop : -1,
+					ease : Agile.ease.linear
+				});
+				car2.addFrame(5, new Agile.Keyframes({
+					'100%' : {
+						x : car2.x + 50
+					}
+				}), {
+					delay : 2,
+					yoyo : true,
+					loop : -1,
+					ease : Agile.ease.linear
+				});
+			}
+
+			function addCar(type) {
+				var car = new Agile.Container();
+				var carBody = new Agile.Image(images['car' + type]);
+				carBody.regY = 1;
+				var w1 = new Agile.Image(images['wheel']);
+				var w2 = new Agile.Image(images['wheel']);
+				w2.x = 73
+				w1.x = -73;
+				w1.y = w2.y = -10;
+				car.addChild(carBody);
+				car.addChild(w1);
+				car.addChild(w2);
+				carBody.addEventListener('imageLoaded', function(e) {
+					if (type == 1) {
+						carBody.addFrame(.3, new Agile.Keyframes({
+							'0%' : {
+								y : carBody.y
+							},
+							'100%' : {
+								y : carBody.y + 6
+							}
+						}), {
+							yoyo : true,
+							loop : -1,
+							ease : Agile.ease.linear
+						});
+					} else {
+						carBody.addFrame(.3, new Agile.Keyframes({
+							'100%' : {
+								y : carBody.y - 6
+							}
+						}), {
+							yoyo : true,
+							loop : -1,
+							ease : Agile.ease.linear
+						});
+					}
+				});
+
+				w1.addEventListener('imageLoaded', function(e) {
+					w1.addFrame(.4, new Agile.Keyframes({
+						'100%' : {
+							rotation : w1.rotation - 360
+						}
+					}), {
+						loop : -1,
+						ease : Agile.ease.linear
+					})
+				});
+
+				w2.addEventListener('imageLoaded', function(e) {
+					w2.addFrame(.4, new Agile.Keyframes({
+						'100%' : {
+							rotation : w2.rotation - 360
+						}
+					}), {
+						loop : -1,
+						ease : Agile.ease.linear
+					})
+				});
+				return car;
+			}
+
+			function addTree(y) {
+				for (var i = 0; i < 5; i++) {
+					var tree = new Agile.Image(images['tree' + Math.round(Math.random() * 2)]);
+					container.addChild(tree);
+					tree.regY = 1;
+					tree.y = y;
+					interlude(tree);
+				}
+			}
+
+			function interlude(tree) {
+				tree.scaleX = tree.scaleY = Math.random() * .7 + .3;
+				var fx = Math.random() * container.width + tree.width / 2;
+				var tx = -fx + Math.max(container.width * 2, container.width + tree.width / 2 + fx);
+				Agile.Tween.fromTo(tree, 5, {
+					x : -fx
+				}, {
+					x : tx,
+					ease : Agile.ease.linear,
+					onComplete : function(tree) {
+						interlude(tree);
+					},
+					onCompleteParams : [tree]
+				})
+			}
+
+			function addQR() {
+				if (Agile.Device.isPC()) {
+					var qrcode = document.createElement('div');
+					qrcode.style.position = 'absolute';
+					qrcode.style.left = '10px';
+					qrcode.style.top = '10px';
+					qrcode.style.zIndex = 20;
+					document.body.appendChild(qrcode);
+					var qrcode = new QRCode(qrcode, {
+						text : window.location.href,
+						width : 128,
+						height : 128,
+						colorDark : "#002b5b",
+						colorLight : "rgba(0,0,0,0)",
+						correctLevel : QRCode.CorrectLevel.L
+					});
+				}
+			}
+		</script>
+	</body>
+</html>
