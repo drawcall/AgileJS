@@ -10,7 +10,7 @@ Check out examples at
 - Agile’s API has high similar characteristic with actionscript3.0, you can learn it in 10 minites.
 
 ## Usage
-Download the [minified library](https://github.com/a-jie/Agile/build/agile.min.js) and include it in your html.
+Download the [minified library](https://github.com/a-jie/Agile/blob/master/build/agile.min.js) and include it in your html.
 
 ```html
 <script src="js/agile.min.js"></script>
