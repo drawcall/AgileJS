@@ -5,7 +5,7 @@
 			if (Object['create']) {
 				subClass.prototype = Object.create(superClass.prototype, {
 					constructor : {
-						value : superClass
+						value : subClass
 					}
 				});
 			} else {
