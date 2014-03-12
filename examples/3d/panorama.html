@@ -39,12 +39,12 @@
 			function loadImage() {
 				var loader = new Agile.LoadManager();
 				var obj = {
-					'left' : 'image/left.jpg',
 					'front' : 'image/front.jpg',
-					'right' : 'image/right.jpg',
 					'back' : 'image/back.jpg',
 					'up' : 'image/up.jpg',
-					'down' : 'image/down.jpg'
+					'down' : 'image/down.jpg',
+					'left' : 'image/left.jpg',
+					'right' : 'image/right.jpg'
 				}
 
 				loader.load(obj);
@@ -86,43 +86,25 @@
 				var box = new Agile.Container('3d');
 				//or set box.mode = '3d' it is important!;
 				box.backface = false;
-				var face1 = new Agile.Image(images['front'], width, height);
-				var face2 = new Agile.Image(images['back'], width, height);
-				var face3 = new Agile.Image(images['up'], width, length);
-				var face4 = new Agile.Image(images['down'], width, length);
-				var face5 = new Agile.Image(images['left'], length, height);
-				var face6 = new Agile.Image(images['right'], length, height);
-
-				face1.z = -length / 2;
-				face2.z = length / 2;
-				face2.rotationY = 180;
-				face3.y = -height / 2;
-				face3.rotationX = -90;
-				face4.y = height / 2;
-				face4.rotationX = 90;
-				face5.x = -width / 2;
-				face5.rotationY = 90;
-				face6.x = width / 2;
-				face6.rotationY = -90;
-
-				box.addChild(face1);
-				box.addChild(face2);
-				box.addChild(face3);
-				box.addChild(face4);
-				box.addChild(face5);
-				box.addChild(face6);
-				face1.width += 4;
-				face1.height += 4;
-				face2.width += 4;
-				face2.height += 4;
-				face3.width += 4;
-				face3.height += 4;
-				face4.width += 4;
-				face4.height += 4;
-				face5.width += 4;
-				face5.height += 4;
-				face6.width += 4;
-				face6.height += 4;
+				var faces = [];
+				for(var position in images) {
+					var temp = new Agile.Image(images[position], width, height);
+					box.addChild(temp);
+					temp.width += 4;
+					temp.height += 4;
+					faces.push(temp);
+				}
+				faces[0].z = -length / 2;
+				faces[1].z = length / 2;
+				faces[1].rotationY = 180;
+				faces[2].y = -height / 2;
+				faces[2].rotationX = -90;
+				faces[3].y = height / 2;
+				faces[3].rotationX = 90;
+				faces[4].x = -width / 2;
+				faces[4].rotationY = 90;
+				faces[5].x = width / 2;
+				faces[5].rotationY = -90;
 				return box;
 			}
 
