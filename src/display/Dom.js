@@ -1,5 +1,5 @@
 (function(Agile, undefined) {
-	function Dom(dom) {
+	function Dom(dom, resetPosition) {
 		Dom._super_.call(this);
 		if ( typeof dom == 'string')
 			this.element = Agile.Css.select(dom);
@@ -27,12 +27,20 @@
 
 		this.transform();
 		Agile.agileObjs[this.id] = this;
+
+		if (resetPosition)
+			this.resetPosition();
 	}
 
 
 	Agile.Utils.inherits(Dom, Agile.DisplayObject);
 	Dom.prototype.createElement = function() {
 		//null
+	}
+
+	Dom.prototype.resetPosition = function() {
+		this.originalWidth = this.width;
+		this.originalHeight = this.height;
 	}
 
 	Dom.prototype.__defineGetter__('visible', function() {

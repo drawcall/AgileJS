@@ -7,14 +7,16 @@
 		this.delayEventTime = 5;
 		//ms
 
-		if ( typeof image == 'string') {
-			var reg = new RegExp('ftp|http|png|jpg|jpeg|gif');
-			if (reg.test(image))
+		if (image) {
+			if ( typeof image == 'string') {
+				var reg = new RegExp('ftp|http|png|jpg|jpeg|gif');
+				if (reg.test(image))
+					this.image = image;
+				else
+					this.setClassImage(image);
+			} else {
 				this.image = image;
-			else
-				this.setClassImage(image);
-		} else {
-			this.image = image;
+			}
 		}
 
 		if (width)

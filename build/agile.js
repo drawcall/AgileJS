@@ -15,7 +15,7 @@
             support3d: true,
             backface: true
         },
-        keywordArr: ['x', 'y', 'z', 'width', 'height', 'color', 'regX', 'regY', 'alpha', 'rotation', 'rotationX', 'rotationY', 'rotationZ', 'scaleX', 'scaleY', 'scaleZ', 'skewX', 'skewY', 'zIndex','round', 'originalWidth', 'originalHeight'],
+        keywordArr: ['x', 'y', 'z', 'width', 'height', 'color', 'regX', 'regY', 'alpha', 'rotation', 'rotationX', 'rotationY', 'rotationZ', 'scaleX', 'scaleY', 'scaleZ', 'skewX', 'skewY', 'zIndex','round','radius','radiusX','radiusY', 'originalWidth', 'originalHeight'],
         perspective: 500,
         defaultDepth: 100,
         agileObjs: {},
@@ -1525,14 +1525,16 @@
 		this.delayEventTime = 5;
 		//ms
 
-		if ( typeof image == 'string') {
-			var reg = new RegExp('ftp|http|png|jpg|jpeg|gif');
-			if (reg.test(image))
+		if (image) {
+			if ( typeof image == 'string') {
+				var reg = new RegExp('ftp|http|png|jpg|jpeg|gif');
+				if (reg.test(image))
+					this.image = image;
+				else
+					this.setClassImage(image);
+			} else {
 				this.image = image;
-			else
-				this.setClassImage(image);
-		} else {
-			this.image = image;
+			}
 		}
 
 		if (width)
@@ -2088,7 +2090,7 @@
 
 
 
-	function Dom(dom) {
+	function Dom(dom, resetPosition) {
 		Dom._super_.call(this);
 		if ( typeof dom == 'string')
 			this.element = Agile.Css.select(dom);
@@ -2116,12 +2118,20 @@
 
 		this.transform();
 		Agile.agileObjs[this.id] = this;
+
+		if (resetPosition)
+			this.resetPosition();
 	}
 
 
 	Agile.Utils.inherits(Dom, Agile.DisplayObject);
 	Dom.prototype.createElement = function() {
 		//null
+	}
+
+	Dom.prototype.resetPosition = function() {
+		this.originalWidth = this.width;
+		this.originalHeight = this.height;
 	}
 
 	Dom.prototype.__defineGetter__('visible', function() {

@@ -5,7 +5,7 @@
             support3d: true,
             backface: true
         },
-        keywordArr: ['x', 'y', 'z', 'width', 'height', 'color', 'regX', 'regY', 'alpha', 'rotation', 'rotationX', 'rotationY', 'rotationZ', 'scaleX', 'scaleY', 'scaleZ', 'skewX', 'skewY', 'zIndex','round', 'originalWidth', 'originalHeight'],
+        keywordArr: ['x', 'y', 'z', 'width', 'height', 'color', 'regX', 'regY', 'alpha', 'rotation', 'rotationX', 'rotationY', 'rotationZ', 'scaleX', 'scaleY', 'scaleZ', 'skewX', 'skewY', 'zIndex','round','radius','radiusX','radiusY', 'originalWidth', 'originalHeight'],
         perspective: 500,
         defaultDepth: 100,
         agileObjs: {},
