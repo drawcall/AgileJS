@@ -1,5 +1,5 @@
 /*!
- * Agile v0.1.5
+ * Agile v0.1.6
  * https://github.com/a-jie/Agile
  *
  * Copyright 2011-2014, A-JIE
@@ -15,7 +15,7 @@
             support3d: true,
             backface: true
         },
-        keywordArr: ['x', 'y', 'z', 'width', 'height', 'color', 'regX', 'regY', 'alpha', 'rotation', 'rotationX', 'rotationY', 'rotationZ', 'scaleX', 'scaleY', 'scaleZ', 'skewX', 'skewY', 'zIndex','round', 'originalWidth', 'originalHeight'],
+        keywordArr: ['x', 'y', 'z', 'width', 'height', 'color', 'regX', 'regY', 'alpha', 'rotation', 'rotationX', 'rotationY', 'rotationZ', 'scaleX', 'scaleY', 'scaleZ', 'skewX', 'skewY', 'zIndex','round','radius','radiusX','radiusY', 'originalWidth', 'originalHeight'],
         perspective: 500,
         defaultDepth: 100,
         agileObjs: {},
@@ -518,7 +518,7 @@
 			if (Object['create']) {
 				subClass.prototype = Object.create(superClass.prototype, {
 					constructor : {
-						value : superClass
+						value : subClass
 					}
 				});
 			} else {
@@ -1441,6 +1441,7 @@
 			'borderRightColor' : 'transparent',
 			'borderLeftColor' : 'transparent'
 		}, 3);
+		this._avatar.ox = 0;
 		this.width = width || 100;
 		this.height = height || 173.2;
 		this.color = color || '#00cc22';
@@ -1487,6 +1488,7 @@
 				'borderRightWidth' : width + 'px',
 				'borderLeftWidth' : width + 'px'
 			}, 3);
+			this._avatar.ox = width / 2;
 		} else {
 			this.scaleX = this.width / this.originalWidth;
 		}
@@ -1509,6 +1511,39 @@
 		}
 	});
 
+	Triangle.prototype.__defineGetter__('x', function() {
+		return this._avatar.x + this._avatar.ox;
+	});
+
+	Triangle.prototype.__defineSetter__('x', function(x) {
+		this._avatar.x = x - this._avatar.ox;
+		this.transform();
+	});
+
+	Triangle.prototype.transform = function() {
+		if (Agile.mode == '3d' && Agile.support3d) {
+			var parentOffsetX = this.parent ? this.parent.regX * this.parent.originalWidth : 0;
+			var parentOffsetY = this.parent ? this.parent.regY * this.parent.originalHeight : 0;
+			var thisOffsetX = this.regX * this.originalWidth;
+			var thisOffsetY = this.regY * this.originalHeight;
+			var translate = 'translate3d(' + (this._avatar.x - thisOffsetX + parentOffsetX) + 'px,' + (this.y - thisOffsetY + parentOffsetY) + 'px,' + this.z + 'px) ';
+			var rotate = 'rotateX(' + this.rotationX + 'deg) ' + 'rotateY(' + this.rotationY + 'deg) ' + 'rotateZ(' + this.rotationZ + 'deg) ';
+			var scale = 'scale3d(' + this.scaleX + ',' + this.scaleY + ',' + this.scaleZ + ') ';
+			var skew = 'skew(' + this.skewX + 'deg,' + this.skewY + 'deg)';
+			this.css3('transform', translate + rotate + scale + skew);
+		} else {
+			var parentOffsetX = this.parent ? this.parent.regX * this.parent.originalWidth : 0;
+			var parentOffsetY = this.parent ? this.parent.regY * this.parent.originalHeight : 0;
+			var thisOffsetX = this.regX * this.originalWidth;
+			var thisOffsetY = this.regY * this.originalHeight;
+			var translate = 'translate(' + (this._avatar.x - thisOffsetX + parentOffsetX) + 'px,' + (this.y - thisOffsetY + parentOffsetY) + 'px) ';
+			var rotate = 'rotate(' + this.rotationZ + 'deg) ';
+			var scale = 'scale(' + this.scaleX + ',' + this.scaleY + ') ';
+			var skew = 'skew(' + this.skewX + 'deg,' + this.skewY + 'deg)';
+			this.css3('transform', translate + rotate + scale + skew);
+		}
+	}
+
 	Triangle.prototype.toString = function() {
 		return 'Triangle';
 	}
@@ -1525,14 +1560,16 @@
 		this.delayEventTime = 5;
 		//ms
 
-		if ( typeof image == 'string') {
-			var reg = new RegExp('ftp|http|png|jpg|jpeg|gif');
-			if (reg.test(image))
+		if (image) {
+			if ( typeof image == 'string') {
+				var reg = new RegExp('ftp|http|png|jpg|jpeg|gif');
+				if (reg.test(image))
+					this.image = image;
+				else
+					this.setClassImage(image);
+			} else {
 				this.image = image;
-			else
-				this.setClassImage(image);
-		} else {
-			this.image = image;
+			}
 		}
 
 		if (width)
@@ -2088,7 +2125,7 @@
 
 
 
-	function Dom(dom) {
+	function Dom(dom, resetPosition) {
 		Dom._super_.call(this);
 		if ( typeof dom == 'string')
 			this.element = Agile.Css.select(dom);
@@ -2116,12 +2153,20 @@
 
 		this.transform();
 		Agile.agileObjs[this.id] = this;
+
+		if (resetPosition)
+			this.resetPosition();
 	}
 
 
 	Agile.Utils.inherits(Dom, Agile.DisplayObject);
 	Dom.prototype.createElement = function() {
 		//null
+	}
+
+	Dom.prototype.resetPosition = function() {
+		this.originalWidth = this.width;
+		this.originalHeight = this.height;
 	}
 
 	Dom.prototype.__defineGetter__('visible', function() {
