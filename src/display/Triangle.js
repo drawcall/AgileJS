@@ -11,6 +11,7 @@
 			'borderRightColor' : 'transparent',
 			'borderLeftColor' : 'transparent'
 		}, 3);
+		this._avatar.ox = 0;
 		this.width = width || 100;
 		this.height = height || 173.2;
 		this.color = color || '#00cc22';
@@ -57,6 +58,7 @@
 				'borderRightWidth' : width + 'px',
 				'borderLeftWidth' : width + 'px'
 			}, 3);
+			this._avatar.ox = width / 2;
 		} else {
 			this.scaleX = this.width / this.originalWidth;
 		}
@@ -78,6 +80,39 @@
 			this.scaleY = this.height / this.originalHeight;
 		}
 	});
+
+	Triangle.prototype.__defineGetter__('x', function() {
+		return this._avatar.x + this._avatar.ox;
+	});
+
+	Triangle.prototype.__defineSetter__('x', function(x) {
+		this._avatar.x = x - this._avatar.ox;
+		this.transform();
+	});
+
+	Triangle.prototype.transform = function() {
+		if (Agile.mode == '3d' && Agile.support3d) {
+			var parentOffsetX = this.parent ? this.parent.regX * this.parent.originalWidth : 0;
+			var parentOffsetY = this.parent ? this.parent.regY * this.parent.originalHeight : 0;
+			var thisOffsetX = this.regX * this.originalWidth;
+			var thisOffsetY = this.regY * this.originalHeight;
+			var translate = 'translate3d(' + (this._avatar.x - thisOffsetX + parentOffsetX) + 'px,' + (this.y - thisOffsetY + parentOffsetY) + 'px,' + this.z + 'px) ';
+			var rotate = 'rotateX(' + this.rotationX + 'deg) ' + 'rotateY(' + this.rotationY + 'deg) ' + 'rotateZ(' + this.rotationZ + 'deg) ';
+			var scale = 'scale3d(' + this.scaleX + ',' + this.scaleY + ',' + this.scaleZ + ') ';
+			var skew = 'skew(' + this.skewX + 'deg,' + this.skewY + 'deg)';
+			this.css3('transform', translate + rotate + scale + skew);
+		} else {
+			var parentOffsetX = this.parent ? this.parent.regX * this.parent.originalWidth : 0;
+			var parentOffsetY = this.parent ? this.parent.regY * this.parent.originalHeight : 0;
+			var thisOffsetX = this.regX * this.originalWidth;
+			var thisOffsetY = this.regY * this.originalHeight;
+			var translate = 'translate(' + (this._avatar.x - thisOffsetX + parentOffsetX) + 'px,' + (this.y - thisOffsetY + parentOffsetY) + 'px) ';
+			var rotate = 'rotate(' + this.rotationZ + 'deg) ';
+			var scale = 'scale(' + this.scaleX + ',' + this.scaleY + ') ';
+			var skew = 'skew(' + this.skewX + 'deg,' + this.skewY + 'deg)';
+			this.css3('transform', translate + rotate + scale + skew);
+		}
+	}
 
 	Triangle.prototype.toString = function() {
 		return 'Triangle';

@@ -60,7 +60,6 @@
 
 				triangle = new Agile.Triangle(80, 120, '#336633');
 				container.addChild(triangle);
-				triangle.x = 480;
 				triangle.y = 120;
 
 				image = new Agile.Image('img/cartoon.jpg');
@@ -131,7 +130,7 @@
 				rect.rotation++;
 				semicircle.rotationY++;
 				line.rotationZ++;
-				triangle.x = 480 + 10 * Math.cos(angle += .1);
+				triangle.x = 550 + 10 * Math.cos(angle += .1);
 			}
 
 			function addQR() {

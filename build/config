@@ -1,4 +1,4 @@
-version = 0.1.5
+version = 0.1.6
 source_dir = ../src/
 output_full = agile.js
 output_min = agile.min.js
