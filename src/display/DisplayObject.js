@@ -27,7 +27,8 @@
             originalHeight: null,
             realWidth: null,
             realHeight: null,
-            backface: true
+            backface: true,
+            maxChildrenDepth: 0,
         };
         this.numChildren = 0;
         this.childrens = [];
@@ -39,8 +40,7 @@
         this.createElement();
         this.position = 'absolute';
         this.zIndex = Agile.defaultDepth;
-        if(this.id != '')
-       	 	Agile.agileObjs[this.id] = this;
+        if (this.id != '') Agile.agileObjs[this.id] = this;
     }
 
     DisplayObject.prototype = {
@@ -270,8 +270,8 @@
         },
         set backface(backface) {
             this._avatar.backface = backface;
-            var bf = backface ? 'visible' : 'hidden';
-			this.css3('backfaceVisibility', bf);
+            var bf = backface ? 'visible': 'hidden';
+            this.css3('backfaceVisibility', bf);
         },
         get backface() {
             return this._avatar.backface;
@@ -318,7 +318,7 @@
     DisplayObject.prototype.addClass = function(styleName) {
         if (this.element) Agile.Css.addClass(this.element, styleName);
     }
-    
+
     DisplayObject.prototype.removeClass = function(styleName) {
         if (this.element) Agile.Css.removeClass(this.element, styleName);
     }
@@ -326,13 +326,13 @@
     DisplayObject.prototype.addFrame = function(duration, frameObj, parmObj) {
         return Agile.Timeline.addFrame(this, duration, frameObj, parmObj);
     }
-    
+
     DisplayObject.prototype.removeFrame = function(frame, removeStyle) {
-    	return Agile.Timeline.removeFrame(this, frame, removeStyle);
+        return Agile.Timeline.removeFrame(this, frame, removeStyle);
     }
-    
+
     DisplayObject.prototype.removeFrameAfter = function(frame, removeStyle) {
-    	Agile.Timeline.removeFrameAfter(this, frame , removeStyle);	
+        Agile.Timeline.removeFrameAfter(this, frame, removeStyle);
     }
 
     DisplayObject.prototype.pause = function() {
@@ -344,27 +344,32 @@
     }
 
     DisplayObject.prototype.addChild = function(obj) {
-        this.element.appendChild(obj.element);
-        this.numChildren++;
-        this.childrens.push(obj);
-        obj.zIndex += this.numChildren;
-        obj.parent = this;
-        obj.transform();
+    	this._avatar.maxChildrenDepth++;
+    	obj.zIndex = Agile.defaultDepth + this._avatar.maxChildrenDepth;
+    	
+        if (obj.parent != this) {
+            this.element.appendChild(obj.element);
+            this.numChildren++;
+            this.childrens.push(obj);
+            obj.parent = this;
+            obj.transform();
 
-        if (!this._avatar.realWidth) this._avatar.realWidth = this.originalWidth;
-        var left = Math.min(obj.x - obj.width * obj.regX, -this.width * this.regX);
-        this._avatar.realWidth += Math.abs((left + this.width * this.regX));
-        var right = Math.max(obj.x + obj.width * (1 - obj.regX), this.width * (1 - this.regX));
-        this._avatar.realWidth += (right - this.width * (1 - this.regX));
+            if (!this._avatar.realWidth) this._avatar.realWidth = this.originalWidth;
+            var left = Math.min(obj.x - obj.width * obj.regX, -this.width * this.regX);
+            this._avatar.realWidth += Math.abs((left + this.width * this.regX));
+            var right = Math.max(obj.x + obj.width * (1 - obj.regX), this.width * (1 - this.regX));
+            this._avatar.realWidth += (right - this.width * (1 - this.regX));
 
-        if (!this._avatar.realHeight) this._avatar.realHeight = this.originalHeight;
-        var top = Math.min(obj.y - obj.height * obj.regY, -this.height * this.regY);
-        this._avatar.realHeight += Math.abs((top + this.height * this.regY));
-        var bottom = Math.max(obj.y + obj.height * (1 - obj.regY), this.height * (1 - this.regY));
-        this._avatar.realHeight += (bottom - this.height * (1 - this.regY));
+            if (!this._avatar.realHeight) this._avatar.realHeight = this.originalHeight;
+            var top = Math.min(obj.y - obj.height * obj.regY, -this.height * this.regY);
+            this._avatar.realHeight += Math.abs((top + this.height * this.regY));
+            var bottom = Math.max(obj.y + obj.height * (1 - obj.regY), this.height * (1 - this.regY));
+            this._avatar.realHeight += (bottom - this.height * (1 - this.regY));
+        }
+
         return obj;
     }
-    
+
     DisplayObject.prototype.addChildAt = function(obj, index) {
         this.addChild(obj);
         obj.zIndex = index;
@@ -428,9 +433,8 @@
     }
 
     DisplayObject.prototype.destroy = function() {
-    	for(var i=0;i<this.childrens.length;i++)
-        	this.childrens[i].destroy();
-        	
+        for (var i = 0; i < this.childrens.length; i++) this.childrens[i].destroy();
+
         Agile.Utils.destroyObject(this.childrens);
         delete Agile.agileObjs[this.id];
         this.parent = null;
