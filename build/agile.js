@@ -1459,7 +1459,8 @@
 	});
 
 	Triangle.prototype.__defineSetter__('color', function(color) {
-		if (color == 'random' || color == '#random') color = Agile.Color.randomColor();
+		if (color == 'random' || color == '#random')
+			color = Agile.Color.randomColor();
 		this._avatar.color = color;
 		this.css3('borderBottomColor', this.color);
 	});
@@ -1547,6 +1548,15 @@
 			var skew = 'skew(' + this.skewX + 'deg,' + this.skewY + 'deg)';
 			this.css3('transform', translate + rotate + scale + skew);
 		}
+	}
+
+	Triangle.prototype.getCirumRadius = function() {
+		var tha = 2 * Math.atan2(this.height, this.width);
+		return this.width / Math.sin(tha);
+	}
+
+	Triangle.prototype.regCircumcenter = function() {
+		this.regY = this.getCirumRadius() / this.height;
 	}
 
 	Triangle.prototype.toString = function() {
