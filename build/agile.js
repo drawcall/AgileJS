@@ -1243,6 +1243,7 @@
     DisplayObject.prototype.addChild = function(obj) {
     	this._avatar.maxChildrenDepth++;
     	obj.zIndex = Agile.defaultDepth + this._avatar.maxChildrenDepth;
+    	
         if (obj.parent != this) {
             this.element.appendChild(obj.element);
             this.numChildren++;
@@ -1458,6 +1459,7 @@
 	});
 
 	Triangle.prototype.__defineSetter__('color', function(color) {
+		if (color == 'random' || color == '#random') color = Agile.Color.randomColor();
 		this._avatar.color = color;
 		this.css3('borderBottomColor', this.color);
 	});

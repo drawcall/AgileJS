@@ -25,6 +25,7 @@
 	});
 
 	Triangle.prototype.__defineSetter__('color', function(color) {
+		if (color == 'random' || color == '#random') color = Agile.Color.randomColor();
 		this._avatar.color = color;
 		this.css3('borderBottomColor', this.color);
 	});
