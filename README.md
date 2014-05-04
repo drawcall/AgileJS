@@ -1,21 +1,20 @@
 Agile
 ======
 #### Using javascript generated pure CSS3 ####
-Agile is a engine Using javascript generated pure CSS3.Its simple, fast and easy to use.
+Agile is a simpe, fast and easy to use engine which uses javascript generated pure CSS3.
 Check out examples at http://a-jie.github.io/Agile/
 
 ## Features
-- Agile uses javascript to generate pure CSS3. No canvas no webGL no svg.
-- In mobile devices Agile's performance is perfect ,It really can cross platform.
-- Agile’s API has high similar characteristic with actionscript3.0, you can learn it in 10 minites.
+- Agile uses javascript to generate pure CSS3, without canvas, webGL or SVG.
+- Performant on mobile devices, being truly cross platform.
+- Agile’s API has high similar characteristic with actionscript 3.0, you can learn it in 10 minutes.
 
 ## Usage
-Download the [minified library](https://github.com/a-jie/Agile/blob/master/build/agile.min.js) and include it in your html.
-
+Download the [minified library](https://github.com/a-jie/Agile/blob/master/build/agile.min.js) and include it in your html document.
 ```html
 <script src="js/agile.min.js"></script>
 ```
-This code will create a circle and make it moving.
+Create and move a circle:
 ```javascript
 //init Agile
 Agile.mode = '3d';
