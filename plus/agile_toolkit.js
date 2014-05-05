@@ -94,7 +94,7 @@
 		this.element.addEventListener(events, this.touchEndHandler);
 	}
 
-	Agile.DisplayObject.prototype.stopTouchMove = function() {
+	Agile.DisplayObject.prototype.stopTouchEnd = function() {
 		if (this.touchEndHandler) {
 			var events = Agile.Device.isPC() ? 'mouseup' : 'touchend';
 			this.element.removeEventListener(events, this.touchEndHandler);
