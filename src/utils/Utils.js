@@ -90,7 +90,7 @@
 		},
 
 		initValue : function(a, b) {
-			var s = (a == undefined || a == null) ? b : a;
+			var s = (a === undefined || a === null) ? b : a;
 			return s;
 		},
 
