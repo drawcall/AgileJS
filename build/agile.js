@@ -2372,7 +2372,7 @@
 
 
 	var Tween = Agile.Tween || {
-		'keyword' : ['ease', 'delay', 'yoyo', 'all', 'loop', 'repeat', 'frame', 'onStart', 'onUpdate', 'onComplete', 'onCompleteParams', 'overwrite'],
+		'keyword' : ['ease', 'delay', 'yoyo', 'all', 'loop', 'repeat', 'frame', 'onStart', 'onUpdate', 'onComplete', 'onCompleteParams', 'overwrite', 'setTimeout'],
 		callbacks : {},
 		arguments : {},
 		oldAttribute : {},
@@ -2398,7 +2398,10 @@
 		}
 
 		var id = -999;
-		if (Tween.setTimeout) {
+		var isSetTimeout = false;
+		isSetTimeout = paramsObj.setTimeout === undefined ? Tween.setTimeout : paramsObj.setTimeout;
+		
+		if (isSetTimeout) {
 			id = setTimeout(function(agile, transition, paramsObj, tweenIndex) {
 				Tween.start(agile, transition, paramsObj, tweenIndex);
 				id = -999;
