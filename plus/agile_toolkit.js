@@ -88,9 +88,7 @@
 
 	Agile.DisplayObject.prototype.touchEnd = function(fun) {
 		this.touchEndHandler = function(e) {
-			var x = e['targetTouches'] ? e['targetTouches'][0].pageX : e.pageX;
-			var y = e['targetTouches'] ? e['targetTouches'][0].pageY : e.pageY;
-			fun(x, y, e);
+			fun(e);
 		}
 		var events = Agile.Device.isPC() ? 'mouseup' : 'touchend';
 		this.element.addEventListener(events, this.touchEndHandler);
