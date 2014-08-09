@@ -54,7 +54,7 @@
 		this.touchStartHandler = function(e) {
 			var x = e['targetTouches'] ? e['targetTouches'][0].pageX : e.pageX;
 			var y = e['targetTouches'] ? e['targetTouches'][0].pageY : e.pageY;
-			fun(x, y);
+			fun(x, y, e);
 		}
 		var events = Agile.Device.isPC() ? 'mousedown' : 'touchstart';
 		this.element.addEventListener(events, this.touchStartHandler);
