@@ -72,7 +72,7 @@
 		this.touchMoveHandler = function(e) {
 			var x = e['targetTouches'] ? e['targetTouches'][0].pageX : e.pageX;
 			var y = e['targetTouches'] ? e['targetTouches'][0].pageY : e.pageY;
-			fun(x, y);
+			fun(x, y, e);
 		}
 		var events = Agile.Device.isPC() ? 'mousemove' : 'touchmove';
 		this.element.addEventListener(events, this.touchMoveHandler);
@@ -88,7 +88,9 @@
 
 	Agile.DisplayObject.prototype.touchEnd = function(fun) {
 		this.touchEndHandler = function(e) {
-			fun();
+			var x = e['targetTouches'] ? e['targetTouches'][0].pageX : e.pageX;
+			var y = e['targetTouches'] ? e['targetTouches'][0].pageY : e.pageY;
+			fun(x, y, e);
 		}
 		var events = Agile.Device.isPC() ? 'mouseup' : 'touchend';
 		this.element.addEventListener(events, this.touchEndHandler);
