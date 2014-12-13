@@ -95,11 +95,10 @@
 		},
 
 		removeClass : function(element, cls) {
-			var obj_class = ' ' + obj.className + ' ';
-			obj_class = obj_class.replace(/(\s+)/gi, ' ');
-			var removed = obj_class.replace(' ' + cls + ' ', ' ');
-			removed = removed.replace(/(^\s+)|(\s+$)/g, '');
-			element.className = removed;
+            if (this.hasClass(element,cls)) {
+                var reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
+                element.className = element.className.replace(reg,'');
+            }
 		},
 
 		hasClass : function(element, className) {

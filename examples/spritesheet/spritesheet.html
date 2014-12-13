@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>displayobject</title>
+    <meta charset="utf-8">
+    <meta name="viewport" id="viewport"
+          content="width=device-width, user-scalable=no, minimum-scale=.5, maximum-scale=.5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link type="text/css" rel="stylesheet" media="all" href="css.css"/>
+    <style type="text/css">
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #container {
+            width: 640px;
+            height: 100%;
+            margin: 0 auto;
+        }
+
+        .loadText {
+            width: 100px;;
+            left: 50%;
+            top: 50%;
+            margin-left: -50px;
+            position: absolute;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div id="container">
+</div>
+<script src="../lib/qrcode.min.js"></script>
+<script src="../../build/agile.min.js"></script>
+<script src="../../plus/agile_toolkit.js"></script>
+<script>
+    var container;
+    var spritesheet1, spritesheet2, spritesheet3;
+
+    Main();
+    function Main(Agile) {
+        loadImage();
+        tick();
+        addQR();
+    }
+
+    function loadImage() {
+        var loadText = document.createElement("div");
+        Agile.Css.addClass(loadText, 'loadText');
+        document.getElementById("container").appendChild(loadText);
+        var loader = new Agile.LoadManager();
+        var obj = {}
+        for (var i = 0; i < 24; i++) {
+            obj[i + ""] = "image/" + (i + 1) + ".png";
+        }
+        obj.css = "css.png";
+        var id = setInterval(function () {
+            loadText.innerText = 'loading:' + Math.floor(loader.loadScale * 100) + '%';
+        }, 1000 / 60);
+        loader.load(obj);
+        loader.addEventListener(Agile.GROUP_LOADED, function () {
+            document.getElementById("container").removeChild(loadText);
+            clearInterval(id);
+            addAgile();
+
+        });
+    }
+
+    function addAgile() {
+        Agile.mode = '3d';
+        Agile.lockTouch();
+        container = new Agile.Container('container');
+        container.select = false;
+        container.perspective = 1000;
+
+        var imgArr = [];
+        var classArr = [];
+        for (var i = 0; i < 24; i++) {
+            imgArr.push("image/" + (i + 1) + ".png");
+        }
+        for (var i = 0; i < 27; i++) {
+            classArr.push("img_" + (i + 1));
+        }
+
+        spritesheet1 = new Agile.SpriteSheet(imgArr, 480, 360);
+        spritesheet1.x = container.width / 2 - 150;
+        spritesheet1.y = container.height / 2;
+        spritesheet1.speed = 30;
+        spritesheet1.play();
+        //spritesheet1.gotoAndStop(5);
+        container.addChild(spritesheet1);
+
+        spritesheet2 = new Agile.SpriteSheet(imgArr, 480, 360);
+        spritesheet2.x = container.width / 2 + 150;
+        spritesheet2.y = container.height / 2;
+        spritesheet2.prvePlay = true;
+        spritesheet2.useIntervl = false;
+        spritesheet2.speed = 60;
+        spritesheet2.gotoAndStop(5);
+        spritesheet2.play();
+        container.addChild(spritesheet2);
+
+        spritesheet3 = new Agile.SpriteSheet(classArr, 240, 240, true);
+        spritesheet3.useCssSprite = true;
+        spritesheet3.addClass("sprite");
+        spritesheet3.x = container.width / 2;
+        spritesheet3.y = container.height / 2;
+        spritesheet3.scaleX = spritesheet3.scaleY = 1.2;
+        spritesheet3.speed = 30;
+        spritesheet3.gotoAndStop(5);
+        spritesheet3.play();
+
+        container.addChildAt(spritesheet3, 999);
+    }
+
+    function tick() {
+        requestAnimationFrame(tick);
+        if (spritesheet2)
+            spritesheet2.update();
+    }
+
+    function addQR() {
+        if (Agile.Device.isPC()) {
+            var qrcode = document.createElement('div');
+            qrcode.style.position = 'absolute';
+            qrcode.style.left = '10px';
+            qrcode.style.top = '10px';
+            qrcode.style.zIndex = 20;
+            document.body.appendChild(qrcode);
+            var qrcode = new QRCode(qrcode, {
+                text: window.location.href,
+                width: 128,
+                height: 128,
+                colorDark: "#000000",
+                colorLight: "#fff",
+                correctLevel: QRCode.CorrectLevel.L
+            });
+        }
+    }
+</script>
+</body>
+</html>

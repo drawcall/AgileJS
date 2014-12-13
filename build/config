@@ -38,6 +38,7 @@ display/Text.js
 display/MovieClip.js
 display/Dom.js
 display/Container.js
+display/SpriteSheet.js
 animate/Avatar.js
 animate/Tween.js
 animate/Timeline.js

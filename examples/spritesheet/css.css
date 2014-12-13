@@ -1,0 +1,41 @@
+/* ----------------------------------------------------
+   created with http://www.codeandweb.com/texturepacker 
+   ----------------------------------------------------
+   $TexturePacker:SmartUpdate:81b87423565a215f4ae981f70799f900:aaa6f60c39d4c316b8ed9667f27805ca:f7febb4d7eee8134d4984d95486ac5de$
+   ----------------------------------------------------
+
+   usage: <span class="{-spritename-} sprite"></span>
+
+   replace {-spritename-} with the sprite you like to use
+
+*/
+
+.sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(css.png);}
+
+.img_1 {width:240px; height:240px; background-position: -1454px -486px}
+.img_10 {width:240px; height:240px; background-position: -1212px -728px}
+.img_11 {width:240px; height:240px; background-position: -1212px -486px}
+.img_12 {width:240px; height:240px; background-position: -1454px -244px}
+.img_13 {width:240px; height:240px; background-position: -1212px -244px}
+.img_14 {width:240px; height:240px; background-position: -970px -728px}
+.img_15 {width:240px; height:240px; background-position: -970px -486px}
+.img_16 {width:240px; height:240px; background-position: -970px -244px}
+.img_17 {width:240px; height:240px; background-position: -1454px -2px}
+.img_18 {width:240px; height:240px; background-position: -1212px -2px}
+.img_19 {width:240px; height:240px; background-position: -970px -2px}
+.img_2 {width:240px; height:240px; background-position: -728px -728px}
+.img_20 {width:240px; height:240px; background-position: -728px -486px}
+.img_21 {width:240px; height:240px; background-position: -728px -244px}
+.img_22 {width:240px; height:240px; background-position: -728px -2px}
+.img_23 {width:240px; height:240px; background-position: -486px -728px}
+.img_24 {width:240px; height:240px; background-position: -486px -486px}
+.img_25 {width:240px; height:240px; background-position: -486px -244px}
+.img_26 {width:240px; height:240px; background-position: -486px -2px}
+.img_27 {width:240px; height:240px; background-position: -244px -728px}
+.img_3 {width:240px; height:240px; background-position: -244px -486px}
+.img_4 {width:240px; height:240px; background-position: -244px -244px}
+.img_5 {width:240px; height:240px; background-position: -244px -2px}
+.img_6 {width:240px; height:240px; background-position: -2px -728px}
+.img_7 {width:240px; height:240px; background-position: -2px -486px}
+.img_8 {width:240px; height:240px; background-position: -2px -244px}
+.img_9 {width:240px; height:240px; background-position: -2px -2px}

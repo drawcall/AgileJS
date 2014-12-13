@@ -30,7 +30,8 @@ var paths = {
 	"MovieClip" : "display/MovieClip",
 	"Dom" : "display/Dom",
 	"Container" : "display/Container",
-	
+	"SpriteSheet" : "display/SpriteSheet",
+
 	"Avatar" : "animate/Avatar",
 	"Tween" : "animate/Tween",
 	"Timeline" : "animate/Timeline",
@@ -132,7 +133,11 @@ for (var index in paths) {
 		shim[index] = {
 			deps : ["Dom"]
 		};
-	}
+	} else if (index == "SpriteSheet") {
+        shim[index] = {
+            deps : ["DisplayObject"]
+        };
+    }
 	//extras
 	else if (index == "Semicircle") {
 		shim[index] = {
