@@ -2388,9 +2388,9 @@
             var time = new Date().getTime();
             this.elapsed += (time - this.oldTime);
             this.oldTime = time;
-            //console.log(this.elapsed*1000,1000 / this.speed);
+            
             if (this.elapsed >= 1000 / this.speed) {
-                this.elapsed = 0;
+                this.elapsed = this.elapsed % (1000 / this.speed);
             } else {
                 return;
             }
