@@ -167,11 +167,10 @@
 		},
 
 		removeClass : function(element, cls) {
-			var obj_class = ' ' + obj.className + ' ';
-			obj_class = obj_class.replace(/(\s+)/gi, ' ');
-			var removed = obj_class.replace(' ' + cls + ' ', ' ');
-			removed = removed.replace(/(^\s+)|(\s+$)/g, '');
-			element.className = removed;
+            if (this.hasClass(element,cls)) {
+                var reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
+                element.className = element.className.replace(reg,'');
+            }
 		},
 
 		hasClass : function(element, className) {
@@ -603,7 +602,7 @@
 		},
 
 		initValue : function(a, b) {
-			var s = (a == undefined || a == null) ? b : a;
+			var s = (a === undefined || a === null) ? b : a;
 			return s;
 		},
 
@@ -1243,6 +1242,7 @@
     DisplayObject.prototype.addChild = function(obj) {
     	this._avatar.maxChildrenDepth++;
     	obj.zIndex = Agile.defaultDepth + this._avatar.maxChildrenDepth;
+    	
         if (obj.parent != this) {
             this.element.appendChild(obj.element);
             this.numChildren++;
@@ -1458,6 +1458,8 @@
 	});
 
 	Triangle.prototype.__defineSetter__('color', function(color) {
+		if (color == 'random' || color == '#random')
+			color = Agile.Color.randomColor();
 		this._avatar.color = color;
 		this.css3('borderBottomColor', this.color);
 	});
@@ -1545,6 +1547,15 @@
 			var skew = 'skew(' + this.skewX + 'deg,' + this.skewY + 'deg)';
 			this.css3('transform', translate + rotate + scale + skew);
 		}
+	}
+
+	Triangle.prototype.getCirumRadius = function() {
+		var tha = 2 * Math.atan2(this.height, this.width);
+		return this.width / Math.sin(tha);
+	}
+
+	Triangle.prototype.regCircumcenter = function() {
+		this.regY = this.getCirumRadius() / this.height;
 	}
 
 	Triangle.prototype.toString = function() {
@@ -2296,6 +2307,135 @@
 
 
 
+    var _intervalID;
+
+    function SpriteSheet(imgArr, width, height, speed, useIntervl, useCssSprite) {
+        SpriteSheet._super_.call(this);
+        _intervalID = -1;
+        this.imgArr = imgArr;
+        if (typeof speed == 'boolean') {
+            this.speed = 30;
+            this.useCssSprite = this.speed;
+        } else {
+            this.speed = speed || 30;
+            this.useCssSprite = useCssSprite || false;
+        }
+        this.useIntervl = useIntervl || true;
+        this.state = 'stop';
+        this.originalHeight = height;
+        this.originalWidth = width;
+        this.currentFrame = 1;
+        this.prevFrame = this.currentFrame;
+        this.totalFrames = imgArr.length;
+        this.setBackgroundImage();
+        this.loop = true;
+        this.prvePlay = false;
+        this.elapsed = 0;
+        this.stop();
+    }
+
+    Agile.Utils.inherits(SpriteSheet, Agile.DisplayObject);
+
+    SpriteSheet.prototype.setBackgroundImage = function () {
+        if (this.useCssSprite) {
+            this.removeClass(this.imgArr[this.prevFrame - 1]);
+            this.addClass(this.imgArr[this.currentFrame - 1]);
+        } else {
+            this.backgroundImage = this.imgArr[this.currentFrame - 1];
+        }
+    }
+
+    SpriteSheet.prototype.play = function () {
+        if (this.useIntervl) {
+            var _self = this;
+            if (_intervalID < 0)
+                _intervalID = setInterval(function () {
+                    _self.update.apply(_self);
+                }, 1000 / this.speed);
+        }
+        this.state = 'play';
+    }
+
+    SpriteSheet.prototype.stop = function (clear) {
+        if (this.useIntervl && clear) {
+            clearInterval(_intervalID);
+            _intervalID = -1;
+        }
+        this.state = 'stop';
+    }
+
+    SpriteSheet.prototype.gotoAndPlay = function (frame) {
+        this.currentFrame = frame;
+        this.setBackgroundImage();
+        this.play();
+        this.state = 'play';
+    }
+
+    SpriteSheet.prototype.gotoAndStop = function (frame) {
+        this.currentFrame = frame;
+        this.setBackgroundImage();
+        this.stop();
+        this.state = 'stop';
+    }
+
+    SpriteSheet.prototype.update = function () {
+        if (this.state == 'stop')
+            return;
+
+        if (!this.useIntervl) {
+            if (!this.oldTime)
+                this.oldTime = new Date().getTime();
+            var time = new Date().getTime();
+            this.elapsed += (time - this.oldTime);
+            this.oldTime = time;
+            
+            if (this.elapsed >= 1000 / this.speed) {
+                this.elapsed = this.elapsed % (1000 / this.speed);
+            } else {
+                return;
+            }
+        }
+
+        this.prevFrame = this.currentFrame;
+
+        if (this.prvePlay)
+            this.currentFrame--;
+        else
+            this.currentFrame++;
+
+        if (this.prvePlay) {
+            if (this.loop) {
+                if (this.currentFrame < 1)
+                    this.currentFrame = this.totalFrames;
+            } else {
+                if (this.currentFrame <= 1) {
+                    this.currentFrame = 1;
+                    this.stop();
+                }
+            }
+        } else {
+            if (this.loop) {
+                if (this.currentFrame > this.totalFrames)
+                    this.currentFrame = 1;
+            } else {
+                if (this.currentFrame >= this.totalFrames) {
+                    this.currentFrame = this.totalFrames;
+                    this.stop();
+                }
+            }
+        }
+
+        this.setBackgroundImage();
+    }
+
+    SpriteSheet.prototype.toString = function () {
+        return 'SpriteSheet';
+    }
+
+    Agile.SpriteSheet = SpriteSheet;
+
+
+
 	function Avatar(width, height, color) {
 		Avatar._super_.call(this);
 		this.width = width || 50;
@@ -2360,7 +2500,7 @@
 
 
 	var Tween = Agile.Tween || {
-		'keyword' : ['ease', 'delay', 'yoyo', 'all', 'loop', 'repeat', 'frame', 'onStart', 'onUpdate', 'onComplete', 'onCompleteParams', 'overwrite'],
+		'keyword' : ['ease', 'delay', 'yoyo', 'all', 'loop', 'repeat', 'frame', 'onStart', 'onUpdate', 'onComplete', 'onCompleteParams', 'overwrite', 'setTimeout'],
 		callbacks : {},
 		arguments : {},
 		oldAttribute : {},
@@ -2386,7 +2526,10 @@
 		}
 
 		var id = -999;
-		if (Tween.setTimeout) {
+		var isSetTimeout = false;
+		isSetTimeout = paramsObj.setTimeout === undefined ? Tween.setTimeout : paramsObj.setTimeout;
+		
+		if (isSetTimeout) {
 			id = setTimeout(function(agile, transition, paramsObj, tweenIndex) {
 				Tween.start(agile, transition, paramsObj, tweenIndex);
 				id = -999;
