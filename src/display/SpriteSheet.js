@@ -71,22 +71,26 @@
     }
 
     SpriteSheet.prototype.update = function () {
-        if (this.state == 'stop')
-            return;
-
         if (!this.useIntervl) {
             if (!this.oldTime)
                 this.oldTime = new Date().getTime();
             var time = new Date().getTime();
             this.elapsed += (time - this.oldTime);
             this.oldTime = time;
-            
+
             if (this.elapsed >= 1000 / this.speed) {
                 this.elapsed = this.elapsed % (1000 / this.speed);
             } else {
                 return;
             }
         }
+
+        this.render();
+    }
+
+    SpriteSheet.prototype.render = function () {
+        if (this.state == 'stop')
+            return;
 
         this.prevFrame = this.currentFrame;
 
