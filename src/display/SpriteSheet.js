@@ -71,6 +71,9 @@
     }
 
     SpriteSheet.prototype.update = function () {
+        if (this.state == 'stop')
+            return;
+
         if (!this.useIntervl) {
             if (!this.oldTime)
                 this.oldTime = new Date().getTime();
@@ -89,6 +92,7 @@
     }
 
     SpriteSheet.prototype.render = function () {
+        //The use of two times for a reason
         if (this.state == 'stop')
             return;
 
