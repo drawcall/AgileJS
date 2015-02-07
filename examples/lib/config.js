@@ -143,14 +143,14 @@ for (var index in paths) {
 			deps : ["Image"]
 		};
 	} else if (index == "agile_toolkit") {
-		//xccessors\all-plus
+		//xccessors\all-plugs
 		shim[index] = {
 			deps : ["Agile","DisplayObject"]
 		};
 	}
 	//other
 	else {
-		//xccessors\all-plus
+		//xccessors\all-plugs
 		shim[index] = {
 			deps : ["Agile"]
 		};

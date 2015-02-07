@@ -42,7 +42,7 @@ var paths = {
 	"Semicircle" : "extras/Semicircle",
 	"ScrollingBg" : "extras/ScrollingBg",
 
-	"agile_toolkit" : "../plus/agile_toolkit"
+	"agile_toolkit" : "../plugs/agile_toolkit"
 }
 
 for (var index in paths) {
