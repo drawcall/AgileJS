@@ -92,6 +92,9 @@
         spritesheet1.y = container.height / 2;
         spritesheet1.speed = 30;
         spritesheet1.play();
+        //////   IMPORTANT!!!   //////
+        spritesheet1.css("overflow","hidden");
+        //////   IMPORTANT!!!   //////
         //spritesheet1.gotoAndStop(5);
         container.addChild(spritesheet1);
 
@@ -101,6 +104,9 @@
         spritesheet2.prvePlay = true;
         spritesheet2.useIntervl = false;
         spritesheet2.speed = 30;
+        //////   IMPORTANT!!!   //////
+        spritesheet2.css("overflow","hidden");
+        //////   IMPORTANT!!!   //////
         spritesheet2.gotoAndStop(5);
         spritesheet2.play();
         container.addChild(spritesheet2);
