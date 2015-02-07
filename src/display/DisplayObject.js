@@ -331,8 +331,8 @@
         return Agile.Timeline.removeFrame(this, frame, removeStyle);
     }
 
-    DisplayObject.prototype.removeFrameAfter = function(frame, removeStyle) {
-        Agile.Timeline.removeFrameAfter(this, frame, removeStyle);
+    DisplayObject.prototype.removeFrameAfter = function(frame, complete, removeStyle) {
+        Agile.Timeline.removeFrameAfter(this, frame, complete, removeStyle);
     }
 
     DisplayObject.prototype.pause = function() {

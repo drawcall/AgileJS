@@ -2,7 +2,7 @@
  * Agile v0.1.6
  * https://github.com/a-jie/Agile
  *
- * Copyright 2011-2014, A-JIE
+ * Copyright 2011-2015, A-JIE
  * Licensed under the MIT license
  * http://www.opensource.org/licenses/mit-license
  *
@@ -1227,8 +1227,8 @@
         return Agile.Timeline.removeFrame(this, frame, removeStyle);
     }
 
-    DisplayObject.prototype.removeFrameAfter = function(frame, removeStyle) {
-        Agile.Timeline.removeFrameAfter(this, frame, removeStyle);
+    DisplayObject.prototype.removeFrameAfter = function(frame, complete, removeStyle) {
+        Agile.Timeline.removeFrameAfter(this, frame, complete, removeStyle);
     }
 
     DisplayObject.prototype.pause = function() {
@@ -3072,12 +3072,14 @@
 		return Timeline.removeFrameByIndex(agile, timelineIndex);
 	}
 
-	Timeline.removeFrameAfter = function(agile, frame, removeStyle) {
+	Timeline.removeFrameAfter = function(agile, frame, complete, removeStyle) {
 		Timeline.prefixEvent();
 		agile.element.addEventListener(Timeline.animationiteration, animationiterationHandler, false);
 		function animationiterationHandler(e) {
 			Timeline.removeFrame(agile, frame, removeStyle);
 			agile.element.removeEventListener(Timeline.animationiteration, animationiterationHandler);
+            if(complete)
+                complete();
 		}
 
 	}

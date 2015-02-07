@@ -244,12 +244,14 @@
 		return Timeline.removeFrameByIndex(agile, timelineIndex);
 	}
 
-	Timeline.removeFrameAfter = function(agile, frame, removeStyle) {
+	Timeline.removeFrameAfter = function(agile, frame, complete, removeStyle) {
 		Timeline.prefixEvent();
 		agile.element.addEventListener(Timeline.animationiteration, animationiterationHandler, false);
 		function animationiterationHandler(e) {
 			Timeline.removeFrame(agile, frame, removeStyle);
 			agile.element.removeEventListener(Timeline.animationiteration, animationiterationHandler);
+            if(complete)
+                complete();
 		}
 
 	}
