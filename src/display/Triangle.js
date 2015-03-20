@@ -76,7 +76,7 @@
 			this.originalHeight = height;
 			this.css({
 				'borderTopWidth' : '0px',
-				'borderBottomWidth' : height + 'px',
+				'borderBottomWidth' : height + 'px'
 			}, 3);
 		} else {
 			this.scaleY = this.height / this.originalHeight;

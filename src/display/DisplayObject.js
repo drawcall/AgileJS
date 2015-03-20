@@ -28,7 +28,7 @@
             realWidth: null,
             realHeight: null,
             backface: true,
-            maxChildrenDepth: 0,
+            maxChildrenDepth: 0
         };
         this.numChildren = 0;
         this.childrens = [];

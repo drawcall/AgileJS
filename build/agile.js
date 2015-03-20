@@ -924,7 +924,7 @@
             realWidth: null,
             realHeight: null,
             backface: true,
-            maxChildrenDepth: 0,
+            maxChildrenDepth: 0
         };
         this.numChildren = 0;
         this.childrens = [];
@@ -1509,7 +1509,7 @@
 			this.originalHeight = height;
 			this.css({
 				'borderTopWidth' : '0px',
-				'borderBottomWidth' : height + 'px',
+				'borderBottomWidth' : height + 'px'
 			}, 3);
 		} else {
 			this.scaleY = this.height / this.originalHeight;
