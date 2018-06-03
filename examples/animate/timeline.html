@@ -1,340 +1,347 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>timeline</title>
-		<meta charset="utf-8">
-		<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.5, maximum-scale=.5">
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black">
-		<style type="text/css">
-			html, body {
-				width: 100%;
-				height: 100%;
-				margin: 0;
-				padding: 0;
-				overflow: hidden;
-				background: #eee;
-			}
-			#container {
-				width: 100%;
-				height: 100%;
-			}
-		</style>
-	</head>
-	<body>
-		<div id="container"></div>
-		<script src="../lib/qrcode.min.js"></script>
-		<script src="../../build/agile.min.js"></script>
-		<script src="../../plus/agile_toolkit.js"></script>
-		<script>
-			var container, rects, centers, lines, points;
-			var recetsrotate, centersrotate, linesrotate, pointsrotate;
-			
-			Main();
-			
-			function Main() {
-				addAgile();
-				tick();
-				addQR();
-			}
 
-			function addAgile() {
-				Agile.mode = '3d';
-				Agile.lockTouch();
-				container = new Agile.Container('container');
-				container.select = false;
-				
-				//replace old keyframes
-				Agile.Timeline.replace = true;
-				//onComplete remove keyframes from style
-				Agile.Timeline.remove = true;
-				
-				rects = addRects();
-				centers = addCenter(8);
-				lines = addLine(10);
-				points = addPoint(12);
-			}
+<head>
+	<title>timeline</title>
+	<meta charset="utf-8">
+	<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.5, maximum-scale=.5">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<style type="text/css">
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+			background: #eee;
+		}
 
-			function addRects() {
-				var rects = new Agile.Container();
-				container.addChild(rects);
-				rects.x = container.width / 2;
-				rects.y = container.height / 2;
+		#container {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+</head>
 
-				var L = .6 * container.width;
+<body>
+	<div id="container"></div>
+	<script src="../lib/ppo.min.js"></script>
+	<script src="../lib/qrcode.min.js"></script>
+	<script src="../..//build/agile.js"></script>
 
-				for (var i = 0, length = 8; i < length; i++) {
-					var peas = new Agile.Rect(100);
-					peas.color = 'random';
-					peas.alpha = 0;
-					peas.scaleX = .3;
-					peas.scaleY = 1.3;
-					rects.addChild(peas);
+	<script>
+		var container, rects, centers, lines, points;
+		var recetsrotate, centersrotate, linesrotate, pointsrotate;
 
-					var keyframes = new Agile.Keyframes();
-					keyframes.add({
-						'0%' : {
-							alpha : 0,
-							y : -container.height / 2,
-							x : i * L / (length - 1) - L / 2
-						},
-						'30%' : {
-							y : 0,
-							scaleY : .3,
-							alpha : .7
-						},
-						'65%' : {},
-						'100%' : {
-							x : 0,
-							rotation : 180
+		Main();
+
+		function Main() {
+			addAgile();
+			tick();
+			addQR();
+		}
+
+		function addAgile() {
+			Agile.mode = '3d';
+			ppo.lockTouch();
+
+			container = new Agile.Container('container');
+			container.select = false;
+
+			//replace old keyframes
+			Agile.Timeline.replace = true;
+			//onComplete remove keyframes from style
+			Agile.Timeline.remove = true;
+
+			rects = addRects();
+			centers = addCenter(8);
+			lines = addLine(10);
+			points = addPoint(12);
+		}
+
+		function addRects() {
+			var rects = new Agile.Container();
+			container.addChild(rects);
+			rects.x = container.width / 2;
+			rects.y = container.height / 2;
+
+			var L = .6 * container.width;
+
+			for (var i = 0, length = 8; i < length; i++) {
+				var peas = new Agile.Rect(100);
+				peas.color = 'random';
+				peas.alpha = 0;
+				peas.scaleX = .3;
+				peas.scaleY = 1.3;
+				rects.addChild(peas);
+
+				var keyframes = new Agile.Keyframes();
+				keyframes.add({
+					'0%': {
+						alpha: 0,
+						y: -container.height / 2,
+						x: i * L / (length - 1) - L / 2
+					},
+					'30%': {
+						y: 0,
+						scaleY: .3,
+						alpha: .7
+					},
+					'65%': {},
+					'100%': {
+						x: 0,
+						rotation: 180
+					}
+				});
+
+				peas.addFrame(2.5, keyframes, {
+					delay: .1 * i,
+					ease: Agile.ease.easeOutBack,
+					onComplete: function (i) {
+						if (i == length - 1) {
+							recetsrotate = true;
+							runRects();
 						}
-					});
-
-					peas.addFrame(2.5, keyframes, {
-						delay : .1 * i,
-						ease : Agile.ease.easeOutBack,
-						onComplete : function(i) {
-							if (i == length - 1) {
-								recetsrotate = true;
-								runRects();
-							}
-						},
-						onCompleteParams : [i]
-					});
-				}
-
-				return rects;
+					},
+					onCompleteParams: [i]
+				});
 			}
 
-			function runRects() {
-				var r = Math.min(container.width, container.height) / 5;
-				var R = 2 * r;
+			return rects;
+		}
 
-				for (var i = 0, length = rects.numChildren; i < length; i++) {
-					var peas = rects.childrens[i];
-					var keyframes = new Agile.Keyframes();
-					keyframes.add({
-						'10%' : {
-							alpha : .3,
-							x : 0,
-							y : 0
-						},
-						'20%' : {
-							x : r * Math.cos(i * 2 * Math.PI / length),
-							y : r * Math.sin(i * 2 * Math.PI / length),
-							rotation : 180 + i * 360 / length,
-							alpha : .5
-						},
-						'40%' : {
+		function runRects() {
+			var r = Math.min(container.width, container.height) / 5;
+			var R = 2 * r;
 
-						},
-						'50%' : {
-							x : R * Math.cos(i * 2 * Math.PI / length),
-							y : R * Math.sin(i * 2 * Math.PI / length),
-							rotation : 450 + i * 360 / length,
-							round : 0
-						},
-						'60%' : {
-						},
-						'80%' : {
-							scaleX : .5,
-							scaleY : .5,
-							alpha : 1,
-							round : 100
-						}
-					});
+			for (var i = 0, length = rects.numChildren; i < length; i++) {
+				var peas = rects.childrens[i];
+				var keyframes = new Agile.Keyframes();
+				keyframes.add({
+					'10%': {
+						alpha: .3,
+						x: 0,
+						y: 0
+					},
+					'20%': {
+						x: r * Math.cos(i * 2 * Math.PI / length),
+						y: r * Math.sin(i * 2 * Math.PI / length),
+						rotation: 180 + i * 360 / length,
+						alpha: .5
+					},
+					'40%': {
 
-					peas.addFrame(10, keyframes, {
-						delay : .1 * i,
-						ease : Agile.ease.easeOutQuad,
-						onComplete : function(i) {
-							if (i == length - 1)
-								recetsrotate = true;
-						},
-						onCompleteParams : [i]
-					});
-				}
+					},
+					'50%': {
+						x: R * Math.cos(i * 2 * Math.PI / length),
+						y: R * Math.sin(i * 2 * Math.PI / length),
+						rotation: 450 + i * 360 / length,
+						round: 0
+					},
+					'60%': {
+					},
+					'80%': {
+						scaleX: .5,
+						scaleY: .5,
+						alpha: 1,
+						round: 100
+					}
+				});
+
+				peas.addFrame(10, keyframes, {
+					delay: .1 * i,
+					ease: Agile.ease.easeOutQuad,
+					onComplete: function (i) {
+						if (i == length - 1)
+							recetsrotate = true;
+					},
+					onCompleteParams: [i]
+				});
+			}
+		}
+
+		function addLine(delay) {
+			var lines = new Agile.Container();
+			container.addChild(lines);
+			lines.x = container.width / 2;
+			lines.y = container.height / 2;
+
+			var R = Math.min(container.width, container.height) / 5;
+			var color = Agile.Color.randomColor();
+			var r = .5 * R;
+			for (var i = 0, length = 6; i < length; i++) {
+				var line = new Agile.Rect(80, 80);
+				lines.addChild(line);
+				line.alpha = 0;
+				var keyframes = new Agile.Keyframes({
+					'0%': {
+						x: 0,
+						y: 0,
+						scaleX: .1,
+						scaleY: .1,
+						alpha: 0,
+						color: 'random'
+					},
+					'50%': {
+						x: r * Math.cos(i * 2 * Math.PI / length),
+						y: r * Math.sin(i * 2 * Math.PI / length),
+						rotation: i * 360 / length,
+						scaleX: .3,
+						scaleY: .3,
+						alpha: .5
+					},
+					'60%': {
+					},
+					'100%': {
+						x: R * Math.cos(i * 2 * Math.PI / length),
+						y: R * Math.sin(i * 2 * Math.PI / length),
+						scaleY: 1,
+						scaleX: .1,
+						alpha: .7,
+						color: color
+					}
+				});
+
+				line.addFrame(2, keyframes, {
+					delay: delay + i * .1,
+					ease: Agile.ease.easeOutQuart,
+					onComplete: function () {
+						linesrotate = true;
+					}
+				});
 			}
 
-			function addLine(delay) {
-				var lines = new Agile.Container();
-				container.addChild(lines);
-				lines.x = container.width / 2;
-				lines.y = container.height / 2;
+			return lines;
+		}
 
-				var R = Math.min(container.width, container.height) / 5;
-				var color = Agile.Color.random();
-				var r = .5 * R;
-				for (var i = 0, length = 6; i < length; i++) {
-					var line = new Agile.Rect(80, 80);
-					lines.addChild(line);
-					line.alpha = 0;
-					var keyframes = new Agile.Keyframes({
-						'0%' : {
-							x : 0,
-							y : 0,
-							scaleX : .1,
-							scaleY : .1,
-							alpha : 0,
-							color : 'random'
-						},
-						'50%' : {
-							x : r * Math.cos(i * 2 * Math.PI / length),
-							y : r * Math.sin(i * 2 * Math.PI / length),
-							rotation : i * 360 / length,
-							scaleX : .3,
-							scaleY : .3,
-							alpha : .5
-						},
-						'60%' : {
-						},
-						'100%' : {
-							x : R * Math.cos(i * 2 * Math.PI / length),
-							y : R * Math.sin(i * 2 * Math.PI / length),
-							scaleY : 1,
-							scaleX : .1,
-							alpha : .7,
-							color : color
-						}
-					});
+		function addCenter(delay) {
+			var centers = new Agile.Container();
+			container.addChild(centers);
+			centers.x = container.width / 2;
+			centers.y = container.height / 2;
 
-					line.addFrame(2, keyframes, {
-						delay : delay + i * .1,
-						ease : Agile.ease.easeOutQuart,
-						onComplete : function() {
-							linesrotate = true;
-						}
-					});
-				}
+			var R = 100;
+			for (var i = 0, length = 4; i < length; i++) {
+				var center = new Agile.Rect(40, 40, 'random');
+				centers.addChild(center);
+				center.alpha = 0;
+				var keyframes = new Agile.Keyframes({
+					'0%': {
+						x: R * Math.cos(i * 2 * Math.PI / length),
+						y: R * Math.sin(i * 2 * Math.PI / length),
+						rotation: i * 360 / length,
+						scaleX: .1,
+						scaleY: .1,
+						alpha: 0
+					},
+					'50%': {
+						x: R * Math.cos(i * 2 * Math.PI / length),
+						y: R * Math.sin(i * 2 * Math.PI / length),
+						scaleX: 1,
+						scaleY: 1,
+						alpha: .5
+					},
+					'60%': {
+					},
+					'100%': {
+						rotation: 0,
+						x: 0,
+						y: 0,
+						scaleX: 1.5,
+						scaleY: 1.5
+					}
+				});
 
-				return lines;
+				center.addFrame(1, keyframes, {
+					delay: delay + i * .1,
+					ease: Agile.ease.easeOutQuart,
+					onComplete: function () {
+						centersrotate = true;
+					}
+				});
 			}
 
-			function addCenter(delay) {
-				var centers = new Agile.Container();
-				container.addChild(centers);
-				centers.x = container.width / 2;
-				centers.y = container.height / 2;
+			return centers;
+		}
 
-				var R = 100;
-				for (var i = 0, length = 4; i < length; i++) {
-					var center = new Agile.Rect(40, 40, 'random');
-					centers.addChild(center);
-					center.alpha = 0;
-					var keyframes = new Agile.Keyframes({
-						'0%' : {
-							x : R * Math.cos(i * 2 * Math.PI / length),
-							y : R * Math.sin(i * 2 * Math.PI / length),
-							rotation : i * 360 / length,
-							scaleX : .1,
-							scaleY : .1,
-							alpha : 0
-						},
-						'50%' : {
-							x : R * Math.cos(i * 2 * Math.PI / length),
-							y : R * Math.sin(i * 2 * Math.PI / length),
-							scaleX : 1,
-							scaleY : 1,
-							alpha : .5
-						},
-						'60%' : {
-						},
-						'100%' : {
-							rotation : 0,
-							x : 0,
-							y : 0,
-							scaleX : 1.5,
-							scaleY : 1.5
-						}
-					});
+		function addPoint(delay) {
+			var points = new Agile.Container();
+			container.addChild(points);
+			points.x = container.width / 2;
+			points.y = container.height / 2;
 
-					center.addFrame(1, keyframes, {
-						delay : delay + i * .1,
-						ease : Agile.ease.easeOutQuart,
-						onComplete : function() {
-							centersrotate = true;
-						}
-					});
-				}
+			var R = Math.min(container.width, container.height) / 3.5;
+			var color = Agile.Color.randomColor();
+			var r = .7 * R;
 
-				return centers;
+			for (var i = 0, length = 20; i < length; i++) {
+				var point = new Agile.Circle(3, '#333');
+				points.addChild(point);
+				point.alpha = 0;
+				var keyframes = new Agile.Keyframes({
+					'0%': {
+						scaleX: .1,
+						scaleY: .1,
+						alpha: 0,
+						x: r * Math.cos(i * 2 * Math.PI / length),
+						y: r * Math.sin(i * 2 * Math.PI / length),
+						color: '#000'
+					},
+					'100%': {
+						scaleX: 1,
+						scaleY: 1,
+						x: R * Math.cos(i * 2 * Math.PI / length),
+						y: R * Math.sin(i * 2 * Math.PI / length),
+						alpha: 1,
+						color: color
+					}
+				});
+
+				point.addFrame(.7, keyframes, {
+					delay: delay + i * .1,
+					ease: Agile.ease.easeOutBack,
+					onComplete: function () {
+						pointsrotate = true;
+					}
+				});
 			}
 
-			function addPoint(delay) {
-				var points = new Agile.Container();
-				container.addChild(points);
-				points.x = container.width / 2;
-				points.y = container.height / 2;
+			return points;
+		}
 
-				var R = Math.min(container.width, container.height) / 3.5;
-				var color = Agile.Color.random();
-				var r = .7 * R;
+		function tick() {
+			requestAnimationFrame(tick);
+			if (recetsrotate)
+				rects.rotation += .7;
+			if (centersrotate)
+				centers.rotation -= 1.2;
+			if (linesrotate)
+				lines.rotation -= .8;
+			if (pointsrotate)
+				points.rotation += .5;
+		}
 
-				for (var i = 0, length = 20; i < length; i++) {
-					var point = new Agile.Circle(3, '#333');
-					points.addChild(point);
-					point.alpha = 0;
-					var keyframes = new Agile.Keyframes({
-						'0%' : {
-							scaleX : .1,
-							scaleY : .1,
-							alpha : 0,
-							x : r * Math.cos(i * 2 * Math.PI / length),
-							y : r * Math.sin(i * 2 * Math.PI / length),
-							color : '#000'
-						},
-						'100%' : {
-							scaleX : 1,
-							scaleY : 1,
-							x : R * Math.cos(i * 2 * Math.PI / length),
-							y : R * Math.sin(i * 2 * Math.PI / length),
-							alpha : 1,
-							color : color
-						}
-					});
-
-					point.addFrame(.7, keyframes, {
-						delay : delay + i * .1,
-						ease : Agile.ease.easeOutBack,
-						onComplete : function() {
-							pointsrotate = true;
-						}
-					});
-				}
-
-				return points;
+		function addQR() {
+			if (!ppo.isMobile()) {
+				var qrcode = document.createElement('div');
+				qrcode.style.position = 'absolute';
+				qrcode.style.left = '10px';
+				qrcode.style.top = '10px';
+				qrcode.style.zIndex = 20;
+				document.body.appendChild(qrcode);
+				var qrcode = new QRCode(qrcode, {
+					text: window.location.href,
+					width: 128,
+					height: 128,
+					colorDark: "#000000",
+					colorLight: "rgba(0,0,0,0)",
+					correctLevel: QRCode.CorrectLevel.L
+				});
 			}
+		}
+	</script>
+</body>
 
-			function tick() {
-				requestAnimationFrame(tick);
-				if (recetsrotate)
-					rects.rotation += .7;
-				if (centersrotate)
-					centers.rotation -= 1.2;
-				if (linesrotate)
-					lines.rotation -= .8;
-				if (pointsrotate)
-					points.rotation += .5;
-			}
-
-			function addQR() {
-				if (Agile.Device.isPC()) {
-					var qrcode = document.createElement('div');
-					qrcode.style.position = 'absolute';
-					qrcode.style.left = '10px';
-					qrcode.style.top = '10px';
-					qrcode.style.zIndex = 20;
-					document.body.appendChild(qrcode);
-					var qrcode = new QRCode(qrcode, {
-						text : window.location.href,
-						width : 128,
-						height : 128,
-						colorDark : "#000000",
-						colorLight : "rgba(0,0,0,0)",
-						correctLevel : QRCode.CorrectLevel.L
-					});
-				}
-			}
-		</script>
-	</body>
 </html>

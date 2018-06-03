@@ -1,194 +1,201 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>box</title>
-		<meta charset="utf-8">
-		<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.5, maximum-scale=.5">
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black">
-		<style type="text/css">
-			html, body {
-				width: 100%;
-				height: 100%;
-				margin: 0;
-				padding: 0;
-				background-color: #e7d465;
-				overflow: hidden;
-			}
-			#container {
-				width: 100%;
-				height: 100%;
-			}
 
-		</style>
-	</head>
-	<body>
-		<div id="container"></div>
-		<script src="../lib/qrcode.min.js"></script>
-		<script src="../lib/hammer.min.js"></script>
-		<script src="../../build/agile.min.js"></script>
-		<script src="../../plus/agile_toolkit.js"></script>
-		<script>
-			var container, box, render, images, index;
+<head>
+	<title>box</title>
+	<meta charset="utf-8">
+	<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.5, maximum-scale=.5">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<style type="text/css">
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			background-color: #e7d465;
+			overflow: hidden;
+		}
 
-			Main();
+		#container {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+</head>
 
-			function Main() {
-				loadImage();
-				addQR();
-			}
+<body>
+	<div id="container"></div>
+	<script src="../lib/ppo.min.js"></script>
+	<script src="../lib/qrcode.min.js"></script>
+	<script src="../lib/hammer.min.js"></script>
+	<script src="../..//build/agile.js"></script>
 
-			function loadImage() {
-				var loader = new Agile.LoadManager();
-				var obj = {
-					'face1' : 'image/face1.jpg',
-					'face2' : 'image/face2.jpg',
-					'face3' : 'image/face3.jpg'
+	<script>
+		var container, box, render, images, index;
+
+		main();
+
+		function main() {
+			loadImage();
+			addQR();
+		}
+
+		function loadImage() {
+			var loader = new Agile.LoadManager();
+			var obj = {
+				'face1': 'image/face1.jpg',
+				'face2': 'image/face2.jpg',
+				'face3': 'image/face3.jpg'
+			};
+
+			loader.load(obj);
+			loader.addEventListener(Agile.GROUP_LOADED, function () {
+				index = 1;
+				images = loader.targetList;
+				addAgile();
+				tick();
+			});
+		}
+
+		function addAgile() {
+			ppo.lockTouch();
+
+			Agile.mode = '3d';
+			container = new Agile.Container('#container');
+			container.select = false;
+			container.perspective = 1000;
+
+			render = true;
+			box = addBox(images['face' + index]);
+			box.x = container.width / 2;
+			box.y = container.height / 2;
+			container.addChild(box);
+			addInteractive();
+		}
+
+		function addInteractive() {
+			Hammer(box.element).on("tap", clickHandler);
+			Hammer(container.element).on("doubletap", delClickHandler);
+		}
+
+		function clickHandler(e) {
+			render = false;
+			Agile.Tween.to(box, .6, {
+				scaleX: Math.max(Math.random(), .1),
+				scaleY: Math.max(Math.random(), .1),
+				ease: Agile.ease.easeInOutBack,
+				onComplete: function () {
+					render = true;
 				}
-				loader.load(obj);
-				loader.addEventListener(Agile.GROUP_LOADED, function() {
-					index = 1;
-					images = loader.targetList;
-					addAgile();
-					tick();
-				});
-			}
+			});
+		}
 
-			function addAgile() {
-				Agile.lockTouch();
-				Agile.mode = '3d';
-				container = new Agile.Container('#container');
-				container.select = false;
-				container.perspective = 1000;
+		function delClickHandler(e) {
+			box.removeEventListener('mousedown', clickHandler);
+			render = false;
+			Agile.Tween.to(box, .7, {
+				scaleX: .1,
+				scaleY: .1,
+				scaleZ: .1,
+				rotationX: 360,
+				rotationY: 360,
+				rotationZ: 360,
+				overwrite: 1,
+				onComplete: boxComplete
+			});
+		}
 
-				render = true;
-				box = addBox(images['face' + index]);
-				box.x = container.width / 2;
-				box.y = container.height / 2;
-				container.addChild(box);
-				addInteractive();
-			}
+		function boxComplete() {
+			container.removeChild(box);
+			box.destroy();
+			box = null;
 
-			function addInteractive() {
-				Hammer(box.element).on("tap", clickHandler);
-				Hammer(container.element).on("doubletap", delClickHandler);
-			}
+			index++;
+			if (index > 3)
+				index = 1;
+				
+			box = addBox(images['face' + index]);
+			box.x = container.width / 2;
+			box.y = container.height / 2;
+			box.addEventListener('click', clickHandler);
+			container.addChild(box);
 
-			function clickHandler(e) {
-				render = false;
-				Agile.Tween.to(box, .6, {
-					scaleX : Math.max(Math.random(), .1),
-					scaleY : Math.max(Math.random(), .1),
-					ease : Agile.ease.easeInOutBack,
-					onComplete : function() {
-						render = true;
-					}
-				});
-			}
-
-			function delClickHandler(e) {
-				box.removeEventListener('mousedown', clickHandler);
-				render = false;
-				Agile.Tween.to(box, .7, {
-					scaleX : .1,
-					scaleY : .1,
-					scaleZ : .1,
-					rotationX : 360,
-					rotationY : 360,
-					rotationZ : 360,
-					alpha : 0,
-					overwrite : 1,
-					onComplete : boxComplete
-				});
-			}
-
-			function boxComplete() {
-				container.removeChild(box);
-				box.destroy();
-				box = null;
-
-				index++;
-				if (index > 3)
-					index = 1;
-				box = addBox(images['face' + index]);
-				box.x = container.width / 2;
-				box.y = container.height / 2;
-				box.addEventListener('click', clickHandler);
-				container.addChild(box);
-
-				Agile.Tween.from(box, .6, {
-					scaleX : 3,
-					scaleY : 3,
-					scaleZ : 3,
-					overwrite : 1,
-					ease : Agile.ease.easeOutBack,
-					onComplete : function() {
-						render = true;
-					}
-				});
-			}
-
-			function addBox(url) {
-				var width = 300, height = 300, length = 300;
-				var box = new Agile.Container('3d');
-				//or set box.mode = '3d' it is important!;
-
-				box.backface = false;
-				var front = new Agile.Image(url, width, height);
-				var back = new Agile.Image(url, width, height);
-				var right = new Agile.Image(url, length, height);
-				var left = new Agile.Image(url, length, height);
-				var top = new Agile.Image(url, width, length);
-				var bottom = new Agile.Image(url, width, length);
-
-				front.z = length / 2;
-				back.z = -length / 2;
-				back.rotationY = 180;
-				top.y = -height / 2;
-				top.rotationX = 90;
-				bottom.y = height / 2;
-				bottom.rotationX = -90;
-				left.x = -width / 2;
-				left.rotationY = -90;
-				right.x = width / 2;
-				right.rotationY = 90;
-
-				box.addChild(front);
-				box.addChild(back);
-				box.addChild(right);
-				box.addChild(left);
-				box.addChild(top);
-				box.addChild(bottom);
-				return box;
-			}
-
-			function tick() {
-				requestAnimationFrame(tick);
-				if (render) {
-					box.rotationY++;
-					box.rotationZ++;
-					box.rotationX++;
+			Agile.Tween.from(box, .6, {
+				scaleX: 3,
+				scaleY: 3,
+				scaleZ: 3,
+				overwrite: 1,
+				ease: Agile.ease.easeOutBack,
+				onComplete: function () {
+					render = true;
 				}
-			}
+			});
+		}
 
-			function addQR() {
-				if (Agile.Device.isPC()) {
-					var qrcode = document.createElement('div');
-					qrcode.style.position = 'absolute';
-					qrcode.style.left = '10px';
-					qrcode.style.top = '10px';
-					qrcode.style.zIndex = 20;
-					document.body.appendChild(qrcode);
-					var qrcode = new QRCode(qrcode, {
-						text : window.location.href,
-						width : 128,
-						height : 128,
-						colorDark : "#530c1c",
-						colorLight : "rgba(0,0,0,0)",
-						correctLevel : QRCode.CorrectLevel.L
-					});
-				}
+		function addBox(url) {
+			var width = 300, height = 300, length = 300;
+			var box = new Agile.Container('3d');
+			//or set box.mode = '3d' it is important!;
+
+			box.backface = false;
+			var front = new Agile.Image(url, width, height);
+			var back = new Agile.Image(url, width, height);
+			var right = new Agile.Image(url, length, height);
+			var left = new Agile.Image(url, length, height);
+			var top = new Agile.Image(url, width, length);
+			var bottom = new Agile.Image(url, width, length);
+
+			front.z = length / 2;
+			back.z = -length / 2;
+			back.rotationY = 180;
+			top.y = -height / 2;
+			top.rotationX = 90;
+			bottom.y = height / 2;
+			bottom.rotationX = -90;
+			left.x = -width / 2;
+			left.rotationY = -90;
+			right.x = width / 2;
+			right.rotationY = 90;
+
+			box.addChild(front);
+			box.addChild(back);
+			box.addChild(right);
+			box.addChild(left);
+			box.addChild(top);
+			box.addChild(bottom);
+			return box;
+		}
+
+		function tick() {
+			requestAnimationFrame(tick);
+			if (render) {
+				box.rotationY++;
+				box.rotationZ++;
+				box.rotationX++;
 			}
-		</script>
-	</body>
+		}
+
+		function addQR() {
+			if (!ppo.isMobile()) {
+				var qrcode = document.createElement('div');
+				qrcode.style.position = 'absolute';
+				qrcode.style.left = '10px';
+				qrcode.style.top = '10px';
+				qrcode.style.zIndex = 20;
+				document.body.appendChild(qrcode);
+				var qrcode = new QRCode(qrcode, {
+					text: window.location.href,
+					width: 128,
+					height: 128,
+					colorDark: "#530c1c",
+					colorLight: "rgba(0,0,0,0)",
+					correctLevel: QRCode.CorrectLevel.L
+				});
+			}
+		}
+	</script>
+</body>
+
 </html>

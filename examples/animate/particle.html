@@ -1,343 +1,356 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>particle</title>
-		<meta charset="utf-8">
-		<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.5, maximum-scale=.5">
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black">
-		<style type="text/css">
-			html, body {
-				width: 100%;
-				height: 100%;
-				margin: 0;
-				padding: 0;
-				overflow: hidden;
-			}
-			#container {
-				width: 100%;
-				height: 100%;
-			}
-			#canvas {
-				background: #000;
-				width: 100%;
-				height: 100%;
-				position: absolute;
-				display: none;
-			}
-			.info {
-				position: absolute;
-				z-index: 2;
-				left: 10px;
-				top: 10px;
-				width: 96%;
-				font-family: Arial;
-				color: #333;
-				display: none;
-			}
-			.info span {
-				color: #ff0000;
-			}
-		</style>
-	</head>
-	<body>
-		<div class='info'>
-			This demo use greensock's <span>GSAP</span> TweenMax. On the comparison of <span>GSAP</span> and <span>Agile.Tween</span>,please see <a href="http://www.greensock.com/transitions" target="_blank">http://www.greensock.com/transitions</a>
-		</div>
-		<div id="container"></div>
-		<canvas id="canvas">
-			The canvas is only used to draw picture
-		</canvas>
-		<script src="../lib/qrcode.min.js"></script>
-		<script src="../lib/zepto.min.js"></script>
-		<script src="js/TweenMax.min.js"></script>
-		<script src="js/EasePack.min.js"></script>
-		<script src="../../build/agile.min.js"></script>
-		<script src="../../plus/agile_toolkit.js"></script>
-		<script>
-			////// this demo is use of greensock's tweenmax, I want to compare the Agile.Tween speed. //////
-			var circles = [];
-			var imagedata, canvas;
-			var container, stage;
-			var play, time, currentIndex;
-			
-			Main();
-			function Main() {
-				time = 2;
-				addAgile();
-				loadImage();
-				tick();
-				addQR();
-			}
 
-			function loadImage() {
-				canvas = document.getElementById('canvas');
-				context = canvas.getContext('2d');
-				var loader = new Agile.LoadManager();
-				var obj = {
-					'logo' : 'image/logo.png'
+<head>
+	<title>particle</title>
+	<meta charset="utf-8">
+	<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.5, maximum-scale=.5">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<style type="text/css">
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+		}
+
+		#container {
+			width: 100%;
+			height: 100%;
+		}
+
+		#canvas {
+			background: #000;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			display: none;
+		}
+
+		.info {
+			position: absolute;
+			z-index: 2;
+			left: 10px;
+			top: 10px;
+			width: 96%;
+			font-family: Arial;
+			color: #333;
+			display: none;
+		}
+
+		.info span {
+			color: #ff0000;
+		}
+	</style>
+</head>
+
+<body>
+	<div class='info'>
+		This demo use greensock's
+		<span>GSAP</span> TweenMax. On the comparison of
+		<span>GSAP</span> and
+		<span>Agile.Tween</span>,please see
+		<a href="http://www.greensock.com/transitions" target="_blank">http://www.greensock.com/transitions</a>
+	</div>
+	<div id="container"></div>
+	<canvas id="canvas">
+		The canvas is only used to draw picture
+	</canvas>
+	<script src="../lib/ppo.min.js"></script>
+	<script src="../lib/qrcode.min.js"></script>
+	<script src="../lib/zepto.min.js"></script>
+	<script src="js/TweenMax.min.js"></script>
+	<script src="js/EasePack.min.js"></script>
+	<script src="../..//build/agile.js"></script>
+
+	<script>
+		////// this demo is use of greensock's tweenmax, I want to compare the Agile.Tween speed. //////
+		var circles = [];
+		var imagedata, canvas;
+		var container, stage;
+		var play, time, currentIndex;
+
+		Main();
+		function Main() {
+			time = 2;
+			addAgile();
+			loadImage();
+			tick();
+			addQR();
+		}
+
+		function loadImage() {
+			canvas = document.getElementById('canvas');
+			context = canvas.getContext('2d');
+			var loader = new Agile.LoadManager();
+			var obj = {
+				'logo': 'image/logo.png'
+			}
+			loader.load(obj);
+			loader.addEventListener(Agile.GROUP_LOADED, function (e) {
+				var img = 'logo';
+				canvas.width = loader.targetList[img].width;
+				canvas.height = loader.targetList[img].height;
+				context.clearRect(0, 0, canvas.width, canvas.height);
+				context.drawImage(loader.targetList[img], 0, 0);
+				imagedata = context.getImageData(0, 0, canvas.width, canvas.height);
+
+				start();
+			});
+		}
+
+		function start() {
+			changeLogo();
+			TweenMax.delayedCall(3.5, function () {
+				play = true;
+			});
+		}
+
+		function addAgile() {
+			ppo.lockTouch();
+			Agile.mode = '3d';
+			Agile.backface = false;
+
+			container = new Agile.Container('container');
+			container.select = false;
+			container.perspective = 1000;
+
+			if (!ppo.isMobile())
+				$('.info').css('font-size', '14px').css('display', 'block');
+			else
+				$('.info').css('font-size', '18px').css('display', 'block');
+
+			stage = new Agile.Container('3d');
+			stage.x = container.width / 2;
+			stage.y = container.height / 2;
+			container.addChild(stage);
+
+			var length = !ppo.isMobile() ? 180 : 100;
+			for (var i = 0; i < length; i++) {
+				circle = new Agile.Circle(20, 'random');
+				circle.x = Math.random() * container.width - container.width / 2;
+				circle.y = Math.random() * container.height - container.height / 2;
+				circle.alpha = 0;
+				stage.addChild(circle);
+				circles.push(circle);
+			}
+		}
+
+		function changeLogo(delay) {
+			currentIndex = 0;
+			delay = delay || 0;
+			var a = !ppo.isMobile() ? 10 : 12;
+			var b = !ppo.isMobile() ? 10 : 15;
+			var s = !ppo.isMobile() ? .2 : .3;
+			var positions = getImageZone(imagedata, a, b);
+			for (var i = 0, length = circles.length; i < length; i++) {
+				var circle = circles[i];
+				if (positions.length > i) {
+					var x = positions[i].x - canvas.width / 2;
+					var y = positions[i].y - canvas.height / 2;
+					var z = 0;
+					TweenMax.to(circle, .8, {
+						scaleX: s,
+						scaleY: s,
+						x: x,
+						y: y,
+						z: z,
+						alpha: 1,
+						ease: Quart.easeOut,
+						delay: Math.random() * 2 + delay,
+						onComplete: function (length) {
+							currentIndex++;
+							if (currentIndex == length)
+								changeBall(time);
+						},
+						onCompleteParams: [length]
+					});
+				} else {
+					TweenMax.to(circle, .8, {
+						alpha: 0,
+						ease: Quart.easeOut,
+						delay: Math.random() * 2 + delay,
+						onComplete: function (length) {
+							currentIndex++;
+							if (currentIndex == length)
+								changeBall(time);
+						},
+						onCompleteParams: [length]
+					});
 				}
-				loader.load(obj);
-				loader.addEventListener(Agile.GROUP_LOADED, function(e) {
-					var img = 'logo';
-					canvas.width = loader.targetList[img].width;
-					canvas.height = loader.targetList[img].height;
-					context.clearRect(0, 0, canvas.width, canvas.height);
-					context.drawImage(loader.targetList[img], 0, 0);
-					imagedata = context.getImageData(0, 0, canvas.width, canvas.height);
+			}
+		}
 
-					start();
+		function changeBall(delay) {
+			currentIndex = 0;
+			var radius = .8 * Math.min(container.width / 2, container.height / 2);
+			radius = Math.min(512 * .8, radius);
+
+			for (var i = 0, length = circles.length; i < length; i++) {
+				var circle = circles[i];
+				var phi = Math.acos(-1 + (2 * i) / circles.length);
+				var theta = Math.sqrt(circles.length * Math.PI) * phi;
+
+				var x = radius * Math.cos(theta) * Math.sin(phi);
+				var y = radius * Math.sin(theta) * Math.sin(phi);
+				var z = radius * Math.cos(phi);
+				x = Math.floor(x);
+				y = Math.floor(y);
+				z = Math.floor(z);
+				TweenMax.to(circle, .7, {
+					scaleX: .6,
+					scaleY: .6,
+					x: x,
+					y: y,
+					z: z,
+					alpha: 1,
+					ease: Quart.easeOut,
+					delay: Math.random() * 3 + delay,
+					onComplete: function (length) {
+						currentIndex++;
+						if (currentIndex == length)
+							changeGround(time);
+					},
+					onCompleteParams: [length]
 				});
 			}
+		}
 
-			function start() {
-				changeLogo();
-				TweenMax.delayedCall(3.5, function() {
-					play = true;
+		function changeGround(delay) {
+			currentIndex = 0;
+			for (var i = 0, length = circles.length; i < length; i++) {
+				var circle = circles[i];
+				var y = container.height / 2 - 20;
+				TweenMax.to(circle, 1.2 + 1.6 * Math.random(), {
+					y: y,
+					ease: Bounce.easeOut,
+					delay: delay,
+					onComplete: function (length) {
+						currentIndex++;
+						if (currentIndex == length)
+							changeHelical(time);
+					},
+					onCompleteParams: [length]
 				});
 			}
+		}
 
-			function addAgile() {
-				Agile.lockTouch();
-				Agile.mode = '3d';
-				Agile.backface = false;
-				container = new Agile.Container('container');
-				container.select = false;
-				container.perspective = 1000;
+		function changeHelical(delay) {
+			currentIndex = 0;
+			var a = .6 * Math.min(container.width / 2, container.height / 2);
+			a = Math.min(400 * .6, a);
+			var b = 10;
+			var l = 20;
+			var cy = b * (2 * Math.PI * (circles.length - 1) / l) / 2;
 
-				if (Agile.Device.isPC())
-					$('.info').css('font-size', '14px');
-				else
-					$('.info').css('font-size', '18px');
-				$('.info').css('display', 'block');
-
-				stage = new Agile.Container('3d');
-				stage.x = container.width / 2;
-				stage.y = container.height / 2;
-				container.addChild(stage);
-
-				var length = Agile.Device.isPC() ? 180 : 100;
-				for (var i = 0; i < length; i++) {
-					circle = new Agile.Circle(20, 'random');
-					circle.x = Math.random() * container.width - container.width / 2;
-					circle.y = Math.random() * container.height - container.height / 2;
-					circle.alpha = 0;
-					stage.addChild(circle);
-					circles.push(circle);
-				}
+			for (var i = 0, length = circles.length; i < length; i++) {
+				var t = 2 * Math.PI * i / l;
+				var x = a * Math.cos(t);
+				var z = a * Math.sin(t);
+				var y = b * t - cy;
+				var circle = circles[i];
+				x = Math.floor(x);
+				y = Math.floor(y);
+				z = Math.floor(z);
+				TweenMax.to(circle, 1, {
+					x: x,
+					y: y,
+					z: z,
+					ease: Quart.easeOut,
+					delay: delay + i * .02,
+					onComplete: function (length) {
+						currentIndex++;
+						if (currentIndex == length)
+							changeCube(time);
+					},
+					onCompleteParams: [length]
+				});
 			}
+		}
 
-			function changeLogo(delay) {
-				currentIndex = 0;
-				delay = delay || 0;
-				var a = Agile.Device.isPC() ? 10 : 12;
-				var b = Agile.Device.isPC() ? 10 : 15;
-				var s = Agile.Device.isPC() ? .2 : .3;
-				var positions = getImageZone(imagedata, a, b);
-				for (var i = 0, length = circles.length; i < length; i++) {
-					var circle = circles[i];
-					if (positions.length > i) {
-						var x = positions[i].x - canvas.width / 2;
-						var y = positions[i].y - canvas.height / 2;
-						var z = 0;
-						TweenMax.to(circle, .8, {
-							scaleX : s,
-							scaleY : s,
-							x : x,
-							y : y,
-							z : z,
-							alpha : 1,
-							ease : Quart.easeOut,
-							delay : Math.random() * 2 + delay,
-							onComplete : function(length) {
-								currentIndex++;
-								if (currentIndex == length)
-									changeBall(time);
-							},
-							onCompleteParams : [length]
-						});
-					} else {
-						TweenMax.to(circle, .8, {
-							alpha : 0,
-							ease : Quart.easeOut,
-							delay : Math.random() * 2 + delay,
-							onComplete : function(length) {
-								currentIndex++;
-								if (currentIndex == length)
-									changeBall(time);
-							},
-							onCompleteParams : [length]
+		function changeCube(delay) {
+			currentIndex = 0;
+			var l = !ppo.isMobile() ? 6 : 5;
+			var d = 90;
+			var l2 = l * l;
+			var cx = d * (l - 1) / 2;
+			var cz = cx;
+			var cy = d * Math.floor((circles.length - 1) / l2) / 2;
+			for (var i = 0, length = circles.length; i < length; i++) {
+				var x = d * (i % l) - cx;
+				var z = d * (Math.floor(i / l) % l) - cz;
+				var y = d * Math.floor(i / l2) - cy;
+				x = Math.floor(x);
+				y = Math.floor(y);
+				z = Math.floor(z);
+				var circle = circles[i];
+				TweenMax.to(circle, 1, {
+					x: x,
+					y: y,
+					z: z,
+					ease: Quart.easeOut,
+					delay: delay + i * .03,
+					onComplete: function (length) {
+						currentIndex++;
+						if (currentIndex == length)
+							changeLogo(time);
+					},
+					onCompleteParams: [length]
+				});
+			}
+		}
+
+		function getImageZone(imageData, d1, d2) {
+			var i, j;
+			var vectors = [];
+			var width = imageData.width;
+			var height = imageData.height;
+			for (i = 0; i < width; i += d1) {
+				for (j = 0; j < height; j += d2) {
+					var index = ((j >> 0) * width + (i >> 0)) * 4;
+					if (imageData.data[index + 3] > 0) {
+						vectors.push({
+							x: i,
+							y: j
 						});
 					}
 				}
 			}
+			return vectors;
+		}
 
-			function changeBall(delay) {
-				currentIndex = 0;
-				var radius = .8 * Math.min(container.width / 2, container.height / 2);
-				radius = Math.min(512 * .8, radius);
-
-				for (var i = 0, length = circles.length; i < length; i++) {
-					var circle = circles[i];
-					var phi = Math.acos(-1 + (2 * i ) / circles.length);
-					var theta = Math.sqrt(circles.length * Math.PI) * phi;
-
-					var x = radius * Math.cos(theta) * Math.sin(phi);
-					var y = radius * Math.sin(theta) * Math.sin(phi);
-					var z = radius * Math.cos(phi);
-					x = Math.floor(x);
-					y = Math.floor(y);
-					z = Math.floor(z);
-					TweenMax.to(circle, .7, {
-						scaleX : .6,
-						scaleY : .6,
-						x : x,
-						y : y,
-						z : z,
-						alpha : 1,
-						ease : Quart.easeOut,
-						delay : Math.random() * 3 + delay,
-						onComplete : function(length) {
-							currentIndex++;
-							if (currentIndex == length)
-								changeGround(time);
-						},
-						onCompleteParams : [length]
-					});
-				}
+		function tick() {
+			if (play) {
+				stage.rotationY++;
+				for (var i = 0; i < circles.length; i++)
+					circles[i].rotationY = -stage.rotationY;
 			}
 
-			function changeGround(delay) {
-				currentIndex = 0;
-				for (var i = 0, length = circles.length; i < length; i++) {
-					var circle = circles[i];
-					var y = container.height / 2 - 20;
-					TweenMax.to(circle, 1.2 + 1.6 * Math.random(), {
-						y : y,
-						ease : Bounce.easeOut,
-						delay : delay,
-						onComplete : function(length) {
-							currentIndex++;
-							if (currentIndex == length)
-								changeHelical(time);
-						},
-						onCompleteParams : [length]
-					});
-				}
+			requestAnimationFrame(tick);
+		}
+
+		function addQR() {
+			if (!ppo.isMobile()) {
+				var qrcode = document.createElement('div');
+				qrcode.style.position = 'absolute';
+				qrcode.style.right = '10px';
+				qrcode.style.top = '10px';
+				qrcode.style.zIndex = 20;
+				document.body.appendChild(qrcode);
+				var qrcode = new QRCode(qrcode, {
+					text: window.location.href,
+					width: 128,
+					height: 128,
+					colorDark: "#000000",
+					colorLight: "#fff",
+					correctLevel: QRCode.CorrectLevel.L
+				});
 			}
+		}
+	</script>
+</body>
 
-			function changeHelical(delay) {
-				currentIndex = 0;
-				var a = .6 * Math.min(container.width / 2, container.height / 2);
-				a = Math.min(400 * .6, a);
-				var b = 10;
-				var l = 20;
-				var cy = b * (2 * Math.PI * (circles.length - 1) / l) / 2;
-
-				for (var i = 0, length = circles.length; i < length; i++) {
-					var t = 2 * Math.PI * i / l;
-					var x = a * Math.cos(t);
-					var z = a * Math.sin(t);
-					var y = b * t - cy;
-					var circle = circles[i];
-					x = Math.floor(x);
-					y = Math.floor(y);
-					z = Math.floor(z);
-					TweenMax.to(circle, 1, {
-						x : x,
-						y : y,
-						z : z,
-						ease : Quart.easeOut,
-						delay : delay + i * .02,
-						onComplete : function(length) {
-							currentIndex++;
-							if (currentIndex == length)
-								changeCube(time);
-						},
-						onCompleteParams : [length]
-					});
-				}
-			}
-
-			function changeCube(delay) {
-				currentIndex = 0;
-				var l = Agile.Device.isPC() ? 6 : 5;
-				var d = 90;
-				var l2 = l * l;
-				var cx = d * (l - 1) / 2;
-				var cz = cx;
-				var cy = d * Math.floor((circles.length - 1) / l2) / 2;
-				for (var i = 0, length = circles.length; i < length; i++) {
-					var x = d * (i % l) - cx;
-					var z = d * (Math.floor(i / l) % l) - cz;
-					var y = d * Math.floor(i / l2) - cy;
-					x = Math.floor(x);
-					y = Math.floor(y);
-					z = Math.floor(z);
-					var circle = circles[i];
-					TweenMax.to(circle, 1, {
-						x : x,
-						y : y,
-						z : z,
-						ease : Quart.easeOut,
-						delay : delay + i * .03,
-						onComplete : function(length) {
-							currentIndex++;
-							if (currentIndex == length)
-								changeLogo(time);
-						},
-						onCompleteParams : [length]
-					});
-				}
-			}
-
-			function getImageZone(imageData, d1, d2) {
-				var i, j;
-				var vectors = [];
-				var width = imageData.width;
-				var height = imageData.height;
-				for ( i = 0; i < width; i += d1) {
-					for ( j = 0; j < height; j += d2) {
-						var index = ((j >> 0) * width + (i >> 0)) * 4;
-						if (imageData.data[index + 3] > 0) {
-							vectors.push({
-								x : i,
-								y : j
-							});
-						}
-					}
-				}
-				return vectors;
-			}
-
-			function tick() {
-				if (play) {
-					stage.rotationY++;
-					for (var i = 0; i < circles.length; i++)
-						circles[i].rotationY = -stage.rotationY;
-				}
-
-				requestAnimationFrame(tick);
-			}
-
-			function addQR() {
-				if (Agile.Device.isPC()) {
-					var qrcode = document.createElement('div');
-					qrcode.style.position = 'absolute';
-					qrcode.style.right = '10px';
-					qrcode.style.top = '10px';
-					qrcode.style.zIndex = 20;
-					document.body.appendChild(qrcode);
-					var qrcode = new QRCode(qrcode, {
-						text : window.location.href,
-						width : 128,
-						height : 128,
-						colorDark : "#000000",
-						colorLight : "#fff",
-						correctLevel : QRCode.CorrectLevel.L
-					});
-				}
-			}
-		</script>
-	</body>
 </html>

@@ -1,253 +1,260 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>ios7</title>
-		<meta charset="utf-8">
-		<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=1, maximum-scale=1">
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black">
-		<style type="text/css">
-			html, body {
-				width: 100%;
-				height: 100%;
-				margin: 0;
-				padding: 0;
-				overflow: hidden;
+
+<head>
+	<title>ios7</title>
+	<meta charset="utf-8">
+	<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<style type="text/css">
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+		}
+
+		#container {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="container"></div>
+	<script src="../lib/qrcode.min.js"></script>
+	<script src="../lib/ppo.min.js"></script>
+	<script src="../..//build/agile.js"></script>
+
+	<script>
+		var container;
+		var distance;
+
+		main();
+		function main() {
+			addAgile();
+			addQR();
+		}
+
+		function addAgile() {
+			ppo.lockTouch();
+			Agile.mode = '2d';
+
+			container = new Agile.Dom('container');
+			container.select = false;
+			var color = Agile.gradient('line', 0, '#366387', '#90a5d4');
+			container.color = color;
+			addWallpaper();
+			addIos7();
+		}
+
+		function addWallpaper() {
+			var colors = ['#8ed9ec', '#9df2f5', '#5d5ea6', '#90e2ff', '#77dbe9']
+			var length = !ppo.isMobile() ? 20 : 10;
+			for (var i = 0; i < length; i++) {
+				var radius = Math.random() * 60;
+				var color = colors[Math.floor(colors.length * Math.random())];
+				var alpha = Math.random() / 4;
+				var ball = new Agile.Circle(radius, color);
+				ball.x = Math.random() * container.width;
+				ball.y = Math.random() * container.height;
+				ball.alpha = alpha;
+				container.addChild(ball);
 			}
-			#container {
-				width: 100%;
-				height: 100%;
-			}
-		</style>
-	</head>
-	<body>
-		<div id="container"></div>
-		<script src="../lib/qrcode.min.js"></script>
-		<script src="../../build/agile.min.js"></script>
-		<script src="../../plus/agile_toolkit.js"></script>
-		<script>
-			var container;
-			var distance;
+		}
 
-			Main();
-			function Main() {
-				addAgile();
-				addQR();
-			}
+		function addIos7() {
+			distance = (320 - 4 * 60) / 5;
+			var offsetX = (container.width - 320) / 2;
+			var offsetY = !ppo.isMobile() ? 200 : 50;
+			var info = new Agile.Rect(60, 60);
+			color = Agile.gradient('line', 0, '#707fb8', '#15d122');
+			info.color = color;console.log(color);
+			info.x = offsetX + distance + info.width / 2;
+			info.y = offsetY;
+			container.addChild(info);
+			info.round = 12;
 
-			function addAgile() {
-				Agile.lockTouch();
-				Agile.mode = '2d';
-				container = new Agile.Dom('container');
-				container.select = false;
-				var color = Agile.gradient('line', 0, '#366387', '#90a5d4');
-				container.color = color;
-				addWallpaper();
-				addIos7();
-			}
+			var infoicon1 = new Agile.Triangle(5, 15, '#fff');
+			infoicon1.x = -13;
+			infoicon1.y = 15;
+			infoicon1.rotation = 220;
+			info.addChild(infoicon1);
+			var infoicon2 = new Agile.Ellipse(20, 17, '#fff');
+			info.addChild(infoicon2);
+			infoicon2.alpha = 1;
 
-			function addWallpaper() {
-				var colors = ['#8ed9ec', '#9df2f5', '#5d5ea6', '#90e2ff', '#77dbe9']
-				var length = Agile.Device.isPC() ? 20 : 10;
-				for (var i = 0; i < length; i++) {
-					var radius = Math.random() * 60;
-					var color = colors[Math.floor(colors.length * Math.random())];
-					var alpha = Math.random() / 4;
-					var ball = new Agile.Circle(radius, color);
-					ball.x = Math.random() * container.width;
-					ball.y = Math.random() * container.height;
-					ball.alpha = alpha;
-					container.addChild(ball);
-				}
-			}
+			var photo = new Agile.Rect(60, 60, '#fff');
+			photo.x = info.x + info.width + distance;
+			photo.y = offsetY;
+			container.addChild(photo);
+			photo.round = 12;
 
-			function addIos7() {
-				distance = (320 - 4 * 60) / 5;
-				var offsetX = (container.width - 320) / 2;
-				var offsetY = Agile.Device.isPC() ? 200 : 50;
-				var info = new Agile.Rect(60, 60);
-				color = Agile.gradient('line', 0, '#707fb8', '#15d122');
-				info.color = color;
-				info.x = offsetX + distance + info.width / 2;
-				info.y = offsetY;
-				container.addChild(info);
-				info.round = 12;
-
-				var infoicon1 = new Agile.Triangle(5, 15, '#fff');
-				infoicon1.x = -13;
-				infoicon1.y = 15;
-				infoicon1.rotation = 220;
-				info.addChild(infoicon1);
-				var infoicon2 = new Agile.Ellipse(20, 17, '#fff');
-				info.addChild(infoicon2);
-				infoicon2.alpha = 1;
-
-				var photo = new Agile.Rect(60, 60, '#fff');
-				photo.x = info.x + info.width + distance;
-				photo.y = offsetY;
-				container.addChild(photo);
-				photo.round = 12;
-
-				var colors = ['#3e975f', '#3c72a1', '#64579d', '#b03b65', '#d31c0e', '#f65608', '#dcb309', '#7eb118'];
-				for (var i = 0; i < 8; i++) {
-					var photoicon = new Agile.Rect(23, 14, colors[i]);
-					photoicon.regX = -0.1;
-					photoicon.alpha = .7;
-					photoicon.round = 7;
-					photoicon.rotation = i * 45;
-					photo.addChild(photoicon);
-				}
-
-				var camera = new Agile.Rect(60, 60);
-				color = Agile.gradient('line', 0, '#15d122', '#99fc88');
-				camera.color = color;
-				camera.x = photo.x + photo.width + distance;
-				camera.y = offsetY;
-				container.addChild(camera);
-				camera.round = 12;
-
-				var cameraicon1 = new Agile.Rect(28, 24, '#fff');
-				cameraicon1.x = -5;
-				camera.addChild(cameraicon1);
-				cameraicon1.round = 5;
-
-				var cameraicon2 = new Agile.Triangle(10, 12, '#fff');
-				camera.addChild(cameraicon2);
-				cameraicon2.alpha = 1;
-				cameraicon2.rotation = -90;
-				cameraicon2.x = 11;
-
-				var cameraicon3 = new Agile.Rect(1.5, 20, '#fff');
-				camera.addChild(cameraicon3);
-				cameraicon3.x = 19;
-
-				var cameraicon4 = new Agile.Rect(1.5, 3, '#fff');
-				camera.addChild(cameraicon4);
-				cameraicon4.x = -21;
-				cameraicon4.y = -5;
-
-				var weather = new Agile.Rect(60, 60);
-				color = Agile.gradient('line', 0, '#79e8fc', '#2079f1');
-				weather.color = color;
-				weather.x = camera.x + camera.width + distance;
-				weather.y = offsetY;
-				container.addChild(weather);
-				weather.round = 12;
-
-				var cloudContainer = new Agile.Container();
-				cloudContainer.alpha = .85;
-				weather.addChild(cloudContainer);
-
-				var weathericon2 = new Agile.Rect(32, 20, '#fff');
-				cloudContainer.addChild(weathericon2);
-				weathericon2.y = 5;
-				weathericon2.x = 7;
-				weathericon2.round = 10;
-
-				var weathericon1 = new Agile.Circle(10, '#fff');
-				cloudContainer.addChild(weathericon1);
-				weathericon1.y = 0;
-
-				var weathericon3 = new Agile.Rect(28, 14, '#fff');
-				cloudContainer.addChild(weathericon3);
-				weathericon3.y = 8;
-				weathericon3.x = -4;
-				weathericon3.round = 10;
-
-				var weathericon4 = new Agile.Circle(11, '#fdce00');
-				weather.addChild(weathericon4);
-				weathericon4.y = -6;
-				weathericon4.x = -7;
-				weathericon4.zIndex = 0;
-
-				var safari = new Agile.Rect(60, 60, '#fff');
-				safari.x = info.x;
-				safari.y = info.y + info.width + distance * 2;
-				container.addChild(safari);
-				safari.round = 12;
-
-				color = Agile.gradient('line', 0, '#1b64ef', '#5eecfe');
-				var safariicon1 = new Agile.Circle(50 / 2, color);
-				safari.addChild(safariicon1);
-
-				var sharpContainer = new Agile.Container();
-				sharpContainer.rotation = 235;
-				safari.addChild(sharpContainer);
-
-				var sharp1 = new Agile.Triangle(3, 25, '#fff');
-				sharpContainer.addChild(sharp1);
-				sharp1.y -= 25 / 2;
-
-				var sharp2 = new Agile.Triangle(3, 25, '#ff0000');
-				sharpContainer.addChild(sharp2);
-				sharp2.rotation = 180;
-				sharp2.y += 25 / 2;
-
-				color = Agile.gradient('line', 0, '#2055f3', '#12e6fc');
-				var store = new Agile.Rect(60, 60, color);
-				store.x = photo.x;
-				store.y = photo.y + photo.width + distance * 2;
-				container.addChild(store);
-				store.round = 12;
-
-				var storeicon1 = new Agile.Circle(44 / 2, Agile.Color.alpha0);
-				store.addChild(storeicon1);
-				storeicon1.addFilter(new Agile.Filter('stroke', 2.4, '#fff'));
-
-				var storeicon2 = new Agile.Rect(27, 4, '#fff');
-				store.addChild(storeicon2);
-
-				var storeContainer1 = new Agile.Container();
-				store.addChild(storeContainer1);
-				storeContainer1.rotation = 30;
-				storeContainer1.x = -6;
-
-				var storeicon3 = new Agile.Rect(4, 15, '#fff');
-				storeContainer1.addChild(storeicon3);
-
-				var storeicon4 = new Agile.Rect(4, 4, '#fff');
-				storeContainer1.addChild(storeicon4);
-				storeicon4.y = -11;
-
-				var storeicon5 = new Agile.Triangle(2, 8, '#fff');
-				storeContainer1.addChild(storeicon5);
-				storeicon5.y = 13;
-				storeicon5.rotation = 180;
-
-				var storeContainer2 = new Agile.Container();
-				store.addChild(storeContainer2);
-				storeContainer2.rotation = -30;
-				storeContainer2.x = 6;
-
-				var storeicon6 = new Agile.Rect(4, 23, '#fff');
-				storeicon6.y = -4;
-				storeContainer2.addChild(storeicon6);
-
-				var storeicon7 = new Agile.Ellipse(2, 4, '#fff');
-				storeicon7.y = 12;
-				storeContainer2.addChild(storeicon7);
-
+			var colors = ['#3e975f', '#3c72a1', '#64579d', '#b03b65', '#d31c0e', '#f65608', '#dcb309', '#7eb118'];
+			for (var i = 0; i < 8; i++) {
+				var photoicon = new Agile.Rect(23, 14, colors[i]);
+				photoicon.regX = -0.1;
+				photoicon.alpha = .7;
+				photoicon.round = 7;
+				photoicon.rotation = i * 45;
+				photo.addChild(photoicon);
 			}
 
-			function addQR() {
-				if (Agile.Device.isPC()) {
-					var qrcode = document.createElement('div');
-					qrcode.style.position = 'absolute';
-					qrcode.style.left = '10px';
-					qrcode.style.top = '10px';
-					qrcode.style.zIndex = 9999;
-					qrcode.style.border = '10px solid #fff';
-					document.body.appendChild(qrcode);
-					var qrcode = new QRCode(qrcode, {
-						text : window.location.href,
-						width : 128,
-						height : 128,
-						colorDark : "#000000",
-						colorLight : "#fff",
-						correctLevel : QRCode.CorrectLevel.L
-					});
-				}
+			var camera = new Agile.Rect(60, 60);
+			color = Agile.gradient('line', 0, '#15d122', '#99fc88');
+			camera.color = color;
+			camera.x = photo.x + photo.width + distance;
+			camera.y = offsetY;
+			container.addChild(camera);
+			camera.round = 12;
+
+			var cameraicon1 = new Agile.Rect(28, 24, '#fff');
+			cameraicon1.x = -5;
+			camera.addChild(cameraicon1);
+			cameraicon1.round = 5;
+
+			var cameraicon2 = new Agile.Triangle(10, 12, '#fff');
+			camera.addChild(cameraicon2);
+			cameraicon2.alpha = 1;
+			cameraicon2.rotation = -90;
+			cameraicon2.x = 11;
+
+			var cameraicon3 = new Agile.Rect(1.5, 20, '#fff');
+			camera.addChild(cameraicon3);
+			cameraicon3.x = 19;
+
+			var cameraicon4 = new Agile.Rect(1.5, 3, '#fff');
+			camera.addChild(cameraicon4);
+			cameraicon4.x = -21;
+			cameraicon4.y = -5;
+
+			var weather = new Agile.Rect(60, 60);
+			color = Agile.gradient('line', 0, '#79e8fc', '#2079f1');
+			weather.color = color;
+			weather.x = camera.x + camera.width + distance;
+			weather.y = offsetY;
+			container.addChild(weather);
+			weather.round = 12;
+
+			var cloudContainer = new Agile.Container();
+			cloudContainer.alpha = .85;
+			weather.addChild(cloudContainer);
+
+			var weathericon2 = new Agile.Rect(32, 20, '#fff');
+			cloudContainer.addChild(weathericon2);
+			weathericon2.y = 5;
+			weathericon2.x = 7;
+			weathericon2.round = 10;
+
+			var weathericon1 = new Agile.Circle(10, '#fff');
+			cloudContainer.addChild(weathericon1);
+			weathericon1.y = 0;
+
+			var weathericon3 = new Agile.Rect(28, 14, '#fff');
+			cloudContainer.addChild(weathericon3);
+			weathericon3.y = 8;
+			weathericon3.x = -4;
+			weathericon3.round = 10;
+
+			var weathericon4 = new Agile.Circle(11, '#fdce00');
+			weather.addChild(weathericon4);
+			weathericon4.y = -6;
+			weathericon4.x = -7;
+			weathericon4.zIndex = 0;
+
+			var safari = new Agile.Rect(60, 60, '#fff');
+			safari.x = info.x;
+			safari.y = info.y + info.width + distance * 2;
+			container.addChild(safari);
+			safari.round = 12;
+
+			color = Agile.gradient('line', 0, '#1b64ef', '#5eecfe');
+			var safariicon1 = new Agile.Circle(50 / 2, color);
+			safari.addChild(safariicon1);
+
+			var sharpContainer = new Agile.Container();
+			sharpContainer.rotation = 235;
+			safari.addChild(sharpContainer);
+
+			var sharp1 = new Agile.Triangle(3, 25, '#fff');
+			sharpContainer.addChild(sharp1);
+			sharp1.y -= 25 / 2;
+
+			var sharp2 = new Agile.Triangle(3, 25, '#ff0000');
+			sharpContainer.addChild(sharp2);
+			sharp2.rotation = 180;
+			sharp2.y += 25 / 2;
+
+			color = Agile.gradient('line', 0, '#2055f3', '#12e6fc');
+			var store = new Agile.Rect(60, 60, color);
+			store.x = photo.x;
+			store.y = photo.y + photo.width + distance * 2;
+			container.addChild(store);
+			store.round = 12;
+
+			var storeicon1 = new Agile.Circle(44 / 2, Agile.Color.alpha0);
+			store.addChild(storeicon1);
+			storeicon1.addFilter(new Agile.Filter('stroke', 2.4, '#fff'));
+
+			var storeicon2 = new Agile.Rect(27, 4, '#fff');
+			store.addChild(storeicon2);
+
+			var storeContainer1 = new Agile.Container();
+			store.addChild(storeContainer1);
+			storeContainer1.rotation = 30;
+			storeContainer1.x = -6;
+
+			var storeicon3 = new Agile.Rect(4, 15, '#fff');
+			storeContainer1.addChild(storeicon3);
+
+			var storeicon4 = new Agile.Rect(4, 4, '#fff');
+			storeContainer1.addChild(storeicon4);
+			storeicon4.y = -11;
+
+			var storeicon5 = new Agile.Triangle(2, 8, '#fff');
+			storeContainer1.addChild(storeicon5);
+			storeicon5.y = 13;
+			storeicon5.rotation = 180;
+
+			var storeContainer2 = new Agile.Container();
+			store.addChild(storeContainer2);
+			storeContainer2.rotation = -30;
+			storeContainer2.x = 6;
+
+			var storeicon6 = new Agile.Rect(4, 23, '#fff');
+			storeicon6.y = -4;
+			storeContainer2.addChild(storeicon6);
+
+			var storeicon7 = new Agile.Ellipse(2, 4, '#fff');
+			storeicon7.y = 12;
+			storeContainer2.addChild(storeicon7);
+
+		}
+
+		function addQR() {
+			if (!ppo.isMobile()) {
+				var qrcode = document.createElement('div');
+				qrcode.style.position = 'absolute';
+				qrcode.style.left = '10px';
+				qrcode.style.top = '10px';
+				qrcode.style.zIndex = 9999;
+				qrcode.style.border = '10px solid #fff';
+				document.body.appendChild(qrcode);
+				var qrcode = new QRCode(qrcode, {
+					text: window.location.href,
+					width: 128,
+					height: 128,
+					colorDark: "#000000",
+					colorLight: "#fff",
+					correctLevel: QRCode.CorrectLevel.L
+				});
 			}
-		</script>
-	</body>
+		}
+	</script>
+</body>
+
 </html>

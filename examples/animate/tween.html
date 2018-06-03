@@ -1,208 +1,215 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>tween</title>
-		<meta charset="utf-8">
-		<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.5, maximum-scale=.5">
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black">
-		<style type="text/css">
-			html, body {
-				width: 100%;
-				height: 100%;
-				margin: 0;
-				padding: 0;
-				overflow: hidden;
-			}
-			#container {
-				width: 100%;
-				height: 100%;
-			}
-		</style>
-	</head>
-	<body>
-		<div id="container"></div>
-		<script src="../lib/qrcode.min.js"></script>
-		<script src="js/color.min.js"></script>
-		<script src="../../build/agile.min.js"></script>
-		<script src="../../plus/agile_toolkit.js"></script>
-		<script>
-			var container;
-			var waves = [];
-			var hcolor;
-			var missileImage;
-			var waveColors = ['#990033', '#ff6600', '#009966', '#99cc99', '#0099cc'];
-			
-			Main();
-			function Main() {
-				loadImage();
-				addQR();
-			}
 
-			function loadImage() {
-				var loader = new Agile.LoadManager();
-				var obj = {
-					'missile' : 'image/missile.png'
+<head>
+	<title>tween</title>
+	<meta charset="utf-8">
+	<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.5, maximum-scale=.5">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<style type="text/css">
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+		}
+
+		#container {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="container"></div>
+	<script src="../lib/ppo.min.js"></script>
+	<script src="../lib/qrcode.min.js"></script>
+	<script src="js/color.min.js"></script>
+	<script src="../..//build/agile.js"></script>
+
+	<script>
+		var container;
+		var waves = [];
+		var hcolor;
+		var missileImage;
+		var waveColors = ['#990033', '#ff6600', '#009966', '#99cc99', '#0099cc'];
+
+		main();
+		function main() {
+			loadImage();
+			addQR();
+		}
+
+		function loadImage() {
+			var loader = new Agile.LoadManager();
+			var obj = {
+				'missile': 'image/missile.png'
+			}
+			loader.load(obj);
+			loader.addEventListener(Agile.GROUP_LOADED, function () {
+				missileImage = loader.targetList['missile'];
+				addAgile();
+				start();
+			});
+		}
+
+		function start() {
+			addWave();
+			addCircle();
+			addButton();
+		}
+
+		function addAgile() {
+			Agile.mode = '3d';
+			ppo.lockTouch();
+
+			container = new Agile.Container('container');
+			container.select = false;
+		}
+
+		function addWave() {
+			var wave = new Agile.Rect(200, 200);
+			container.addChild(wave);
+			waves.push(wave);
+			hcolor = 195;
+			var color = Color.parse("hsl(" + (hcolor % 360) + ", 100%, 50%)").hexTriplet();
+			var keyframe = new Agile.Keyframes({
+				'0%': {
+					x: container.width / 2,
+					y: container.height / 2,
+					color: color,
+					rotation: 90
+				},
+				'20%': {
+					width: 4,
+					height: 4,
+					rotation: -90
+				},
+				'25%': {},
+				'40%': {
+					height: 200
+				},
+				'45%': {},
+				'56%': {
+					rotation: 0
+				},
+				'65%': {},
+				'80%': {
+					height: 100,
+					y: container.height - 30
+				},
+				'100%': {
+					width: container.width
 				}
-				loader.load(obj);
-				loader.addEventListener(Agile.GROUP_LOADED, function() {
-					missileImage = loader.targetList['missile'];
-					addAgile();
-					start();
-				});
-			}
+			});
 
-			function start() {
-				addWave();
-				addCircle();
-				addButton();
-			}
+			wave.addFrame(3.5, keyframe, {
+				ease: Agile.ease.easeOutQuart,
+				onComplete: addOtherWave
+			});
+		}
 
-			function addAgile() {
-				Agile.mode = '3d';
-				Agile.lockTouch();
-				container = new Agile.Container('container');
-				container.select = false;
-			}
-
-			function addWave() {
-				var wave = new Agile.Rect(200, 200);
-				container.addChild(wave);
-				waves.push(wave);
-				hcolor = 195;
+		function addOtherWave() {
+			for (var i = 0; i < 4; i++) {
+				var wave = new Agile.Rect(container.width, 100);
+				wave.x = container.width / 2;
+				hcolor += 20;
 				var color = Color.parse("hsl(" + (hcolor % 360) + ", 100%, 50%)").hexTriplet();
-				var keyframe = new Agile.Keyframes({
-					'0%' : {
-						x : container.width / 2,
-						y : container.height / 2,
-						color : color,
-						rotation : 90
-					},
-					'20%' : {
-						width : 4,
-						height : 4,
-						rotation : -90
-					},
-					'25%' : {},
-					'40%' : {
-						height : 200
-					},
-					'45%' : {},
-					'56%' : {
-						rotation : 0
-					},
-					'65%' : {},
-					'80%' : {
-						height : 100,
-						y : container.height - 30
-					},
-					'100%' : {
-						width : container.width
-					}
-				});
+				wave.color = color;
+				waves.push(wave);
+				container.addChild(wave);
+				wave.zIndex = 99 - i;
 
-				wave.addFrame(3.5, keyframe, {
-					ease : Agile.ease.easeOutQuart,
-					onComplete : addOtherWave
-				});
-			}
-
-			function addOtherWave() {
-				for (var i = 0; i < 4; i++) {
-					var wave = new Agile.Rect(container.width, 100);
-					wave.x = container.width / 2;
-					hcolor += 20;
-					var color = Color.parse("hsl(" + (hcolor % 360) + ", 100%, 50%)").hexTriplet();
-					wave.color = color;
-					waves.push(wave);
-					container.addChild(wave);
-					wave.zIndex = 99 - i;
-
-					Agile.Tween.fromTo(wave, .7, {
-						y : container.height + 150
-					}, {
-						y : container.height - 30 - (i + 1) * 25,
-						delay : .1 * i,
-						ease : Agile.ease.easeOutQuart
-					})
-				}
-			}
-
-			function changeWave() {
-				for (var i = 0; i < waves.length; i++) {
-					var wave = waves[i];
-					var w = container.width / waves.length;
-					Agile.Tween.to(wave, .8, {
-						rotation : 90,
-						height : container.width + 300,
-						width : container.height,
-						x : container.width / 2 - 150,
-						y : container.height / 2,
-						onComplete : function(wave, i) {
-							Agile.Tween.to(wave, .5, {
-								delay : .5 + i * .15,
-								x : w * (i + 1) / 2,
-								height : w * (i + 1),
-								width : container.height,
-								ease : Agile.ease.easeOutQuart
-							});
-						},
-						onCompleteParams : [wave, i]
-					});
-				}
-			}
-
-			function addCircle() {
-				var circle = new Agile.Circle(130, '#c2fd59');
-				circle.x = container.width / 2;
-				circle.y = container.height / 2;
-				circle.alpha = 0;
-				container.addChild(circle);
-				Agile.Tween.fromTo(circle, .7, {
-					scaleX : .1,
-					scaleY : .1,
-					alpha : 0
+				Agile.Tween.fromTo(wave, .7, {
+					y: container.height + 150
 				}, {
-					scaleX : 1,
-					scaleY : 1,
-					delay : 4.5,
-					alpha : 1,
-					ease : Agile.ease.easeOutBack,
-					onComplete : function() {
+						y: container.height - 30 - (i + 1) * 25,
+						delay: .1 * i,
+						ease: Agile.ease.easeOutQuart
+					})
+			}
+		}
+
+		function changeWave() {
+			for (var i = 0; i < waves.length; i++) {
+				var wave = waves[i];
+				var w = container.width / waves.length;
+				Agile.Tween.to(wave, .8, {
+					rotation: 90,
+					height: container.width + 300,
+					width: container.height,
+					x: container.width / 2 - 150,
+					y: container.height / 2,
+					onComplete: function (wave, i) {
+						Agile.Tween.to(wave, .5, {
+							delay: .5 + i * .15,
+							x: w * (i + 1) / 2,
+							height: w * (i + 1),
+							width: container.height,
+							ease: Agile.ease.easeOutQuart
+						});
+					},
+					onCompleteParams: [wave, i]
+				});
+			}
+		}
+
+		function addCircle() {
+			var circle = new Agile.Circle(130, '#c2fd59');
+			circle.x = container.width / 2;
+			circle.y = container.height / 2;
+			circle.alpha = 0;
+			container.addChild(circle);
+
+			Agile.Tween.fromTo(circle, .7, {
+				scaleX: .1,
+				scaleY: .1,
+				alpha: 0
+			}, {
+					scaleX: 1,
+					scaleY: 1,
+					delay: 4.5,
+					alpha: 1,
+					ease: Agile.ease.easeOutBack,
+					onComplete: function () {
 						addImssile();
 						Agile.Tween.to(circle, .4, {
-							delay : 3.8,
-							scaleX : .01,
-							scaleY : .01,
-							ease : Agile.ease.easeInBack,
-							onComplete : function() {
+							delay: 3.8,
+							scaleX: .01,
+							scaleY: .01,
+							ease: Agile.ease.easeInBack,
+							onComplete: function () {
 								container.removeChild(circle);
 								circle.destroy();
 							}
 						});
 					}
 				})
-			}
+		}
 
-			function addImssile() {
-				var missile = new Agile.Image(missileImage);
-				missile.scaleX = missile.scaleY = .9;
-				container.addChild(missile);
-				missile.rotation = 45;
-				Agile.Tween.fromTo(missile, .5, {
-					x : -missile.width / 2,
-					y : container.height / 2 - container.width / 2 - missile.width / 2
-				}, {
-					x : container.width / 2,
-					y : container.height / 2,
-					ease : Agile.ease.easeOutQuart,
-					onComplete : function() {
+		function addImssile() {
+			var missile = new Agile.Image(missileImage);
+			missile.scaleX = missile.scaleY = .9;
+			container.addChild(missile);
+			missile.rotation = 45;
+			Agile.Tween.fromTo(missile, .5, {
+				x: -missile.width / 2,
+				y: container.height / 2 - container.width / 2 - missile.width / 2
+			}, {
+					x: container.width / 2,
+					y: container.height / 2,
+					ease: Agile.ease.easeOutQuart,
+					onComplete: function () {
 						Agile.Tween.to(missile, .4, {
-							delay : 3.5,
-							x : container.width + missile.width / 2,
-							y : container.height / 2 + container.width / 2 + missile.width / 2,
-							ease : Agile.ease.easeOutQuart,
-							onComplete : function() {
+							delay: 3.5,
+							x: container.width + missile.width / 2,
+							y: container.height / 2 + container.width / 2 + missile.width / 2,
+							ease: Agile.ease.easeOutQuart,
+							onComplete: function () {
 								container.removeChild(missile);
 								missile.destroy();
 								changeWave();
@@ -211,155 +218,155 @@
 					}
 				});
 
-				var mText = new Agile.Text();
-				mText.text = 'MISSILE';
-				mText.size = 48;
-				mText.width = 180;
-				mText.font = 'Arial';
-				mText.weight = 900;
-				mText.align = 'center';
-				mText.regX = mText.regY = .5;
-				mText.color = '#fff';
-				container.addChild(mText);
+			var mText = new Agile.Text();
+			mText.text = 'MISSILE';
+			mText.size = 48;
+			mText.width = 180;
+			mText.font = 'Arial';
+			mText.weight = 900;
+			mText.align = 'center';
+			mText.regX = mText.regY = .5;
+			mText.color = '#fff';
+			container.addChild(mText);
 
-				Agile.Tween.fromTo(mText, .5, {
-					alpha : 0,
-					x : container.width / 2 - 100,
-					y : container.height / 2 - mText.size / 2
+			Agile.Tween.fromTo(mText, .5, {
+				alpha: 0,
+				x: container.width / 2 - 100,
+				y: container.height / 2 - mText.size / 2
+			}, {
+					alpha: 1,
+					delay: .5,
+					x: container.width / 2,
+					y: container.height / 2 - mText.size / 2,
+					ease: Agile.ease.easeOutBack,
+					onComplete: addSpeedLine
+				});
+
+			setTimeout(function () {
+				Agile.Tween.to(mText, .35, {
+					x: container.width + mText.width / 2,
+					ease: Agile.ease.easeInBack
+				});
+			}, 3500);
+		}
+
+		function addSpeedLine() {
+			for (var i = 0; i < 35; i++) {
+				var w = Math.random() * 200 + 50;
+				var h = Math.random() * 18 + 2;
+				var line = new Agile.Rect(w, h);
+				line.color = '#00c0ff';
+				line.alpha = .3 + .7 * Math.random();
+				line.x = -line.width / 2;
+				line.y = Math.random() * (container.height - 300) + 150;
+				container.addChild(line);
+				Agile.Tween.to(line, .2 * Math.random() + .15, {
+					delay: .15 * Math.random() * i,
+					x: container.width + line.width / 2,
+					ease: Agile.ease.linear,
+					onComplete: function (line) {
+						container.removeChild(line);
+						line.destroy();
+					},
+					onCompleteParams: [line]
+				});
+			}
+		}
+
+		function addButton() {
+			var button = new Agile.Container();
+			button.x = container.width / 2;
+			button.y = container.height / 2;
+			container.addChild(button);
+			button.addEventListener('mouseover', function (event) {
+				if (button.enabled) {
+					Agile.Tween.to(button, .6, {
+						rotation: button.rotation + 180,
+						ease: Agile.ease.easeOutQuart
+					});
+				}
+			});
+
+			button.touchStart(function (x, y) {
+				if (button.enabled) {
+					button.cursor = false;
+					button.stopTouchStart();
+					reset();
+				}
+			});
+
+			for (var i = 0; i < 5; i++) {
+				var r = i == 4 ? 150 : 120 - i * 25;
+				var color = i == 4 ? Agile.Color.alpha0 : 'random';
+				var btn = new Agile.Circle(r, color);
+				button.addChild(btn);
+				btn.scaleX = btn.scaleY = .1;
+				btn.alpha = 0;
+				if (i == 4)
+					btn.zIndex = 999;
+
+				Agile.Tween.to(btn, .6, {
+					alpha: 1,
+					scaleX: 1,
+					scaleY: 1,
+					delay: .2 * i + 12,
+					ease: Agile.ease.easeOutBack
+				});
+			}
+
+			for (i = 0; i < 2; i++) {
+				var line = new Agile.Rect(360, 2);
+				line.color = '#fff';
+				button.addChild(line);
+				line.rotation = 45 - i * 90;
+				line.alpha = 0;
+				Agile.Tween.fromTo(line, .4, {
+					x: -line.width + line.width * i * 2,
+					y: -line.width,
 				}, {
-					alpha : 1,
-					delay : .5,
-					x : container.width / 2,
-					y : container.height / 2 - mText.size / 2,
-					ease : Agile.ease.easeOutBack,
-					onComplete : addSpeedLine
-				});
-
-				setTimeout(function() {
-					Agile.Tween.to(mText, .35, {
-						x : container.width + mText.width / 2,
-						ease : Agile.ease.easeInBack
-					});
-				}, 3500);
-			}
-
-			function addSpeedLine() {
-				for (var i = 0; i < 35; i++) {
-					var w = Math.random() * 200 + 50;
-					var h = Math.random() * 18 + 2;
-					var line = new Agile.Rect(w, h);
-					line.color = '#00c0ff';
-					line.alpha = .3 + .7 * Math.random();
-					line.x = -line.width / 2;
-					line.y = Math.random() * (container.height - 300) + 150;
-					container.addChild(line);
-					Agile.Tween.to(line, .2 * Math.random() + .15, {
-						delay : .15 * Math.random() * i,
-						x : container.width + line.width / 2,
-						ease : Agile.ease.linear,
-						onComplete : function(line) {
-							container.removeChild(line);
-							line.destroy();
-						},
-						onCompleteParams : [line]
-					});
-				}
-			}
-
-			function addButton() {
-				var button = new Agile.Container();
-				button.x = container.width / 2;
-				button.y = container.height / 2;
-				container.addChild(button);
-				button.addEventListener('mouseover', function(event) {
-					if (button.enabled) {
-						Agile.Tween.to(button, .6, {
-							rotation : button.rotation + 180,
-							ease : Agile.ease.easeOutQuart
-						});
-					}
-				});
-
-				button.touchStart(function(x, y) {
-					if (button.enabled) {
-						button.cursor = false;
-						button.stopTouchStart();
-						reset();
-					}
-				});
-
-				for (var i = 0; i < 5; i++) {
-					var r = i == 4 ? 150 : 120 - i * 25;
-					var color = i == 4 ? Agile.Color.alpha0 : 'random';
-					var btn = new Agile.Circle(r, color);
-					button.addChild(btn);
-					btn.scaleX = btn.scaleY = .1;
-					btn.alpha = 0;
-					if (i == 4)
-						btn.zIndex = 999;
-
-					Agile.Tween.to(btn, .6, {
-						alpha : 1,
-						scaleX : 1,
-						scaleY : 1,
-						delay : .2 * i + 12,
-						ease : Agile.ease.easeOutBack
-					});
-				}
-
-				for ( i = 0; i < 2; i++) {
-					var line = new Agile.Rect(360, 2);
-					line.color = '#fff';
-					button.addChild(line);
-					line.rotation = 45 - i * 90;
-					line.alpha = 0;
-					Agile.Tween.fromTo(line, .4, {
-						x : -line.width + line.width * i * 2,
-						y : -line.width,
-					}, {
-						alpha : 1,
-						x : 0,
-						y : 0,
-						delay : 13 + i * .1,
-						ease : Agile.ease.easeOutQuart,
-						onComplete : function() {
+						alpha: 1,
+						x: 0,
+						y: 0,
+						delay: 13 + i * .1,
+						ease: Agile.ease.easeOutQuart,
+						onComplete: function () {
 							button.enabled = true;
 							button.cursor = true;
 						}
 					});
-				}
 			}
+		}
 
-			function reset() {
-				for (var i = container.childrens.length - 1; i > -1; i--) {
-					var sub = container.childrens[i];
-					container.removeChild(sub);
-					console.log(sub.id)
-					sub.destroy();
-				}
-				waves.length = 0;
-				Agile.Tween.killAll();
-				start();
+		function reset() {
+			for (var i = container.childrens.length - 1; i > -1; i--) {
+				var sub = container.childrens[i];
+				container.removeChild(sub);
+				sub.destroy();
 			}
+			waves.length = 0;
+			Agile.Tween.killAll();
+			start();
+		}
 
-			function addQR() {
-				if (Agile.Device.isPC()) {
-					var qrcode = document.createElement('div');
-					qrcode.style.position = 'absolute';
-					qrcode.style.left = '10px';
-					qrcode.style.top = '10px';
-					qrcode.style.zIndex = 20;
-					document.body.appendChild(qrcode);
-					var qrcode = new QRCode(qrcode, {
-						text : window.location.href,
-						width : 128,
-						height : 128,
-						colorDark : "#141b49",
-						colorLight : "rgba(0,0,0,0)",
-						correctLevel : QRCode.CorrectLevel.L
-					});
-				}
+		function addQR() {
+			if (!ppo.isMobile()) {
+				var qrcode = document.createElement('div');
+				qrcode.style.position = 'absolute';
+				qrcode.style.left = '10px';
+				qrcode.style.top = '10px';
+				qrcode.style.zIndex = 20;
+				document.body.appendChild(qrcode);
+				var qrcode = new QRCode(qrcode, {
+					text: window.location.href,
+					width: 128,
+					height: 128,
+					colorDark: "#141b49",
+					colorLight: "rgba(0,0,0,0)",
+					correctLevel: QRCode.CorrectLevel.L
+				});
 			}
-		</script>
-	</body>
+		}
+	</script>
+</body>
+
 </html>

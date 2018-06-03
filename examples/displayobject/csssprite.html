@@ -1,43 +1,47 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>css sprite</title>
-		<meta charset="utf-8">
-		<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.7, maximum-scale=.7">
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black">
-		<link type="text/css" rel="stylesheet" media="all" href="css/agile.css"/>
-		<link type="text/css" rel="stylesheet" media="all" href="css/github.css"/>
-		<style type="text/css">
-			html, body {
-				width: 100%;
-                min-width: 1003px;
-				height: 100%;
-				margin: 0;
-				padding: 0;
-			}
-			#container {
-				width: 320px;
-				height: 100%;
-				left: 50%;
-				margin-left: -160px;
-				position: absolute;
-				z-index: 0;
-			}
-			#code {
-				width: 90%;
-				height:auto !important;
-				left: 5%;
-				top: 65%;
-				position: absolute;
-				z-index: 1;
-				margin-bottom: 20px;
-			}
-		</style>
-	</head>
-	<body>
-		<div id='code'>
-			<pre><code  data-language="css">/*created with texturepacker http://www.codeandweb.com/texturepacker*/  
+
+<head>
+	<title>css sprite</title>
+	<meta charset="utf-8">
+	<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.7, maximum-scale=.7">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link type="text/css" rel="stylesheet" media="all" href="css/agile.css" />
+	<link type="text/css" rel="stylesheet" media="all" href="css/github.css" />
+	<style type="text/css">
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+
+		#container {
+			width: 320px;
+			height: 100%;
+			left: 50%;
+			margin-left: -160px;
+			position: absolute;
+			z-index: 0;
+		}
+
+		#code {
+			width: 90%;
+			height: auto !important;
+			left: 5%;
+			top: 65%;
+			position: absolute;
+			z-index: 1;
+			margin-bottom: 20px;
+		}
+	</style>
+</head>
+
+<body>
+	<div id='code'>
+		<pre><code  data-language="css">/*created with texturepacker http://www.codeandweb.com/texturepacker*/  
 .sprite {display:inline-block; overflow:hidden; background-repeat: no-repeat;background-image:url(agile.png);}
 .a1 {width:70px; height:70px; background-position: -114px -398px}
 .a2 {width:114px; height:166px; background-position: -2px -2px}
@@ -47,87 +51,69 @@
 var image = new Agile.Image('a1');
 image.addClass('sprite');
 </code></pre>
-		</div>
-		<div id="container"></div>
-		<script src="../lib/qrcode.min.js"></script>
-		<script src="../lib/rainbow.min.js"></script>
-		<script src="../../build/agile.min.js"></script>
-		<script src="../../plus/agile_toolkit.js"></script>
-		<script>
-			var container, circle, semicircle, line, ellipse, triangle, image, rect;
-			var angle = 0;
-			
-			Main();
-			function Main() {
-				highlight();
-				addAgile();
-				addQR();
-			}
+	</div>
+	<div id="container"></div>
+	<script src="../lib/rainbow.min.js"></script>
+	<script src="../lib/ppo.min.js"></script>
+	<script src="../lib/qr.js"></script>
+	<script src="../..//build/agile.js"></script>
 
-			function highlight() {
-				Rainbow.extend('css', [{
-					'name' : 'comment',
-					'pattern' : /\/\*[\s\S]*?\*\//gm
-				}, {
-					'name' : 'constant.hex-color',
-					'pattern' : /#([a-f0-9]{3}|[a-f0-9]{6})(?=;|\s)/gi
-				}, {
-					'matches' : {
-						1 : 'constant.numeric',
-						2 : 'keyword.unit'
-					},
-					'pattern' : /(\d+)(px|cm|s|%)?/g
-				}], true);
-			}
+	<script>
+		var container, circle, semicircle, line, ellipse, triangle, image, rect;
+		var angle = 0;
 
-			function addAgile() {
-				Agile.mode = '3d';
-				container = new Agile.Container('container');
-				container.select = false;
-				container.perspective = 1000;
-			
-				for (var i = 0; i < 5; i++) {
-					var cssClass = 'a' + (i + 1);
-					image = new Agile.Image(cssClass);
-					image.addClass('sprite');
-					container.addChild(image);
+		main();
 
-					image.addEventListener(Agile.IMAGE_LOADED, function(e) {
-						var image = Agile.getAgileById(e.target.id);
-						if (image.id == 'Image_0') {
-							image.x = image.y = image.width / 2 + 10;
-							image.addFrame(1.5, new Agile.Keyframes(100, {
-								rotation : 360
-							}), {
-								repeat : -1,
-								ease:Agile.ease.linear
-							});
-						} else {
-							image.x = Math.random() * container.width;
-							image.y = .4 * container.height;
-						}
-					});
-				}
-			}
+		function main() {
+			highlight();
+			addAgile();
+			QRCODE.add();
+		}
 
-			function addQR() {
-				if (Agile.Device.isPC()) {
-					var qrcode = document.createElement('div');
-					qrcode.style.position = 'absolute';
-					qrcode.style.left = '10px';
-					qrcode.style.top = '10px';
-					qrcode.style.zIndex = 20;
-					document.body.appendChild(qrcode);
-					var qrcode = new QRCode(qrcode, {
-						text : window.location.href,
-						width : 128,
-						height : 128,
-						colorDark : "#107dc0",
-						colorLight : "#fff",
-						correctLevel : QRCode.CorrectLevel.L
-					});
-				}
+		function highlight() {
+			Rainbow.extend('css', [{
+				'name': 'comment',
+				'pattern': /\/\*[\s\S]*?\*\//gm
+			}, {
+				'name': 'constant.hex-color',
+				'pattern': /#([a-f0-9]{3}|[a-f0-9]{6})(?=;|\s)/gi
+			}, {
+				'matches': {
+					1: 'constant.numeric',
+					2: 'keyword.unit'
+				},
+				'pattern': /(\d+)(px|cm|s|%)?/g
+			}], true);
+		}
+
+		function addAgile() {
+			Agile.mode = '3d';
+			container = new Agile.Container('container');
+			container.select = false;
+			container.perspective = 1000;
+
+			for (var i = 0; i < 5; i++) {
+				var className = 'a' + (i + 1);
+				image = new Agile.Image(className);
+				image.addClass('sprite');
+				container.addChild(image);
+
+				image.addEventListener(Agile.IMAGE_LOADED, function (e) {
+					var image = Agile.getEleById(e.target.id);
+					// console.log(image.id);
+
+					if (image.id == 'AgileImage_0') {
+						image.x = image.y = image.width / 2 + 10;
+						var frame = new Agile.Keyframes(100, { rotation: 360 });
+						image.addFrame(1.5, frame, { repeat: -1, ease: Agile.ease.linear });
+					} else {
+						image.x = Math.random() * container.width;
+						image.y = .4 * container.height;
+					}
+				});
 			}
-		</script>
-	</body>
+		}
+	</script>
+</body>
+
 </html>

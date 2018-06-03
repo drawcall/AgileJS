@@ -8,11 +8,11 @@ var bodys = [];
 var mouseBody;
 var CONFIG = {};
 
-Main();
+main();
 
-function Main() {
-	CONFIG.max = Agile.Device.isPC() ? 200 : 50;
-	CONFIG.num = Agile.Device.isPC() ? 30 : 20;
+function main() {
+	CONFIG.max = !ppo.isMobile() ? 200 : 50;
+	CONFIG.num = !ppo.isMobile() ? 30 : 20;
 
 	resize();
 	initAgile();
@@ -22,18 +22,18 @@ function Main() {
 }
 
 function initAgile() {
-	Agile.lockTouch();
+	ppo.lockTouch();
 	stage = new Agile.Dom('container');
 	stage.select = false;
 	stage.color = '#ffcc00';
 
 	//touchStart mehtod comes from agile_toolkit.js.You can write it easily!
-	stage.touchStart(function(x, y) {
+	stage.touchStart(function (x, y) {
 		CONFIG.isMouseDown = true;
 		CONFIG.mouseX = x / 30;
 		CONFIG.mouseY = y / 30;
-		
-		if (!Agile.Device.isPC())
+
+		if (!!ppo.isMobile())
 			update();
 		if (!mouseBody) {
 			if (bodys.length < CONFIG.max)
@@ -43,12 +43,12 @@ function initAgile() {
 		mouseBody = null;
 	});
 
-	stage.touchMove(function(x, y) {
+	stage.touchMove(function (x, y) {
 		CONFIG.mouseX = x / 30;
 		CONFIG.mouseY = y / 30;
 	});
 
-	stage.touchEnd(function(x, y) {
+	stage.touchEnd(function (x, y) {
 		CONFIG.isMouseDown = false;
 		mouseBody = null;
 	});
@@ -111,7 +111,6 @@ function createBall($x, $y, $density, $friction, $restitution) {
 	var _xspeed = 0;
 	var _yspeed = Math.random() * 10 + 5;
 
-	_radius = Agile.Device.retina() > 1 ? _radius * 1 : _radius;
 	var body = createBody($density, $friction, $restitution, _x, _y, _xspeed, _yspeed, _radius);
 	var ball = new Agile.Circle(_radius, 'random');
 	ball.x = ball.y = -100;
@@ -196,7 +195,7 @@ function tick() {
 }
 
 function addQR() {
-	if (Agile.Device.isPC()) {
+	if (!ppo.isMobile()) {
 		var qrcode = document.createElement('div');
 		qrcode.style.position = 'absolute';
 		qrcode.style.left = '10px';
@@ -204,12 +203,12 @@ function addQR() {
 		qrcode.style.zIndex = 20;
 		document.body.appendChild(qrcode);
 		var qrcode = new QRCode(qrcode, {
-			text : window.location.href,
-			width : 128,
-			height : 128,
-			colorDark : "#ff5500",
-			colorLight : "rgba(0,0,0,0)",
-			correctLevel : QRCode.CorrectLevel.L
+			text: window.location.href,
+			width: 128,
+			height: 128,
+			colorDark: "#ff5500",
+			colorLight: "rgba(0,0,0,0)",
+			correctLevel: QRCode.CorrectLevel.L
 		});
 	}
 }

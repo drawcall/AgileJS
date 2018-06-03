@@ -1,246 +1,253 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>input</title>
-		<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=1, maximum-scale=1">
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black">
-		<meta charset="utf-8">
-		<link rel="stylesheet" href="css/tipTip.css" type="text/css" />
-		<style type="text/css">
-			html, body {
-				width: 100%;
-				height: 100%;
-				margin: 0;
-				padding: 0;
-				background: #e1f6ff;
-				overflow: hidden;
-			}
-			#container {
-				width: 320px;
-				height: 100%;
-				left: 50%;
-				margin-left: -160px;
-				position: absolute;
-				text-align: center;
-				z-index: 1;
-			}
-			#show {
-				width: 90%;
-				height: 100px;
-				margin: 50px auto;
-				text-align: left;
-				font-family: Arial;
-			}
-			#input {
-				width: 90%;
-				height: 40px;
-				color: #333;
-				background-color: #ccc;
-				padding: 0;
-				padding-left: 10px;
-				border: none;
-				outline: none;
-				outline-color: black;
-				font-size: 16px;
-				position: absolute;
-				left: 5%;
-				color: #FF6666;
-				display: none;
-			}
-			#notice {
-				position: absolute;
-				width: 200px;
-				height: 0px;
-				top: 50%;
-				left: 50%;
-				margin-left: -100px;
-				margin-top: -16px;
-				text-align: center;
-				font-family: Arial;
-				font-size: 18px;
-				color: #0099CC;
-				display: none;
-			}
 
-		</style>
-	</head>
-	<body>
-		<div id="container">
-			<div id='show'></div>
-			<input id='input' type="text" value="" autocorrect="off" spellcheck="false" autocomplete="off"/>
-		</div>
-		<div id="notice">
-			Please touch the screen!
-			<br/>
-			and enter the English
-		</div>
-		<script src="../lib/jquery-1.8.0.min.js"></script>
-		<script src="../lib/qrcode.min.js"></script>
-		<script src="../lib/dat.gui.min.js"></script>
-		<script src="../lib/TweenMax.min.js"></script>
-		<script src="js/jquery.range.js"></script>
-		<script src="js/jquery.tipTip.js"></script>
-		<script src="../../build/agile.min.js"></script>
-		<script src="../../plus/agile_toolkit.js"></script>
-		<script>
-			var container;
-			var size;
-			var guiValue;
-			var oldText;
+<head>
+	<title>input</title>
+	<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="css/tipTip.css" type="text/css" />
+	<style type="text/css">
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			background: #e1f6ff;
+			overflow: hidden;
+		}
 
-			Main();
-			function Main() {
-				addAgile();
-				addGui();
-				addQR();
-				initInput();
+		#container {
+			width: 320px;
+			height: 100%;
+			left: 50%;
+			margin-left: -160px;
+			position: absolute;
+			text-align: center;
+			z-index: 1;
+		}
+
+		#show {
+			width: 90%;
+			height: 100px;
+			margin: 50px auto;
+			text-align: left;
+			font-family: Arial;
+		}
+
+		#input {
+			width: 90%;
+			height: 40px;
+			color: #333;
+			background-color: #ccc;
+			padding: 0;
+			padding-left: 10px;
+			border: none;
+			outline: none;
+			outline-color: black;
+			font-size: 16px;
+			position: absolute;
+			left: 5%;
+			color: #FF6666;
+			display: none;
+		}
+
+		#notice {
+			position: absolute;
+			width: 200px;
+			height: 0px;
+			top: 50%;
+			left: 50%;
+			margin-left: -100px;
+			margin-top: -16px;
+			text-align: center;
+			font-family: Arial;
+			font-size: 18px;
+			color: #0099CC;
+			display: none;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="container">
+		<div id='show'></div>
+		<input id='input' type="text" value="" autocorrect="off" spellcheck="false" autocomplete="off" />
+	</div>
+	<div id="notice">
+		Please touch the screen!
+		<br/> and enter the English
+	</div>
+	<script src="../lib/ppo.min.js"></script>
+	<script src="../lib/jquery-1.8.0.min.js"></script>
+	<script src="../lib/qrcode.min.js"></script>
+	<script src="../lib/dat.gui.min.js"></script>
+	<script src="../lib/TweenMax.min.js"></script>
+	<script src="js/jquery.range.js"></script>
+	<script src="js/jquery.tipTip.js"></script>
+	<script src="../..//build/agile.js"></script>
+
+	<script>
+		var container;
+		var size;
+		var guiValue;
+		var oldText;
+
+		main();
+		function main() {
+			addAgile();
+			addGui();
+			addQR();
+			initInput();
+		}
+
+		function addAgile() {
+			Agile.mode = '3d';
+			container = new Agile.Container('show');
+			container.perspective = 1000;
+		}
+
+		function initInput() {
+			oldText = '';
+			$('#input').css('display', 'block');
+			$('#input').bind('input', onKeyDown);
+			$('#input').bind('beforepaste', onBeforepaste);
+
+			if (!ppo.isMobile()) {
+				$('#container').width(640);
+				$("#container").css('margin-left', '-320px');
+				$('#input').attr('placeholder', 'input');
+				$("#input").css('top', '500px');
+				$('#input').tipTip({
+					content: 'Please enter the English！',
+					fadeIn: 500,
+					defaultPosition: 'top',
+					active: true,
+					activation: 'none',
+					edgeOffset: 5
+				});
+				size = 40;
+			} else {
+				$("#input").css({
+					top: '100px',
+					left: '0px',
+					opacity: 0,
+					width: '1px',
+					height: '1px'
+				});
+				$("#notice").fadeIn(100);
+				$("#show").css('margin-top', '10px');
+				$('#container').on('touchstart', function (e) {
+					$("#input").focus();
+					$("#notice").fadeOut(500);
+					window.scrollTo(0, 1);
+				});
+				size = 30;
 			}
+		}
 
-			function addAgile() {
-				Agile.mode = '3d';
-				container = new Agile.Container('show');
-				container.perspective = 1000;
-			}
+		function onBeforepaste(e) {
+			clipboardData.setData('text', clipboardData.getData('text').replace(/[^/d]/g, ''));
+		}
 
-			function initInput() {
-				oldText = '';
-				$('#input').css('display', 'block');
-				$('#input').bind('input', onKeyDown);
-				$('#input').bind('beforepaste', onBeforepaste);
+		function onKeyDown(e) {
+			$('#input').focusEnd();
+			var value = $('#input').val().replace(/[/W]/g, '');
+			$('#input').val(value);
 
-				if (Agile.Device.isPC()) {
-					$('#container').width(640);
-					$("#container").css('margin-left', '-320px');
-					$('#input').attr('placeholder', 'input');
-					$("#input").css('top', '500px');
-					$('#input').tipTip({
-						content : 'Please enter the English！',
-						fadeIn : 500,
-						defaultPosition : 'top',
-						active : true,
-						activation : 'none',
-						edgeOffset : 5
+			if ($('#input').val().length > oldText.length) {
+				var c = value.substr(value.length - 1, 1);
+				if (c == ' ')
+					c = '&nbsp;';
+				var charSpan = new Agile.Dom($("<span>" + c + "</span>"));
+				charSpan.css({
+					'color': '#0099CC',
+					'fontSize': size + 'px',
+					'position': 'relative',
+					'display': 'inline-block'
+				});
+				charSpan.alpha = 1;
+				charSpan.scaleX = 1;
+				charSpan.scaleY = 1;
+				charSpan.rotation = 0;
+				charSpan.x = 0;
+				charSpan.y = 0;
+				container.addChild(charSpan);
+				if (!ppo.isMobile()) {
+					///pc use GSAP TweenMax
+					TweenMax.from(charSpan, .5, {
+						x: guiValue.x,
+						y: guiValue.y,
+						scaleX: guiValue.scaleX,
+						scaleY: guiValue.scaleY,
+						alpha: guiValue.alpha,
+						rotation: guiValue.rotation,
+						ease: Back.easeOut
 					});
-					size = 40;
 				} else {
-					$("#input").css({
-						top : '100px',
-						left : '0px',
-						opacity : 0,
-						width : '1px',
-						height : '1px'
-					});
-					$("#notice").fadeIn(100);
-					$("#show").css('margin-top', '10px');
-					$('#container').on('touchstart', function(e) {
-						$("#input").focus();
-						$("#notice").fadeOut(500);
-						window.scrollTo(0, 1);
-					});
-					size = 30;
-				}
-			}
-
-			function onBeforepaste(e) {
-				clipboardData.setData('text', clipboardData.getData('text').replace(/[^/d]/g, ''));
-			}
-
-			function onKeyDown(e) {
-				$('#input').focusEnd();
-				var value = $('#input').val().replace(/[/W]/g, '');
-				$('#input').val(value);
-
-				if ($('#input').val().length > oldText.length) {
-					var c = value.substr(value.length - 1, 1);
-					if (c == ' ')
-						c = '&nbsp;';
-					var charSpan = new Agile.Dom($("<span>" + c + "</span>"));
-					charSpan.css({
-						'color' : '#0099CC',
-						'fontSize' : size + 'px',
-						'position' : 'relative',
-						'display' : 'inline-block'
-					});
-					charSpan.alpha = 1;
-					charSpan.scaleX = 1;
-					charSpan.scaleY = 1;
-					charSpan.rotation = 0;
-					charSpan.x = 0;
-					charSpan.y = 0;
-					container.addChild(charSpan);
-					if (Agile.Device.isPC()) {
-						///pc use GSAP TweenMax
-						TweenMax.from(charSpan, .5, {
-							x : guiValue.x,
-							y : guiValue.y,
-							scaleX : guiValue.scaleX,
-							scaleY : guiValue.scaleY,
-							alpha : guiValue.alpha,
-							rotation : guiValue.rotation,
-							ease : Back.easeOut
-						});
-					} else {
-						///mobile use Agile.Tween
-						Agile.Tween.from(charSpan, .5, {
-							x : guiValue.x,
-							y : guiValue.y,
-							scaleX : guiValue.scaleX,
-							scaleY : guiValue.scaleY,
-							alpha : guiValue.alpha,
-							rotation : guiValue.rotation,
-							ease : Agile.ease.easeOutBack
-						});
-					}
-				} else if ($('#input').val().length < oldText.length) {
-					var charSpan = container.childrens[container.numChildren - 1];
-					container.removeChild(charSpan);
-					charSpan.destroy();
-				}
-
-				oldText = $('#input').val();
-			}
-
-			function addGui() {
-				var FizzyText = function() {
-					this.x = 0;
-					this.y = -15;
-					this.alpha = 0.1;
-					this.rotation = 0;
-					this.scaleX = 3;
-					this.scaleY = 3;
-				};
-
-				guiValue = new FizzyText();
-				if (Agile.Device.isPC()) {
-					var gui = new dat.GUI();
-					gui.add(guiValue, 'x').step(1);
-					gui.add(guiValue, 'y').step(1);
-					gui.add(guiValue, 'alpha', 0, 1.0);
-					gui.add(guiValue, 'rotation', -180, 180);
-					gui.add(guiValue, 'scaleX', 0.1, 10);
-					gui.add(guiValue, 'scaleY', 0.1, 10);
-				}
-			}
-
-			function addQR() {
-				if (Agile.Device.isPC()) {
-					var qrcode = document.createElement('div');
-					qrcode.style.position = 'absolute';
-					qrcode.style.left = '10px';
-					qrcode.style.top = '10px';
-					qrcode.style.zIndex = 20;
-					document.body.appendChild(qrcode);
-					var qrcode = new QRCode(qrcode, {
-						text : window.location.href,
-						width : 128,
-						height : 128,
-						colorDark : "#0099CC",
-						colorLight : "rgba(0,0,0,0)",
-						correctLevel : QRCode.CorrectLevel.L
+					///mobile use Agile.Tween
+					Agile.Tween.from(charSpan, .5, {
+						x: guiValue.x,
+						y: guiValue.y,
+						scaleX: guiValue.scaleX,
+						scaleY: guiValue.scaleY,
+						alpha: guiValue.alpha,
+						rotation: guiValue.rotation,
+						ease: Agile.ease.easeOutBack
 					});
 				}
+			} else if ($('#input').val().length < oldText.length) {
+				var charSpan = container.childrens[container.numChildren - 1];
+				container.removeChild(charSpan);
+				charSpan.destroy();
 			}
-		</script>
-	</body>
+
+			oldText = $('#input').val();
+		}
+
+		function addGui() {
+			var FizzyText = function () {
+				this.x = 0;
+				this.y = -15;
+				this.alpha = 0.1;
+				this.rotation = 0;
+				this.scaleX = 3;
+				this.scaleY = 3;
+			};
+
+			guiValue = new FizzyText();
+			if (!ppo.isMobile()) {
+				var gui = new dat.GUI();
+				gui.add(guiValue, 'x').step(1);
+				gui.add(guiValue, 'y').step(1);
+				gui.add(guiValue, 'alpha', 0, 1.0);
+				gui.add(guiValue, 'rotation', -180, 180);
+				gui.add(guiValue, 'scaleX', 0.1, 10);
+				gui.add(guiValue, 'scaleY', 0.1, 10);
+			}
+		}
+
+		function addQR() {
+			if (!ppo.isMobile()) {
+				var qrcode = document.createElement('div');
+				qrcode.style.position = 'absolute';
+				qrcode.style.left = '10px';
+				qrcode.style.top = '10px';
+				qrcode.style.zIndex = 20;
+				document.body.appendChild(qrcode);
+				var qrcode = new QRCode(qrcode, {
+					text: window.location.href,
+					width: 128,
+					height: 128,
+					colorDark: "#0099CC",
+					colorLight: "rgba(0,0,0,0)",
+					correctLevel: QRCode.CorrectLevel.L
+				});
+			}
+		}
+	</script>
+</body>
+
 </html>
