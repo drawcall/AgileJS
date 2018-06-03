@@ -1,8 +1,15 @@
-Agile
+Agile - The Css3 Creation Engine
 ======
-#### Using javascript generated pure CSS3 ####
+
+[![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](./LICENSE)
+[![Release Version](https://img.shields.io/badge/release-2.1.0-red.svg)](https://github.com/a-jie/Agile/releases)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/a-jie/Agile/pulls)
+[![npm](https://img.shields.io/badge/npm-2.1.0-brightgreen.svg)](https://www.npmjs.com/)
+
+
+## Using javascript generated pure CSS3
 Agile is a simple, fast and easy to use engine which uses javascript generated pure CSS3.
-Check out examples at http://a-jie.github.io/Agile/
+Check out examples at [http://a-jie.github.io/Agile/](http://a-jie.github.io/Agile/)
 
 ## Features
 - Agile uses javascript to generate pure CSS3, without canvas, webGL or SVG.
