@@ -1,4 +1,5 @@
 import Agile from '../core/Agile';
+import Color from '../utils/Color';
 import DisplayObject from './DisplayObject';
 
 export default class Triangle extends DisplayObject {

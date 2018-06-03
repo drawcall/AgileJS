@@ -86,7 +86,7 @@ export default {
 	},
 
 	browser() {
-		const isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+		const isOpera = (window.opr && window.opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
 		const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 		const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 		const isIE = !!navigator.userAgent.match(/Trident/g) || !!navigator.userAgent.match(/MSIE/g);

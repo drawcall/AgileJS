@@ -62,10 +62,10 @@ export default class Container extends Dom {
 
 	set perspectiveOriginX(perspectiveOriginX) {
 		this._avatar.perspectiveOriginX = perspectiveOriginX;
-		perspectiveOriginX = this.perspectiveOriginX * 100 + '%';
-		perspectiveOriginY = this.perspectiveOriginY * 100 + '%';
+		const ox = this.perspectiveOriginX * 100 + '%';
+		const oy = this.perspectiveOriginY * 100 + '%';
 
-		this.css3('perspectiveOrigin', perspectiveOriginX + ' ' + perspectiveOriginY);
+		this.css3('perspectiveOrigin', ox + ' ' + oy);
 	}
 
 	get perspectiveOriginY() {
@@ -74,10 +74,10 @@ export default class Container extends Dom {
 
 	set perspectiveOriginY(perspectiveOriginY) {
 		this._avatar.perspectiveOriginY = perspectiveOriginY;
-		perspectiveOriginX = this.perspectiveOriginX * 100 + '%';
-		perspectiveOriginY = this.perspectiveOriginY * 100 + '%';
+		const ox = this.perspectiveOriginX * 100 + '%';
+		const oy = this.perspectiveOriginY * 100 + '%';
 
-		this.css3('perspectiveOrigin', perspectiveOriginX + ' ' + perspectiveOriginY);
+		this.css3('perspectiveOrigin', ox + ' ' + oy);
 	}
 
 	get perspectiveOriginZ() {
@@ -86,11 +86,11 @@ export default class Container extends Dom {
 
 	set perspectiveOriginZ(perspectiveOriginZ) {
 		this._avatar.perspectiveOriginZ = perspectiveOriginZ;
-		perspectiveOriginX = this.perspectiveOriginX * 100 + '%';
-		perspectiveOriginY = this.perspectiveOriginY * 100 + '%';
-		perspectiveOriginZ = this.perspectiveOriginZ + 'px';
+		const ox = this.perspectiveOriginX * 100 + '%';
+		const oy = this.perspectiveOriginY * 100 + '%';
+		const oz = this.perspectiveOriginZ + 'px';
 
-		this.css3('perspectiveOrigin', perspectiveOriginX + ' ' + perspectiveOriginY + ' ' + perspectiveOriginZ);
+		this.css3('perspectiveOrigin', ox + ' ' + oy + ' ' + oz);
 	}
 
 	addChild(obj) {

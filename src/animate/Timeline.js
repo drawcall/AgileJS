@@ -1,4 +1,5 @@
 import Avatar from './Avatar';
+import Agile from '../core/Agile';
 import Css from '../core/Css';
 import Keyframes from './Keyframes';
 import Text from '../display/Text';

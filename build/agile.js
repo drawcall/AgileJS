@@ -4,7 +4,7 @@
 	(global.Agile = factory());
 }(this, (function () { 'use strict';
 
-var Agile$1 = {
+var Agile = {
     GROUP_LOADED: 'groupLoaded',
     SINGLE_LOADED: 'singleLoaded',
     LOAD_ERROR: 'loadError',
@@ -400,7 +400,7 @@ var Utils = {
 		return str.replace(new RegExp(s, 'gm'), b);
 	},
 	browser: function browser() {
-		var isOpera = !!window.opr && !!opr.addons || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+		var isOpera = window.opr && window.opr.addons || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
 		var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 		var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 		var isIE = !!navigator.userAgent.match(/Trident/g) || !!navigator.userAgent.match(/MSIE/g);
@@ -410,7 +410,7 @@ var Utils = {
 	}
 };
 
-var Color$1 = {
+var Color = {
 	gradient: function gradient() {
 		var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'linear';
 
@@ -528,8 +528,8 @@ var DisplayObject = function () {
         this.createElement();
 
         this.position = 'absolute';
-        this.zIndex = Agile$1.DEFAULT_DEPTH;
-        if (this.id !== '') Agile$1.agileObjs[this.id] = this;
+        this.zIndex = Agile.DEFAULT_DEPTH;
+        if (this.id !== '') Agile.agileObjs[this.id] = this;
 
         this.x = 0;
         this.y = 0;
@@ -592,33 +592,33 @@ var DisplayObject = function () {
     }, {
         key: 'addFrame',
         value: function addFrame(duration, frameObj, parmObj) {
-            return Agile$1.Timeline.addFrame(this, duration, frameObj, parmObj);
+            return Agile.Timeline.addFrame(this, duration, frameObj, parmObj);
         }
     }, {
         key: 'removeFrame',
         value: function removeFrame(frame, removeStyle) {
-            return Agile$1.Timeline.removeFrame(this, frame, removeStyle);
+            return Agile.Timeline.removeFrame(this, frame, removeStyle);
         }
     }, {
         key: 'removeFrameAfter',
         value: function removeFrameAfter(frame, complete, removeStyle) {
-            Agile$1.Timeline.removeFrameAfter(this, frame, complete, removeStyle);
+            Agile.Timeline.removeFrameAfter(this, frame, complete, removeStyle);
         }
     }, {
         key: 'pause',
         value: function pause() {
-            Agile$1.Timeline.pause(this);
+            Agile.Timeline.pause(this);
         }
     }, {
         key: 'resume',
         value: function resume() {
-            Agile$1.Timeline.resume(this);
+            Agile.Timeline.resume(this);
         }
     }, {
         key: 'addChild',
         value: function addChild(child) {
             this._avatar.maxChildrenDepth++;
-            child.zIndex = Agile$1.DEFAULT_DEPTH + this._avatar.maxChildrenDepth;
+            child.zIndex = Agile.DEFAULT_DEPTH + this._avatar.maxChildrenDepth;
 
             if (child.parent !== this) {
                 this.element.appendChild(child.element);
@@ -658,7 +658,7 @@ var DisplayObject = function () {
                 this.numChildren--;
                 Utils.arrayRemove(this.childrens, child);
 
-                child.zIndex = Agile$1.DEFAULT_DEPTH;
+                child.zIndex = Agile.DEFAULT_DEPTH;
                 child.parent = null;
                 child.transform();
             }
@@ -697,7 +697,7 @@ var DisplayObject = function () {
                 scale = void 0,
                 skew = void 0;
 
-            if (Agile$1.mode === '3d' && Agile$1.support3d) {
+            if (Agile.mode === '3d' && Agile.support3d) {
                 parentOffsetX = this.parent ? this.parent.regX * this.parent.originalWidth : 0;
                 parentOffsetY = this.parent ? this.parent.regY * this.parent.originalHeight : 0;
                 thisOffsetX = this.regX * this.originalWidth;
@@ -788,13 +788,13 @@ var DisplayObject = function () {
             for (var i = 0; i < this.childrens.length; i++) {
                 this.childrens[i].destroy();
             }Utils.destroyObject(this.childrens);
-            delete Agile$1.agileObjs[this.id];
+            delete Agile.agileObjs[this.id];
 
             this.parent = null;
             this.filters = null;
 
-            Agile$1.Timeline.kill(this);
-            Agile$1.Tween.killTweensOf(this);
+            Agile.Timeline.kill(this);
+            Agile.Tween.killTweensOf(this);
         }
     }, {
         key: 'toString',
@@ -1025,7 +1025,7 @@ var DisplayObject = function () {
     }, {
         key: 'color',
         set: function set$$1(color) {
-            if (color === 'random' || color === '#random') color = Color$1.randomColor();
+            if (color === 'random' || color === '#random') color = Color.randomColor();
             this._avatar.color = color;
 
             if (color.indexOf('gradient') > -1) this.css3j('background', this.color);else this.css2('backgroundColor', this.color);
@@ -1163,7 +1163,7 @@ var Dom = function (_DisplayObject) {
 
 		_this.transform();
 
-		Agile$1.agileObjs[_this.id] = _this;
+		Agile.agileObjs[_this.id] = _this;
 		if (resetPosition) _this.resetPosition();
 		return _this;
 	}
@@ -1223,7 +1223,7 @@ var Container = function (_Dom) {
 
 		if (dom === '3d' || mode === '3d') _this.mode = '3d';else _this.mode = '2d';
 
-		Agile$1.containers.push(_this);
+		Agile.containers.push(_this);
 		return _this;
 	}
 
@@ -1242,7 +1242,7 @@ var Container = function (_Dom) {
 			get(Container.prototype.__proto__ || Object.getPrototypeOf(Container.prototype), 'addChild', this).call(this, obj);
 			obj.backface = this.backface;
 
-			if (Agile$1.backface === false) obj.backface = false;
+			if (Agile.backface === false) obj.backface = false;
 		}
 	}, {
 		key: 'toString',
@@ -1253,7 +1253,7 @@ var Container = function (_Dom) {
 		key: 'destroy',
 		value: function destroy() {
 			get(Container.prototype.__proto__ || Object.getPrototypeOf(Container.prototype), 'destroy', this).call(this);
-			Utils.arrayRemove(Agile$1.containers, this);
+			Utils.arrayRemove(Agile.containers, this);
 		}
 	}, {
 		key: 'mode',
@@ -1281,10 +1281,10 @@ var Container = function (_Dom) {
 		},
 		set: function set$$1(perspectiveOriginX) {
 			this._avatar.perspectiveOriginX = perspectiveOriginX;
-			perspectiveOriginX = this.perspectiveOriginX * 100 + '%';
-			perspectiveOriginY = this.perspectiveOriginY * 100 + '%';
+			var ox = this.perspectiveOriginX * 100 + '%';
+			var oy = this.perspectiveOriginY * 100 + '%';
 
-			this.css3('perspectiveOrigin', perspectiveOriginX + ' ' + perspectiveOriginY);
+			this.css3('perspectiveOrigin', ox + ' ' + oy);
 		}
 	}, {
 		key: 'perspectiveOriginY',
@@ -1293,10 +1293,10 @@ var Container = function (_Dom) {
 		},
 		set: function set$$1(perspectiveOriginY) {
 			this._avatar.perspectiveOriginY = perspectiveOriginY;
-			perspectiveOriginX = this.perspectiveOriginX * 100 + '%';
-			perspectiveOriginY = this.perspectiveOriginY * 100 + '%';
+			var ox = this.perspectiveOriginX * 100 + '%';
+			var oy = this.perspectiveOriginY * 100 + '%';
 
-			this.css3('perspectiveOrigin', perspectiveOriginX + ' ' + perspectiveOriginY);
+			this.css3('perspectiveOrigin', ox + ' ' + oy);
 		}
 	}, {
 		key: 'perspectiveOriginZ',
@@ -1305,11 +1305,11 @@ var Container = function (_Dom) {
 		},
 		set: function set$$1(perspectiveOriginZ) {
 			this._avatar.perspectiveOriginZ = perspectiveOriginZ;
-			perspectiveOriginX = this.perspectiveOriginX * 100 + '%';
-			perspectiveOriginY = this.perspectiveOriginY * 100 + '%';
-			perspectiveOriginZ = this.perspectiveOriginZ + 'px';
+			var ox = this.perspectiveOriginX * 100 + '%';
+			var oy = this.perspectiveOriginY * 100 + '%';
+			var oz = this.perspectiveOriginZ + 'px';
 
-			this.css3('perspectiveOrigin', perspectiveOriginX + ' ' + perspectiveOriginY + ' ' + perspectiveOriginZ);
+			this.css3('perspectiveOrigin', ox + ' ' + oy + ' ' + oz);
 		}
 	}]);
 	return Container;
@@ -1448,7 +1448,7 @@ var LoadManager = function (_EventDispatcher) {
 			this.loadIndex++;
 			this._targetList.push(null);
 
-			this.dispatchEvent({ type: Agile$1.LOAD_ERROR });
+			this.dispatchEvent({ type: Agile.LOAD_ERROR });
 			this.checkLoaded();
 			this.singleLoad();
 		}
@@ -1465,7 +1465,7 @@ var LoadManager = function (_EventDispatcher) {
 			}
 
 			this.loadIndex++;
-			this.dispatchEvent({ type: Agile$1.SINGLE_LOADED });
+			this.dispatchEvent({ type: Agile.SINGLE_LOADED });
 			this.checkLoaded();
 			this.singleLoad();
 		}
@@ -1474,7 +1474,7 @@ var LoadManager = function (_EventDispatcher) {
 		value: function checkLoaded() {
 			if (this.loadIndex >= this._urls.length && !this.loaded) {
 				this.loaded = true;
-				this.dispatchEvent({ type: Agile$1.GROUP_LOADED });
+				this.dispatchEvent({ type: Agile.GROUP_LOADED });
 			}
 		}
 	}, {
@@ -1633,11 +1633,11 @@ var AgileImage = function (_DisplayObject) {
 				var customEvent = void 0;
 				try {
 					customEvent = document.createEvent('CustomEvent');
-					customEvent.initCustomEvent(Agile$1.IMAGE_LOADED, false, false);
+					customEvent.initCustomEvent(Agile.IMAGE_LOADED, false, false);
 					_this3.element.dispatchEvent(customEvent);
 				} catch (e) {
 					customEvent = document.createEvent('HTMLEvents');
-					customEvent.initEvent(Agile$1.IMAGE_LOADED, false, false);
+					customEvent.initEvent(Agile.IMAGE_LOADED, false, false);
 					_this3.element.dispatchEvent(customEvent);
 				}
 
@@ -1747,7 +1747,7 @@ var Line = function (_DisplayObject) {
 
 			var translate = void 0,
 			    rotate = void 0;
-			if (Agile$1.mode === '3d') {
+			if (Agile.mode === '3d') {
 				translate = 'translate3d(' + this._avatar.fromX + 'px,' + this._avatar.fromY + 'px,0px) ';
 				rotate = 'rotateZ(' + angle + 'deg)';
 			} else {
@@ -1810,7 +1810,7 @@ var Line = function (_DisplayObject) {
 			var translate = void 0,
 			    rotate = void 0,
 			    scale = void 0;
-			if (Agile$1.mode === '3d') {
+			if (Agile.mode === '3d') {
 				translate = 'translate3d(' + (this._avatar.fromX - offsetX) + 'px,' + (this._avatar.fromY - offsetY) + 'px,0px) ';
 				rotate = 'rotateZ(' + angle + 'deg) ';
 				scale = 'scale3d(1,' + s + ',1)';
@@ -2046,7 +2046,7 @@ var Keyframes = function () {
 		key: 'setColor',
 		value: function setColor(obj) {
 			if (obj.color) {
-				if (obj.color === 'random') obj.color = Color$1.randomColor();
+				if (obj.color === 'random') obj.color = Color.randomColor();
 			}
 		}
 	}, {
@@ -3099,7 +3099,7 @@ var Triangle = function (_DisplayObject) {
 			    scale = void 0,
 			    skew = void 0;
 
-			if (Agile$1.mode === '3d' && Agile$1.support3d) {
+			if (Agile.mode === '3d' && Agile.support3d) {
 				parentOffsetX = this.parent ? this.parent.regX * this.parent.originalWidth : 0;
 				parentOffsetY = this.parent ? this.parent.regY * this.parent.originalHeight : 0;
 				thisOffsetX = this.regX * this.originalWidth;
@@ -3482,8 +3482,8 @@ var Filter = function () {
 						break;
 
 					case 'blur':
-						Css.css2(agileEle.element, 'color', Color$1.alpha0);
-						Css.css3(agileEle.element, 'background', Color$1.alpha0);
+						Css.css2(agileEle.element, 'color', Color.alpha0);
+						Css.css3(agileEle.element, 'background', Color.alpha0);
 						this.styleObj[agileEle.id].value = '0 0 ' + this.a + 'px ' + this.b;
 						break;
 
@@ -3673,7 +3673,7 @@ var Tween = {
 			if (i <= -1) {
 				this.getOldAttribute(agile, tweenIndex)[index] = agile[index];
 
-				if (index === 'alpha') index = 'opacity';else if (index === 'color' && !(agile instanceof Text)) index = 'background-color';else if (index === 'x' || index === 'y' || index === 'z') index = Agile$1.transform;else if (index === 'scaleX' || index === 'scaleY' || index === 'scaleZ') index = Agile$1.transform;else if (index === 'rotationX' || index === 'rotation' || index === 'rotationY' || index === 'rotationZ') index = Agile$1.transform;else if (index === 'skewX' || index === 'skewY') index = Agile$1.transform;else if (index === 'regX' || index === 'regY') index = this.Agile.transformOrigin;else if (index === 'width' || index === 'height') index = Agile$1.transform;else if (index === 'originalWidth') index = 'width';else if (index === 'originalHeight') index = 'height';
+				if (index === 'alpha') index = 'opacity';else if (index === 'color' && !(agile instanceof Text)) index = 'background-color';else if (index === 'x' || index === 'y' || index === 'z') index = Agile.transform;else if (index === 'scaleX' || index === 'scaleY' || index === 'scaleZ') index = Agile.transform;else if (index === 'rotationX' || index === 'rotation' || index === 'rotationY' || index === 'rotationZ') index = Agile.transform;else if (index === 'skewX' || index === 'skewY') index = Agile.transform;else if (index === 'regX' || index === 'regY') index = this.Agile.transformOrigin;else if (index === 'width' || index === 'height') index = Agile.transform;else if (index === 'originalWidth') index = 'width';else if (index === 'originalHeight') index = 'height';
 
 				if (propertys.indexOf(index) < 0) propertys.push(index);
 			}
@@ -3737,7 +3737,7 @@ var Tween = {
 	},
 	killAll: function killAll(complete) {
 		for (var agileID in this.oldAttribute) {
-			var agile = Agile$1.getEleById(agileID);
+			var agile = Agile.getEleById(agileID);
 			this.killTweensOf(agile, complete);
 		}
 	},
@@ -3749,7 +3749,7 @@ var Tween = {
 			var i = this.getKeywordString().search(new RegExp(newIndex, 'i'));
 
 			if (i <= -1) {
-				var j = Agile$1.keyword.search(new RegExp(newIndex, 'i'));
+				var j = Agile.keyword.search(new RegExp(newIndex, 'i'));
 				if (j <= -1) {
 					if (index.indexOf('-') > -1) {
 						var arr = index.split('-');
@@ -3858,39 +3858,41 @@ var Tween = {
 	}
 };
 
-Agile$1.Css = Css;
+Agile.Css = Css;
 
-Agile$1.DisplayObject = DisplayObject;
-Agile$1.Container = Container;
-Agile$1.Circle = Circle;
-Agile$1.Dom = Dom;
-Agile$1.Ellipse = Ellipse;
-Agile$1.Image = AgileImage;
-Agile$1.Line = Line;
-Agile$1.MovieClip = MovieClip;
-Agile$1.Rect = Rect;
-Agile$1.SpriteSheet = SpriteSheet;
-Agile$1.Text = Text;
-Agile$1.Triangle = Triangle;
-Agile$1.ScrollingBg = ScrollingBg;
-Agile$1.Semicircle = Semicircle;
+Agile.DisplayObject = DisplayObject;
+Agile.Container = Container;
+Agile.Circle = Circle;
+Agile.Dom = Dom;
+Agile.Ellipse = Ellipse;
+Agile.Image = AgileImage;
+Agile.Line = Line;
+Agile.MovieClip = MovieClip;
+Agile.Rect = Rect;
+Agile.SpriteSheet = SpriteSheet;
+Agile.Text = Text;
+Agile.Triangle = Triangle;
+Agile.ScrollingBg = ScrollingBg;
+Agile.Semicircle = Semicircle;
 
-Agile$1.Color = Color$1;
-Agile$1.Filter = Filter;
-Agile$1.Utils = Utils;
-Agile$1.LoadManager = LoadManager;
+Agile.Color = Color;
+Agile.Filter = Filter;
+Agile.Utils = Utils;
+Agile.LoadManager = LoadManager;
 
-Agile$1.MovieClipLabel = MovieClipLabel;
-Agile$1.Keyframes = Keyframes;
-Agile$1.Timeline = Timeline;
-Agile$1.Tween = Tween;
-Agile$1.ease = ease;
+Agile.MovieClipLabel = MovieClipLabel;
+Agile.Keyframes = Keyframes;
+Agile.Timeline = Timeline;
+Agile.Tween = Tween;
+Agile.ease = ease;
 
-Agile$1.gradient = Color$1.gradient.bind(Color$1);
+Agile.gradient = Color.gradient.bind(Color);
 
-Object.assign(Agile$1, ease);
+Object.assign(Agile, ease);
 
-return Agile$1;
+// export
+
+return Agile;
 
 })));
 //# sourceMappingURL=agile.js.map
