@@ -6,6 +6,7 @@ Agile - The Css3 Creation Engine
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/a-jie/Agile/pulls)
 [![npm](https://img.shields.io/badge/npm-2.1.0-brightgreen.svg)](https://www.npmjs.com/)
 
+![Agile banner](https://github.com/a-jie/Agile/blob/master/image/banner.png?raw=true)
 
 ## Using javascript generated pure CSS3
 Agile is a simple, fast and easy to use engine which uses javascript generated pure CSS3.
@@ -17,11 +18,14 @@ Check out examples at [http://a-jie.github.io/Agile/](http://a-jie.github.io/Agi
 - Agile’s API has high similar characteristic with actionscript 3.0, you can learn it in 10 minutes.
 
 ## Usage
-Download the [minified library](https://github.com/a-jie/Agile/blob/master/build/agile.min.js) and include it in your html document.
+Download the [minified library](https://github.com/a-jie/Agile/blob/master/build/agile.min.js) and include it in your html document.  
+
 ```html
 <script src="js/agile.min.js"></script>
 ```
+
 Create and move a circle:
+
 ```javascript
 //init Agile
 Agile.mode = '3d';
@@ -47,12 +51,27 @@ circle.addFrame(1, keyframes, {
 ```
 
 ## Building Agile
-Node is a dependency, use terminal to install it with with:<br>
-`git clone git://github.com/a-jie/Agile.git`<br>
-Then navigate to the build directory by running:<br>
-`cd ./build`<br>
-Finally run the build command:<br>
-`node build.js`
+Node is a dependency, use terminal to install it with with:  
+
+```javascript
+git clone git://github.com/a-jie/Proton.git
+...
+npm install
+npm run build
+``` 
+
+and run examples 
+
+```javascript
+npm start
+//vist http://localhost:3001/examples/
+```
+
+es6 lint
+
+```javascript
+npm run lint
+```
 
 ## License
 LicenseFinder is released under the MIT License. http://www.opensource.org/licenses/mit-license
