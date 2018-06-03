@@ -1,81 +1,97 @@
-(function(Agile, undefined) {
-	var Tween = Agile.Tween || {
-		'keyword' : ['ease', 'delay', 'yoyo', 'all', 'loop', 'repeat', 'frame', 'onStart', 'onUpdate', 'onComplete', 'onCompleteParams', 'overwrite', 'setTimeout'],
-		callbacks : {},
-		arguments : {},
-		oldAttribute : {},
-		//To fix css3 transform bugs using setTimeout., But doing so will lose a lot of efficiency。
-		setTimeout : true,
-		timeoutDelay : 30,
-		index : 0
-	}
+import Css from '../core/Css';
+import Text from '../display/Text';
+import Utils from '../utils/Utils';
+import JsonUtils from '../utils/JsonUtils';
 
-	Tween.to = function(agile, duration, paramsObj) {
-		var propertys = paramsObj['all'] ? ['all'] : Tween.apply(agile, paramsObj, Tween.index);
-		var transition = '';
+export default {
+	keyword: ['ease', 'delay', 'yoyo', 'all', 'loop', 'repeat', 'frame', 'onStart', 'onUpdate', 'onComplete', 'onCompleteParams', 'overwrite', 'setTimeout'],
+	callbacks: {},
+	arguments: {},
+	oldAttribute: {},
+	setTimeout: true,
+	timeoutDelay: 30,
+	index: 0,
 
-		for (var i = 0; i < propertys.length; i++) {
-			if (i > 0)
-				transition += ', ';
+	to(agile, duration, paramsObj) {
+		const propertys = paramsObj['all'] ? ['all'] : this.apply(agile, paramsObj, this.index);
+		let transition = '';
+
+		for (let i = 0; i < propertys.length; i++) {
+			if (i > 0) transition += ', ';
+
 			transition += propertys[i];
 			transition += ' ' + duration + 's';
-			if (paramsObj['ease'])
-				transition += ' ' + paramsObj['ease'];
-			if (paramsObj['delay'])
-				transition += ' ' + paramsObj['delay'] + 's';
+
+			if (paramsObj['ease']) transition += ' ' + paramsObj['ease'];
+			if (paramsObj['delay']) transition += ' ' + paramsObj['delay'] + 's';
 		}
 
-		var id = -999;
-		var isSetTimeout = false;
-		isSetTimeout = paramsObj.setTimeout === undefined ? Tween.setTimeout : paramsObj.setTimeout;
-		
-		if (isSetTimeout) {
-			id = setTimeout(function(agile, transition, paramsObj, tweenIndex) {
-				Tween.start(agile, transition, paramsObj, tweenIndex);
+		let id = -999;
+		if (this.useSetTimeout()) {
+			id = setTimeout((agile, transition, paramsObj, tweenIndex) => {
+				this.start(agile, transition, paramsObj, tweenIndex);
 				id = -999;
-			}, Tween.timeoutDelay, agile, transition, paramsObj, Tween.index);
+			}, this.timeoutDelay, agile, transition, paramsObj, this.index);
 		} else {
-			Tween.start(agile, transition, paramsObj, Tween.index);
+			this.start(agile, transition, paramsObj, this.index);
 		}
 
-		Tween.arguments[Tween.index + ''] = [agile, duration, paramsObj, id];
-		return Tween.index++;
-	}
+		this.arguments[this.index + ''] = [agile, duration, paramsObj, id];
+		return this.index++;
+	},
 
-	Tween.start = function(agile, transition, paramsObj, tweenIndex) {
-		if (paramsObj['overwrite']) {
-			Tween.killTweensOf(agile);
-			Agile.Utils.destroyObject(agile.transitions);
-			agile.transitions[tweenIndex + ''] = transition;
+	useSetTimeout() {
+		let use = false;
+		if (this.setTimeout !== undefined) {
+			use = this.setTimeout;
 		} else {
-			var preTransition = Agile.Utils.isEmpty(agile.transitions) || Agile.JsonUtils.object2String(agile.transitions) == 'none' ? '' : Agile.Css.css3(agile.element, 'transition') + ', ';
-			agile.transitions[tweenIndex + ''] = transition;
+			if (Utils.browser().isFirefox || Utils.browser().isIE) {
+				use = true;
+			} else {
+				use = false;
+			}
+		}
+
+		return use;
+	},
+
+	start(agile, transition, paramsObj, tweenIndex) {
+		if (paramsObj['overwrite']) {
+			this.killTweensOf(agile);
+			Utils.destroyObject(agile.transitions);
+			agile.transitions[`${tweenIndex}`] = transition;
+		} else {
+			const preTransition = Utils.isEmpty(agile.transitions) || JsonUtils.object2String(agile.transitions) === 'none' ? '' : Css.css3(agile.element, 'transition') + ', ';
+			agile.transitions[`${tweenIndex}`] = transition;
 			transition = preTransition + transition;
 		}
 
-		Agile.Css.css3(agile.element, 'transition', transition);
-		Tween.set(agile, paramsObj);
+		Css.css3(agile.element, 'transition', transition);
+		this.set(agile, paramsObj);
 
-		Tween.addCallback(agile);
+		this.addCallback(agile);
+
 		if (paramsObj['onStart']) {
-			var delay = paramsObj['delay'] || 0;
+			const delay = paramsObj['delay'] || 0;
 			setTimeout(paramsObj['onStart'], delay * 1000);
 		}
 
 		if (paramsObj['onComplete']) {
 			if (paramsObj['onCompleteParams'])
-				Tween.callbacks[agile.id].completes[tweenIndex + ''] = [paramsObj['onComplete'], paramsObj['onCompleteParams']];
+				this.callbacks[agile.id].completes[`${tweenIndex}`] = [paramsObj['onComplete'], paramsObj['onCompleteParams']];
 			else
-				Tween.callbacks[agile.id].completes[tweenIndex + ''] = [paramsObj['onComplete']];
+				this.callbacks[agile.id].completes[`${tweenIndex}`] = [paramsObj['onComplete']];
 		}
-	}
+	},
 
-	Tween.from = function(agile, duration, paramsObj) {
-		var toObj = {};
-		for (var index in paramsObj) {
-			var newIndex = '_' + index + '_';
-			var i = Tween.getKeywordString().search(new RegExp(newIndex, 'i'));
-			if (i == -1) {
+	from(agile, duration, paramsObj) {
+		let toObj = {};
+
+		for (let index in paramsObj) {
+			let newIndex = `_${index}_`;
+			let i = this.getKeywordString().search(new RegExp(newIndex, 'i'));
+
+			if (i === -1) {
 				toObj[index] = agile[index];
 				agile[index] = paramsObj[index];
 			} else {
@@ -83,130 +99,135 @@
 			}
 		}
 
-		return Tween.to(agile, duration, toObj);
-	}
+		return this.to(agile, duration, toObj);
+	},
 
-	Tween.fromTo = function(agile, duration, fromObj, toObj) {
-		for (var index in fromObj) {
-			var newIndex = '_' + index + '_';
-			var i = Tween.getKeywordString().search(new RegExp(newIndex, 'i'));
-			if (i == -1)
-				agile[index] = fromObj[index];
+	fromTo(agile, duration, fromObj, toObj) {
+		for (let index in fromObj) {
+			let newIndex = `_${index}_`;
+			let i = this.getKeywordString().search(new RegExp(newIndex, 'i'));
+			if (i === -1) agile[index] = fromObj[index];
 		}
 
-		return Tween.to(agile, duration, toObj);
-	}
+		return this.to(agile, duration, toObj);
+	},
 
-	Tween.apply = function(agile, paramsObj, tweenIndex) {
-		var propertys = [];
-		for (var index in paramsObj) {
-			var newIndex = '_' + index + '_';
-			var i = Tween.getKeywordString().search(new RegExp(newIndex, 'i'));
+	apply(agile, paramsObj, tweenIndex) {
+		const propertys = [];
+
+		for (let index in paramsObj) {
+			let newIndex = `_${index}_`;
+			let i = this.getKeywordString().search(new RegExp(newIndex, 'i'));
+
 			if (i <= -1) {
-				Tween.getOldAttribute(agile,tweenIndex)[index] = agile[index];
+				this.getOldAttribute(agile, tweenIndex)[index] = agile[index];
 
-				if (index == 'alpha')
+				if (index === 'alpha')
 					index = 'opacity';
-				else if (index == 'color' && !( agile instanceof Agile.Text))
+				else if (index === 'color' && !(agile instanceof Text))
 					index = 'background-color';
-				else if (index == 'x' || index == 'y' || index == 'z')
+				else if (index === 'x' || index === 'y' || index === 'z')
 					index = Agile.transform;
-				else if (index == 'scaleX' || index == 'scaleY' || index == 'scaleZ')
+				else if (index === 'scaleX' || index === 'scaleY' || index === 'scaleZ')
 					index = Agile.transform;
-				else if (index == 'rotationX' || index == 'rotation' || index == 'rotationY' || index == 'rotationZ')
+				else if (index === 'rotationX' || index === 'rotation' || index === 'rotationY' || index === 'rotationZ')
 					index = Agile.transform;
-				else if (index == 'skewX' || index == 'skewY')
+				else if (index === 'skewX' || index === 'skewY')
 					index = Agile.transform;
-				else if (index == 'regX' || index == 'regY')
-					index = Tween.Agile.transformOrigin;
-				else if (index == 'width' || index == 'height')
+				else if (index === 'regX' || index === 'regY')
+					index = this.Agile.transformOrigin;
+				else if (index === 'width' || index === 'height')
 					index = Agile.transform;
-				else if (index == 'originalWidth')
+				else if (index === 'originalWidth')
 					index = 'width';
-				else if (index == 'originalHeight')
+				else if (index === 'originalHeight')
 					index = 'height';
 
-				if (propertys.indexOf(index) < 0)
-					propertys.push(index);
+				if (propertys.indexOf(index) < 0) propertys.push(index);
 			}
 		}
 
 		return propertys;
-	}
+	},
 
-	Tween.killTweensOf = function(agile, complete) {
-		if (Agile.Utils.isNumber(agile)) {
-			if (Tween.arguments[agile + '']) {
-				var newagile = Tween.arguments[agile+''][0];
-				var param = Tween.arguments[agile+''][2];
-				var id = Tween.arguments[agile+''][3];
+	killTweensOf(agile, complete) {
+		if (Utils.isNumber(agile)) {
+			if (this.arguments[`${agile}`]) {
+				const newagile = this.arguments[`${agile}`][0];
+				const param = this.arguments[`${agile}`][2];
+				let id = this.arguments[`${agile}`][3];
 				if (id > 0) {
 					clearTimeout(id);
 					id = -999;
 				}
-				if (complete)
-					Tween.set(newagile, param);
 
-				Agile.Css.css3(newagile.element, 'transition', 'none !important');
-				Agile.Css.css3(newagile.element, 'transition', 'none');
-				Tween.removeCallback(newagile);
-				delete Tween.arguments[agile + ''];
-				delete newagile.transitions[agile + ''];
+				if (complete) this.set(newagile, param);
+				Css.css3(newagile.element, 'transition', 'none !important');
+				Css.css3(newagile.element, 'transition', 'none');
+
+				this.removeCallback(newagile);
+				delete this.arguments[`${agile}`];
+				delete newagile.transitions[`${agile}`];
 			}
 		} else {
-			for (var tweenIndex in Tween.arguments) {
-				var arr = Tween.arguments[tweenIndex];
-				if (arr[0] == agile) {
-					var id = arr[3];
+			for (let tweenIndex in this.arguments) {
+				let arr = this.arguments[tweenIndex];
+
+				if (arr[0] === agile) {
+					let id = arr[3];
 					if (id > 0) {
 						clearTimeout(id);
 						id = -999;
 					}
-					
-					delete Tween.arguments[tweenIndex];
+
+					delete this.arguments[tweenIndex];
 				}
 			}
-			
+
 			if (complete) {
-				if (Tween.oldAttribute[agile.id]) {
-					for (var tweenIndex in Tween.oldAttribute[agile.id]) {
-						for (var p in Tween.oldAttribute[agile.id][tweenIndex]) {
-							agile[p] = Tween.oldAttribute[agile.id][tweenIndex][p];
+				if (this.oldAttribute[agile.id]) {
+					for (let tweenIndex in this.oldAttribute[agile.id]) {
+						for (let p in this.oldAttribute[agile.id][tweenIndex]) {
+							agile[p] = this.oldAttribute[agile.id][tweenIndex][p];
 						}
-						delete Tween.oldAttribute[agile.id][tweenIndex];
+
+						delete this.oldAttribute[agile.id][tweenIndex];
 					}
 				}
 			}
-			
-			Agile.Utils.destroyObject(agile.transitions);
-			delete Tween.oldAttribute[agile.id];
-			Tween.removeCallback(agile);
-			Agile.Css.css3(agile.element, 'transition', 'none !important');
-			Agile.Css.css3(agile.element, 'transition', 'none');
-		}
-	}
 
-	Tween.killAll = function(complete) {
-		for (var agileID in Tween.oldAttribute) {
-			var agile = Agile.getAgileByID(agileID);
-			Tween.killTweensOf(agile, complete);
-		}
-	}
+			Utils.destroyObject(agile.transitions);
+			delete this.oldAttribute[agile.id];
+			this.removeCallback(agile);
 
-	Tween.set = function(agile, paramsObj) {
+			Css.css3(agile.element, 'transition', 'none !important');
+			Css.css3(agile.element, 'transition', 'none');
+		}
+	},
+
+	killAll(complete) {
+		for (let agileID in this.oldAttribute) {
+			const agile = Agile.getEleById(agileID);
+			this.killTweensOf(agile, complete);
+		}
+	},
+
+	set(agile, paramsObj) {
 		agile.css3('transition');
-		for (var index in paramsObj) {
-			var newIndex = '_' + index + '_';
-			var i = Tween.getKeywordString().search(new RegExp(newIndex, 'i'));
+
+		for (let index in paramsObj) {
+			let newIndex = `_${index}_`;
+			let i = this.getKeywordString().search(new RegExp(newIndex, 'i'));
+
 			if (i <= -1) {
-				var j = Agile.keyword.search(new RegExp(newIndex, 'i'));
+				let j = Agile.keyword.search(new RegExp(newIndex, 'i'));
 				if (j <= -1) {
 					if (index.indexOf('-') > -1) {
-						var arr = index.split('-');
-						for (var i = 0; i < arr.length; i++) {
-							if (i != 0)
-								arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].substr(1);
+						let arr = index.split('-');
+						for (let i = 0; i < arr.length; i++) {
+							if (i !== 0) arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].substr(1);
 						}
+
 						agile.css2(arr.join(''), paramsObj[index]);
 					} else {
 						agile.css2(index, paramsObj[index]);
@@ -216,104 +237,102 @@
 				}
 			}
 		}
-	}
+	},
 
-	Tween.remove = function(agile, tweenIndex) {
-		tweenIndex = tweenIndex + '';
-		delete agile.transitions[tweenIndex];
-		var transitions = Agile.JsonUtils.object2String(agile.transitions);
-		Agile.Css.css3(agile.element, 'transition', transitions);
-	}
+	remove(agile, tweenIndex) {
+		delete agile.transitions[`${tweenIndex}`];
+		const transitions = JsonUtils.object2String(agile.transitions);
+		Css.css3(agile.element, 'transition', transitions);
+	},
 
-	Tween.getKeywordString = function() {
-		if (!Tween.keywordString)
-			Tween.keywordString = '_' + Tween.keyword.join('_') + '_';
-		return Tween.keywordString;
-	}
+	getKeywordString() {
+		if (!this.keywordString) this.keywordString = '_' + this.keyword.join('_') + '_';
+		return this.keywordString;
+	},
 
-	Tween.addCallback = function(agile) {
-		if (!Tween.callbacks[agile.id]) {
-			Tween.callbacks[agile.id] = {
-				fun : function(e) {
-					for (var tweenIndex in agile.transitions) {
-						if (agile.transitions[tweenIndex].indexOf(e.propertyName) > -1) {
-							Tween.remove(agile, tweenIndex);
-							Tween.deleteOldAttribute(agile, tweenIndex);
+	addCallback(agile) {
+		if (this.callbacks[agile.id]) return this.callbacks[agile.id];
 
-							if (Tween.callbacks[agile.id].completes[tweenIndex]) {
-								if (Tween.callbacks[agile.id].completes[tweenIndex].length == 1)
-									Tween.callbacks[agile.id].completes[tweenIndex][0].apply(agile);
-								else
-									Tween.callbacks[agile.id].completes[tweenIndex][0].apply(agile, Tween.callbacks[agile.id].completes[tweenIndex][1]);
+		this.callbacks[agile.id] = {
+			fun: e => {
+				const callback = this.callbacks[agile.id];
+				for (let index in agile.transitions) {
+					if (agile.transitions[index].indexOf(e.propertyName) > -1) {
+						this.remove(agile, index);
+						this.deleteOldAttribute(agile, index);
 
-								try {
-									delete Tween.callbacks[agile.id].completes[tweenIndex];
-								} catch(e) {
-									//
-								}
+						if (callback.completes[index]) {
+							const completes = callback.completes[index];
+							if (completes.length === 1)
+								completes[0].apply(agile);
+							else
+								completes[0].apply(agile, completes[1]);
+
+							try {
+								delete callback.completes[index];
+							} catch (e) {
+								//
 							}
 						}
 					}
-				},
-				completes : {}
-			}
-
-			Tween.prefixEvent();
-			agile.element.addEventListener(Tween.transitionend, Tween.callbacks[agile.id].fun, false);
+				}
+			},
+			completes: {}
 		}
 
-		return Tween.callbacks[agile.id];
-	}
+		this.getPrefixEvent();
+		agile.element.addEventListener(this.transitionend, this.callbacks[agile.id].fun, false);
 
-	Tween.removeCallback = function(agile) {
-		if (Tween.callbacks[agile.id]) {
-			Tween.prefixEvent();
-			agile.element.removeEventListener(Tween.transitionend, Tween.callbacks[agile.id].fun, false);
-			if(Tween.callbacks[agile.id].completes)
-				Agile.Utils.destroyObject(Tween.callbacks[agile.id].completes);
-			Agile.Utils.destroyObject(Tween.callbacks[agile.id]);
-			
-			delete Tween.callbacks[agile.id];
+		return this.callbacks[agile.id];
+	},
+
+	removeCallback(agile) {
+		if (this.callbacks[agile.id]) {
+			const callback = this.callbacks[agile.id];
+			this.getPrefixEvent();
+			agile.element.removeEventListener(this.transitionend, callback.fun, false);
+
+			if (callback.completes) Utils.destroyObject(callback.completes);
+			Utils.destroyObject(callback);
+
+			delete this.callbacks[agile.id];
 		}
-	}
+	},
 
-	Tween.prefixEvent = function() {
-		if (!Tween.transitionend) {
-			var prefix = Agile.Css.getPrefix();
-			switch(prefix) {
+	getPrefixEvent() {
+		if (!this.transitionend) {
+			const prefix = Css.getPrefix();
+			switch (prefix) {
 				case 'Webkit':
-					Tween.transitionend = 'webkitTransitionEnd';
+					this.transitionend = 'webkitTransitionEnd';
 					break;
 				case 'ms':
-					Tween.transitionend = 'MSTransitionEnd';
+					this.transitionend = 'MSTransitionEnd';
 					break;
 				case 'O':
-					Tween.transitionend = 'oTransitionEnd';
+					this.transitionend = 'oTransitionEnd';
 					break;
 				case 'Moz':
-					Tween.transitionend = 'transitionend';
+					this.transitionend = 'transitionend';
 					break;
 				default:
-					Tween.transitionend = 'transitionend';
+					this.transitionend = 'transitionend';
 			}
 		}
-	}
+	},
 
-	Tween.getOldAttribute = function(agile, tweenIndex) {
-		if (!Tween.oldAttribute[agile.id])
-			Tween.oldAttribute[agile.id] = {};
-		if (!Tween.oldAttribute[agile.id][tweenIndex])
-			Tween.oldAttribute[agile.id][tweenIndex] = {};
-		return Tween.oldAttribute[agile.id][tweenIndex];
-	}
+	getOldAttribute(agile, tweenIndex) {
+		if (!this.oldAttribute[agile.id]) this.oldAttribute[agile.id] = {};
+		if (!this.oldAttribute[agile.id][tweenIndex]) this.oldAttribute[agile.id][tweenIndex] = {};
 
-	Tween.deleteOldAttribute = function(agile, tweenIndex) {
-		if (Tween.oldAttribute[agile.id]) {
-			delete Tween.oldAttribute[agile.id][tweenIndex];
-			if (Agile.Utils.isEmpty(Tween.oldAttribute[agile.id]))
-				delete Tween.oldAttribute[agile.id];
+		return this.oldAttribute[agile.id][tweenIndex];
+	},
+
+	deleteOldAttribute(agile, tweenIndex) {
+		if (this.oldAttribute[agile.id]) {
+			delete this.oldAttribute[agile.id][tweenIndex];
+
+			if (Utils.isEmpty(this.oldAttribute[agile.id])) delete this.oldAttribute[agile.id];
 		}
 	}
-
-	Agile.Tween = Tween;
-})(Agile);
+}

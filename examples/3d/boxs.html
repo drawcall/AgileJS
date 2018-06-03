@@ -1,210 +1,221 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>boxs</title>
-		<meta charset="utf-8">
-		<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.5, maximum-scale=.5">
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black">
-		<style type="text/css">
-			html, body {
-				width: 100%;
-				height: 100%;
-				margin: 0;
-				padding: 0;
-				background-color: #f0ff01;
-				overflow: hidden;
-			}
-			#container {
-				width: 100%;
-				height: 100%;
-			}
-		</style>
-	</head>
-	<body>
-		<div id="container"></div>
-		<script src="../lib/qrcode.min.js"></script>
-		<script src="../lib/hammer.min.js"></script>
-		<script src="../../build/agile.min.js"></script>
-		<script src="../../plugs/agile_toolkit.js"></script>
-		<script>
-			var container, scene3d, box, render, images, index, boxs;
-			var totals = 20, maxZ = 0;
-			
-			Main();
-			
-			function Main() {
-				addAgile();
-				tick();
-				addQR();
-			}
 
-			function addAgile() {
-				Agile.lockTouch();
-				Agile.mode = '3d';
-				//Or set Agile.backface = true;
-				//Agile.backface = false;
-				container = new Agile.Container('#container');
-				container.perspective = 3000;
+<head>
+	<title>boxs</title>
+	<meta charset="utf-8">
+	<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.5, maximum-scale=.5">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<style type="text/css">
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			background-color: #f0ff01;
+			overflow: hidden;
+		}
 
-				scene3d = new Agile.Container('2d');
-				scene3d.x = container.width / 2;
-				scene3d.y = container.height / 2;
-				container.addChild(scene3d);
+		#container {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+</head>
 
-				totals = Agile.Device.isPC() ? 20 : 10;
-				Agile.backface = Agile.Device.isPC() ? true : false;
+<body>
+	<div id="container"></div>
+	<script src="../lib/ppo.min.js"></script>
+	<script src="../lib/qrcode.min.js"></script>
+	<script src="../lib/hammer.min.js"></script>
+	<script src="//localhost:3001/build/agile.js"></script>
 
-				boxs = [];
-				for (var i = 0; i < totals; i++)
-					boxs.push(initBox(true));
-			}
+	<script>
+		var container, scene3d, box, render, images, index, boxs;
+		var totals = 20, maxZ = 0;
 
-			function initBox(render) {
-				var box = addBox();
-				box.x = container.width / 2 - container.width * Math.random();
-				box.y = container.height / 2 - container.height * Math.random();
-				// set box.z to fix safari firefox z order bug.
-				box.z = (maxZ += 500);
-				box.scaleX = box.scaleY = box.scaleZ = Math.random();
-				box.speedX = Math.random() * 2;
-				box.speedY = Math.random() * 2;
-				box.speedZ = Math.random() * 2;
-				Hammer(box.element).on("tap", clickHandler);
-				Hammer(box.element).on("doubletap", delClickHandler);
-				box.render = render === undefined ? false : render;
+		main();
 
-				scene3d.addChild(box);
-				return box;
-			}
+		function main() {
+			addAgile();
+			tick();
+			addQR();
+		}
 
-			function clickHandler(e) {
-				var box = Agile.getAgileById(e.target.parentElement.id);
-				if (box && box != scene3d) {
-					box.render = false;
-					Agile.Tween.to(box, .6, {
-						scaleX : Math.max(Math.random(), .1),
-						scaleY : Math.max(Math.random(), .1),
-						scaleZ : Math.max(Math.random(), .1),
-						ease : Agile.ease.easeInOutBack,
-						onComplete : function() {
-							box.render = true;
-						}
-					});
-				}
-			}
+		function addAgile() {
+			ppo.lockTouch();
+			Agile.mode = '3d';
+			// Or set Agile.backface = true;
+			// Agile.backface = false;
 
-			function delClickHandler(e) {
-				var box = Agile.getAgileById(e.target.parentElement.id);
-				if (box && box != scene3d) {
-					box.render = false;
-					Agile.Tween.to(box, .7, {
-						scaleX : .1,
-						scaleY : .1,
-						scaleZ : .1,
-						rotationX : 360,
-						rotationY : 360,
-						rotationZ : 360,
-						alpha : 0,
-						overwrite : 1,
-						onComplete : boxComplete,
-						onCompleteParams : [box]
-					});
-				}
-			}
+			container = new Agile.Container('#container');
+			container.perspective = 3000;
 
-			function boxComplete(box) {
-				box.removeEventListener('mousedown', clickHandler);
-				container.removeChild(box);
+			scene3d = new Agile.Container('2d');
+			scene3d.x = container.width / 2;
+			scene3d.y = container.height / 2;
+			container.addChild(scene3d);
+
+			totals = !ppo.isMobile() ? 20 : 10;
+			Agile.backface = !ppo.isMobile() ? true : false;
+
+			boxs = [];
+			for (var i = 0; i < totals; i++) boxs.push(initBox(true));
+		}
+
+		function initBox(render) {
+			var box = addBox();
+			box.x = container.width / 2 - container.width * Math.random();
+			box.y = container.height / 2 - container.height * Math.random();
+			// set box.z to fix safari firefox z order bug.
+			box.z = (maxZ += 500);
+			box.scaleX = box.scaleY = box.scaleZ = Math.random();
+			box.speedX = Math.random() * 2;
+			box.speedY = Math.random() * 2;
+			box.speedZ = Math.random() * 2;
+			Hammer(box.element).on("tap", clickHandler);
+			Hammer(box.element).on("doubletap", delClickHandler);
+			box.render = render === undefined ? false : render;
+
+			scene3d.addChild(box);
+			return box;
+		}
+
+		function clickHandler(e) {
+			var box = Agile.getEleById(e.target.parentElement.id);
+			if (box && box != scene3d) {
 				box.render = false;
-				box.destroy();
-				Agile.Utils.arrayRemove(boxs, box);
-				box = null;
-
-				box = initBox(false);
-				Agile.Tween.from(box, .7, {
-					scaleX : .1,
-					scaleY : .1,
-					scaleZ : .1,
-					overwrite : 1,
-					ease : Agile.ease.easeOutBack,
-					onComplete : function() {
+				Agile.Tween.to(box, .6, {
+					scaleX: Math.max(Math.random(), .1),
+					scaleY: Math.max(Math.random(), .1),
+					scaleZ: Math.max(Math.random(), .1),
+					ease: Agile.ease.easeInOutBack,
+					onComplete: function () {
 						box.render = true;
-						boxs.push(box);
-					},
-					onCompleteParams : [box]
+					}
 				});
 			}
+		}
 
-			function addBox(url) {
-				var width = 300, height = 300, length = 300;
-				var box = new Agile.Container('3d');
+		function delClickHandler(e) {
+			var box = Agile.getEleById(e.target.parentElement.id);
 
-				var front = new Agile.Rect(width, height);
-				var back = new Agile.Rect(width, height);
-				var right = new Agile.Rect(length, height);
-				var left = new Agile.Rect(length, height);
-				var top = new Agile.Rect(width, length);
-				var bottom = new Agile.Rect(width, length);
-
-				front.color = 'hsla(0, 100%, 50%, 0.6)';
-				back.color = 'hsla(60, 100%, 50%, 0.6)';
-				right.color = 'hsla(120, 100%, 50%, 0.6)';
-				left.color = 'hsla(180, 100%, 50%, 0.6)';
-				top.color = 'hsla(240, 100%, 50%, 0.6)';
-				bottom.color = 'hsla(300, 100%, 50%, 0.6)';
-
-				front.z = length / 2;
-				back.z = -length / 2;
-				back.rotationY = 180;
-				top.y = -height / 2;
-				top.rotationX = 90;
-				bottom.y = height / 2;
-				bottom.rotationX = -90;
-				left.x = -width / 2;
-				left.rotationY = -90;
-				right.x = width / 2;
-				right.rotationY = 90;
-
-				box.addChild(front);
-				box.addChild(back);
-				box.addChild(right);
-				box.addChild(left);
-				box.addChild(top);
-				box.addChild(bottom);
-				return box;
+			if (box && box != scene3d) {
+				box.render = false;
+				Agile.Tween.to(box, .7, {
+					scaleX: .03,
+					scaleY: .03,
+					scaleZ: .03,
+					rotationX: 180,
+					rotationY: 270,
+					rotationZ: 360,
+					overwrite: 1,
+					onComplete: removeBox,
+					onCompleteParams: [box]
+				});
 			}
+		}
 
-			function tick() {
-				requestAnimationFrame(tick);
-				for (var i = 0; i < boxs.length; i++) {
-					var box = boxs[i];
-					if (box.render) {
-						box.rotationY += box.speedY;
-						box.rotationZ += box.speedZ;
-						box.rotationX += box.speedX;
-					}
+		function removeBox(box) {
+			box.removeEventListener('mousedown', clickHandler);
+			scene3d.removeChild(box);
+			box.render = false;
+			box.destroy();
+			Agile.Utils.arrayRemove(boxs, box);
+			box = null;
+
+			createBox();
+		}
+
+		function createBox() {
+			var box = initBox(false);
+			Agile.Tween.from(box, .7, {
+				scaleX: .1,
+				scaleY: .1,
+				scaleZ: .1,
+				overwrite: 1,
+				ease: Agile.ease.easeOutBack,
+				onComplete: function (box) {
+					box.render = true;
+					boxs.push(box);
+				},
+				onCompleteParams: [box]
+			});
+		}
+
+		function addBox(url) {
+			var width = 300, height = 300, length = 300;
+			var box = new Agile.Container('3d');
+
+			var front = new Agile.Rect(width, height);
+			var back = new Agile.Rect(width, height);
+			var right = new Agile.Rect(length, height);
+			var left = new Agile.Rect(length, height);
+			var top = new Agile.Rect(width, length);
+			var bottom = new Agile.Rect(width, length);
+
+			front.color = 'hsla(0, 100%, 50%, 0.6)';
+			back.color = 'hsla(60, 100%, 50%, 0.6)';
+			right.color = 'hsla(120, 100%, 50%, 0.6)';
+			left.color = 'hsla(180, 100%, 50%, 0.6)';
+			top.color = 'hsla(240, 100%, 50%, 0.6)';
+			bottom.color = 'hsla(300, 100%, 50%, 0.6)';
+
+			front.z = length / 2;
+			back.z = -length / 2;
+			back.rotationY = 180;
+			top.y = -height / 2;
+			top.rotationX = 90;
+			bottom.y = height / 2;
+			bottom.rotationX = -90;
+			left.x = -width / 2;
+			left.rotationY = -90;
+			right.x = width / 2;
+			right.rotationY = 90;
+
+			box.addChild(front);
+			box.addChild(back);
+			box.addChild(right);
+			box.addChild(left);
+			box.addChild(top);
+			box.addChild(bottom);
+			return box;
+		}
+
+		function tick() {
+			requestAnimationFrame(tick);
+			for (var i = 0; i < boxs.length; i++) {
+				var box = boxs[i];
+				if (box.render) {
+					box.rotationY += box.speedY;
+					box.rotationZ += box.speedZ;
+					box.rotationX += box.speedX;
 				}
 			}
+		}
 
-			function addQR() {
-				if (Agile.Device.isPC()) {
-					var qrcode = document.createElement('div');
-					qrcode.style.position = 'absolute';
-					qrcode.style.left = '10px';
-					qrcode.style.top = '10px';
-					qrcode.style.zIndex = 20;
-					document.body.appendChild(qrcode);
-					var qrcode = new QRCode(qrcode, {
-						text : window.location.href,
-						width : 128,
-						height : 128,
-						colorDark : "#530c1c",
-						colorLight : "rgba(0,0,0,0)",
-						correctLevel : QRCode.CorrectLevel.L
-					});
-				}
+		function addQR() {
+			if (!ppo.isMobile()) {
+				var qrcode = document.createElement('div');
+				qrcode.style.position = 'absolute';
+				qrcode.style.left = '10px';
+				qrcode.style.top = '10px';
+				qrcode.style.zIndex = 20;
+				document.body.appendChild(qrcode);
+
+				var qrcode = new QRCode(qrcode, {
+					text: window.location.href,
+					width: 128,
+					height: 128,
+					colorDark: "#530c1c",
+					colorLight: "rgba(0,0,0,0)",
+					correctLevel: QRCode.CorrectLevel.L
+				});
 			}
-		</script>
-	</body>
+		}
+	</script>
+</body>
+
 </html>

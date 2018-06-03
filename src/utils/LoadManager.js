@@ -1,133 +1,149 @@
-(function(Agile, undefined) {
-	function LoadManager() {
-		var _self = this;
+import EventDispatcher from '../event/EventDispatcher';
+import Utils from './Utils';
+import Css from '../core/Css';
+
+const imageBuffer = {};
+
+export default class LoadManager extends EventDispatcher {
+	constructor() {
+		super();
+
 		this._urls = [];
 		this._loaderList = [];
 		this._targetList = {};
 		this._fileSize = [];
-		this._num = 0;
-		this._loadScale = 0;
 		this._totalSize = 0;
-		this._oldScale = 0;
-		this.baseURL = '';
 
-		this.completeHandler = function(e) {
-			for (var index in _self._targetList) {
-				if (_self._loaderList[_self._num - 1].getAttribute('data-url') == _self._targetList[index])
-					_self._targetList[index] = _self._loaderList[_self._num - 1];
-			}
-			_self.singleLoad();
-			_self.dispatchEvent({
-				type : Agile.SINGLE_LOADED
-			});
+		this.index = 0;
+		this.loadIndex = 0;
+		this.loaded = false;
+		this.baseURL = '';
+		this.parallel = 4;
+
+		this.completeHandler = this.completeHandler.bind(this);
+		this.ioErrorHandler = this.ioErrorHandler.bind(this);
+	}
+
+	ioErrorHandler(e) {
+		this.loadIndex++;
+		this._targetList.push(null);
+
+		this.dispatchEvent({ type: Agile.LOAD_ERROR });
+		this.checkLoaded();
+		this.singleLoad();
+	}
+
+	completeHandler(e) {
+		const num = Css.attr(e.target, 'data-index');
+		const targetList = this._targetList;
+		const loaderList = this._loaderList;
+		const img = loaderList[num];
+
+		for (let index in targetList) {
+			if (Css.attr(img, 'data-url') === targetList[index]) targetList[index] = img;
 		}
 
-		this.ioErrorHandler = function(e) {
-			_self._targetList.push(null);
-			_self.singleLoad();
-			_self.dispatchEvent({
-				type : Agile.LOAD_ERROR
-			});
+		this.loadIndex++;
+		this.dispatchEvent({ type: Agile.SINGLE_LOADED });
+		this.checkLoaded();
+		this.singleLoad();
+	}
+
+	checkLoaded() {
+		if (this.loadIndex >= this._urls.length && !this.loaded) {
+			this.loaded = true;
+			this.dispatchEvent({ type: Agile.GROUP_LOADED });
 		}
 	}
 
+	static getImage(img, callback) {
+		if (typeof img === 'string') {
+			if (imageBuffer[img]) {
+				callback(imageBuffer[img]);
+			} else {
+				const myImage = new Image();
+				myImage.onload = e => {
+					imageBuffer[img] = myImage;
+					callback(imageBuffer[img]);
+				}
+				myImage.src = img;
+			}
 
-	Agile.EventDispatcher.prototype.apply(LoadManager.prototype);
-	LoadManager.prototype.__defineGetter__('loadScale', function() {
-		return this._loadScale / this._urls.length;
-	});
-	LoadManager.prototype.__defineGetter__('loadID', function() {
-		return this._num;
-	});
-	LoadManager.prototype.__defineGetter__('targetList', function() {
+			return img;
+		} else if (typeof img === 'object') {
+			imageBuffer[img.src] = img;
+			callback(imageBuffer[img.src]);
+
+			return img.src;
+		}
+	}
+
+	get loadScale() {
+		return this.loadIndex / this._urls.length;
+	}
+
+	get targetList() {
 		return this._targetList;
-	});
-	LoadManager.prototype.__defineGetter__('loaderList', function() {
-		return this._loaderList;
-	});
+	}
 
-	LoadManager.prototype.__defineSetter__('fileSize', function($size) {
-		this._fileSize = $size;
+	get loaderList() {
+		return this._loaderList;
+	}
+
+	set fileSize(size) {
+		this._fileSize = size;
 		this._totalSize = 0;
-		for (var i = 0; i < this._fileSize.length; i++) {
+
+		for (let i = 0; i < this._fileSize.length; i++) {
 			this._totalSize += this._fileSize[i];
 		}
-	});
+	}
 
-	LoadManager.prototype.load = function() {
-		var index = 0;
-		for (var i = 0; i < arguments.length; i++) {
-			var url = arguments[i];
+	load(...rest) {
+		let index = 0;
+		for (let i = 0; i < rest.length; i++) {
+			let url = rest[i];
 
-			if ( typeof url == 'string') {
-				this._targetList['' + index] = url;
+			if (typeof url === 'string') {
+				this._targetList[`${index}`] = url;
 				this._urls.push(url);
+
 				index++;
-			} else if (Agile.Utils.isArray(url)) {
-				for (var j = 0; j < url.length; j++) {
-					this._targetList['' + index] = url[j];
+			} else if (Utils.isArray(url)) {
+				for (let j = 0; j < url.length; j++) {
+					this._targetList[`${index}`] = url[j];
 					this._urls.push(url[j]);
+
 					index++;
 				}
 			} else {
-				for (var index in url) {
+				for (let index in url) {
 					this._targetList[index] = url[index];
 					this._urls.push(url[index]);
 				}
 			}
 		}
 
-		this.singleLoad();
+		const length = Math.min(this.parallel, this._urls.length);
+		for (let i = 0; i < length; i++) {
+			this.singleLoad();
+		}
 	}
 
-	LoadManager.prototype.singleLoad = function() {
-		if (this._num >= this._urls.length) {
-			this._loadScale = this._urls.length;
-			this.dispatchEvent({
-				type : Agile.GROUP_LOADED
-			});
-			return;
-		}
+	singleLoad() {
+		if (this.loaded) return;
+		if (this.index >= this._urls.length) return;
 
-		var url = String(this._urls[this._num]);
-		var image = new Image();
+		const url = String(this._urls[this.index]);
+		const image = new Image();
+
 		image.onerror = this.ioErrorHandler;
 		image.onload = this.completeHandler;
 		image.src = this.baseURL + url;
-		image.setAttribute('data-url', url);
+		Css.attr(image, 'data-url', url);
+		Css.attr(image, 'data-index', this.index);
+
+		this.index++;
 		this._loaderList.push(image);
-		this._num++;
-		this._loadScale++;
 	}
-
-	LoadManager.prototype.scaleFUN = function($scale) {
-		if (this._totalSize == 0)
-			this._loadScale = this._oldScale + ($scale) / this._urls.length;
-		else
-			this._loadScale = this._oldScale + ($scale) * (this._fileSize[this._num - 1] / this._totalSize);
-	}
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	LoadManager.imageBuffer = {};
-	LoadManager.getImage = function(img, fun) {
-		if ( typeof img == 'string') {
-			if (LoadManager.imageBuffer[img]) {
-				fun(LoadManager.imageBuffer[img]);
-			} else {
-				var self = this;
-				var myImage = new Image();
-				myImage.onload = function(e) {
-					LoadManager.imageBuffer[img] = myImage;
-					fun(LoadManager.imageBuffer[img]);
-				}
-				myImage.src = img;
-			}
-			return img;
-		} else if ( typeof img == 'object') {
-			LoadManager.imageBuffer[img.src] = img;
-			fun(LoadManager.imageBuffer[img.src]);
-			return img.src;
-		}
-	};
-
-	Agile.LoadManager = LoadManager;
-})(Agile);
+}

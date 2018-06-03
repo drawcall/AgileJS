@@ -1,36 +1,38 @@
-(function(Agile, undefined) {
-	function Ellipse(radiusX, radiusY, color) {
-		Ellipse._super_.call(this);
-		this.radiusX = radiusX || 50;
-		this.radiusY = radiusY || 25;
-		var color = color || 'purple';
+import DisplayObject from './DisplayObject';
+
+export default class Ellipse extends DisplayObject {
+
+	constructor(radiusX = 50, radiusY = 25, color = 'purple') {
+		super();
+
+		this.radiusX = radiusX;
+		this.radiusY = radiusY;
+
 		this.background(color);
 		this.x = this.y = 0;
 	}
 
-
-	Agile.Utils.inherits(Ellipse, Agile.DisplayObject);
-	Ellipse.prototype.__defineGetter__('radiusX', function() {
+	get radiusX() {
 		return this._avatar.radiusX;
-	});
-	Ellipse.prototype.__defineSetter__('radiusX', function(radiusX) {
+	}
+
+	set radiusX(radiusX) {
 		this._avatar.radiusX = radiusX;
 		this.width = this.radiusX * 2;
 		this.css3('borderRadius', this.radiusX + 'px' + ' / ' + this.radiusY + 'px');
-	});
+	}
 
-	Ellipse.prototype.__defineGetter__('radiusY', function() {
+	get radiusY() {
 		return this._avatar.radiusY;
-	});
-	Ellipse.prototype.__defineSetter__('radiusY', function(radiusY) {
+	}
+
+	set radiusY(radiusY) {
 		this._avatar.radiusY = radiusY;
 		this.height = this.radiusY * 2;
 		this.css3('borderRadius', this.radiusX + 'px' + ' / ' + this.radiusY + 'px');
-	});
-
-	Ellipse.prototype.toString = function() {
-		return 'Ellipse';
 	}
 
-	Agile.Ellipse = Ellipse;
-})(Agile);
+	toString() {
+		return 'Ellipse';
+	}
+}

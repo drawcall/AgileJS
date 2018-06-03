@@ -1,1 +1,4 @@
  .Ds_Store
+node_modules
+build/docs/
+package-lock.json

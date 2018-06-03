@@ -1,159 +1,166 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>li</title>
-		<meta charset="utf-8">
-		<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.5, maximum-scale=.5">
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-		<style type="text/css">
-			html, body {
-				width: 100%;
-				height: 100%;
-				margin: 0;
-				padding: 0;
-				overflow: hidden;
-				background: #fff;
-			}
-			form {
-				display: none;
-			}
-			#container {
-				width: 100%;
-				height: 100%;
-				position: absolute;
-				z-index: 2;
-			}
-		</style>
-	</head>
-	<body>
-		<div id='container'></div>
-		<form>
-			<input class="text" type="text" name="firstname" placeholder="John Doe">
-			<input class="radio" type="radio" name="a-jie" value="" checked="checked">
-			<input class="checkbox" type="checkbox" name="a-jie" value="" checked="checked" />
-			<input class="submit" type="submit" formnovalidate="true" value="agile engine" />
-			<input class="range" type="range" min="-100" max="100" value="0" step="10" name="power" list="powers">
-			<select class="select" name="cars">
-				<option value="Agile">select</option>
-				<option value="ajie">a-jie</option>
-				<option value="is">is</option>
-				<option value="a">a</option>
-				<option value="good">good</option>
-				<option value="men">men</option>
-			</select>
-		</form>
-		<script src="../lib/jquery-1.8.0.min.js"></script>
-		<script src="../lib/qrcode.min.js"></script>
-		<script src="../../build/agile.min.js"></script>
-		<script src="../../plugs/agile_toolkit.js"></script>
-		<script>
-			var container, forms;
-			Main();
-			function Main() {
-				addAgile();
-				addQR();
-				tick();
-			}
+<head>
+	<title>li</title>
+	<meta charset="utf-8">
+	<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.5, maximum-scale=.5">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-			function addAgile() {
-				forms = [];
-				Agile.mode = '3d';
-				container = new Agile.Container('container');
-				container.color = Agile.Color.gradient('radial', '#349134', '#2a5d2a');
-				container.select = false;
-				container.perspective = 1000;
+	<style type="text/css">
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+			background: #fff;
+		}
 
-				var R = Math.min(860 / 2, container.width / 2);
-				var d = Math.min(800, container.height) / 7;
+		form {
+			display: none;
+		}
 
-				var n = Agile.Device.isPC() ? 8 : 6;
-				addInput('text', n, 150, R * .6).y = d;
-				addInput('radio', 28, 0, R * .3, .5).y = 2 * d;
-				addInput('submit', 10, 80, R * .76, -.8).y = 3 * d;
-				addInput('select', n, 150, R * .5, .5).y = 4 * d;
-				addInput('checkbox', 28, 0, R * .3, -.5).y = 5 * d;
-				addInput('range', n, 210, R * .7).y = 6 * d;
-			}
+		#container {
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			z-index: 2;
+		}
+	</style>
+</head>
 
-			function addInput(type, length, width, radius, speed) {
-				var domcontainer = new Agile.Container('3d');
-				container.addChild(domcontainer);
-				domcontainer.x = container.width / 2;
-				forms.push(domcontainer);
-				domcontainer.speed = speed || 1;
+<body>
+	<div id='container'></div>
+	<form>
+		<input class="text" type="text" name="firstname" placeholder="John Doe">
+		<input class="radio" type="radio" name="a-jie" value="" checked="checked">
+		<input class="checkbox" type="checkbox" name="a-jie" value="" checked="checked" />
+		<input class="submit" type="submit" formnovalidate="true" value="agile engine" />
+		<input class="range" type="range" min="-100" max="100" value="0" step="10" name="power" list="powers">
+		<select class="select" name="cars">
+			<option value="Agile">select</option>
+			<option value="ajie">a-jie</option>
+			<option value="is">is</option>
+			<option value="a">a</option>
+			<option value="good">good</option>
+			<option value="men">men</option>
+		</select>
+	</form>
+	<script src="../lib/jquery-1.8.0.min.js"></script>
+	<script src="../lib/qrcode.min.js"></script>
+	<script src="../lib/ppo.min.js"></script>
+	<script src="//localhost:3001/build/agile.js"></script>
 
-				for (var i = 0; i < length; i++) {
-					var dom;
-					switch(type) {
-						case 'text':
-							dom = new Agile.Dom($(".text").clone());
-							break;
+	<script>
+		var container, forms;
+		main();
+		function main() {
+			addAgile();
+			addQR();
+			tick();
+		}
 
-						case 'radio':
-							dom = new Agile.Dom($(".radio").clone().attr('name', '' + i));
-							break;
+		function addAgile() {
+			forms = [];
+			Agile.mode = '3d';
+			container = new Agile.Container('container');
+			container.color = Agile.Color.gradient('radial', '#349134', '#2a5d2a');
+			container.select = false;
+			container.perspective = 1000;
 
-						case 'checkbox':
-							dom = new Agile.Dom($(".checkbox").clone());
-							break;
+			var R = Math.min(860 / 2, container.width / 2);
+			var d = Math.min(800, container.height) / 7;
 
-						case 'submit':
-							dom = new Agile.Dom($(".submit").clone());
-							break;
+			var n = !ppo.isMobile() ? 8 : 6;
+			addInput('text', n, 150, R * .6).y = d;
+			addInput('radio', 28, 0, R * .3, .5).y = 2 * d;
+			addInput('submit', 10, 80, R * .76, -.8).y = 3 * d;
+			addInput('select', n, 150, R * .5, .5).y = 4 * d;
+			addInput('checkbox', 28, 0, R * .3, -.5).y = 5 * d;
+			addInput('range', n, 210, R * .7).y = 6 * d;
+		}
 
-						case 'range':
-							dom = new Agile.Dom($(".range").clone());
-							break;
+		function addInput(type, length, width, radius, speed) {
+			var domcontainer = new Agile.Container('3d');
+			container.addChild(domcontainer);
+			domcontainer.x = container.width / 2;
+			forms.push(domcontainer);
+			domcontainer.speed = speed || 1;
 
-						case 'select':
-							dom = new Agile.Dom($(".select").clone());
-							break;
+			for (var i = 0; i < length; i++) {
+				var dom;
+				switch (type) {
+					case 'text':
+						dom = new Agile.Dom($(".text").clone());
+						break;
 
-					}
+					case 'radio':
+						dom = new Agile.Dom($(".radio").clone().attr('name', '' + i));
+						break;
 
-					dom.position = 'absolute';
-					if (type != 'radio' && type != 'checkbox')
-						dom.width = width;
-					//dom.height = 30;
-					domcontainer.addChild(dom);
+					case 'checkbox':
+						dom = new Agile.Dom($(".checkbox").clone());
+						break;
 
-					var angle = Math.PI / 2 - (Math.PI / length + (2 * Math.PI / length) * i);
-					dom.z = radius * Math.cos(angle);
-					dom.x = radius * Math.sin(angle);
-					dom.rotationY = angle * 180 / Math.PI;
+					case 'submit':
+						dom = new Agile.Dom($(".submit").clone());
+						break;
+
+					case 'range':
+						dom = new Agile.Dom($(".range").clone());
+						break;
+
+					case 'select':
+						dom = new Agile.Dom($(".select").clone());
+						break;
+
 				}
 
-				return domcontainer;
+				dom.position = 'absolute';
+				if (type != 'radio' && type != 'checkbox')
+					dom.width = width;
+				//dom.height = 30;
+				domcontainer.addChild(dom);
+
+				var angle = Math.PI / 2 - (Math.PI / length + (2 * Math.PI / length) * i);
+				dom.z = radius * Math.cos(angle);
+				dom.x = radius * Math.sin(angle);
+				dom.rotationY = angle * 180 / Math.PI;
 			}
 
-			function tick() {
-				requestAnimationFrame(tick);
-				for (var i = 0; i < forms.length; i++) {
-					forms[i].rotationY += forms[i].speed;
-				}
-			}
+			return domcontainer;
+		}
 
-			function addQR() {
-				if (Agile.Device.isPC()) {
-					var qrcode = document.createElement('div');
-					qrcode.style.position = 'absolute';
-					qrcode.style.left = '10px';
-					qrcode.style.top = '10px';
-					qrcode.style.zIndex = 9999;
-					qrcode.style.border = '10px solid #fff';
-					document.body.appendChild(qrcode);
-					var qrcode = new QRCode(qrcode, {
-						text : window.location.href,
-						width : 128,
-						height : 128,
-						colorDark : "#000000",
-						colorLight : "#fff",
-						correctLevel : QRCode.CorrectLevel.L
-					});
-				}
+		function tick() {
+			requestAnimationFrame(tick);
+			for (var i = 0; i < forms.length; i++) {
+				forms[i].rotationY += forms[i].speed;
 			}
-		</script>
-	</body>
+		}
+
+		function addQR() {
+			if (!ppo.isMobile()) {
+				var qrcode = document.createElement('div');
+				qrcode.style.position = 'absolute';
+				qrcode.style.left = '10px';
+				qrcode.style.top = '10px';
+				qrcode.style.zIndex = 9999;
+				qrcode.style.border = '10px solid #fff';
+				document.body.appendChild(qrcode);
+				var qrcode = new QRCode(qrcode, {
+					text: window.location.href,
+					width: 128,
+					height: 128,
+					colorDark: "#000000",
+					colorLight: "#fff",
+					correctLevel: QRCode.CorrectLevel.L
+				});
+			}
+		}
+	</script>
+</body>
+
 </html>

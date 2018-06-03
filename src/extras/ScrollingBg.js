@@ -1,104 +1,106 @@
-/**
- * @author a-jie https://github.com/a-jie
- */
-(function(Agile, undefined) {
-	function ScrollingBg(image, width, height, speed, direction, backgroundWidth, backgroundHeight) {
+import Image from '../display/Image';
+import Ease from '../animate/ease';
+import Keyframes from '../animate/Keyframes';
+
+export default class ScrollingBg extends Image {
+
+	constructor(image, width, height, speed = 10, direction = 'left', backgroundWidth = 0, backgroundHeight = 0) {
+		super(image, width, height);
+
 		this.widthSize = true;
 		this.heightSize = true;
-		ScrollingBg._super_.call(this, image, width, height);
-		this.speed = speed || 10;
-		this.direction = direction || 'left';
-		
-		//fix background-position-y bug
-		this.backgroundWidth = backgroundWidth || 0;
-		this.backgroundHeight = backgroundHeight || 0;
+
+		this.speed = speed;
+		this.direction = direction;
+
+		// fix background-position-y bug
+		this.backgroundWidth = backgroundWidth;
+		this.backgroundHeight = backgroundHeight;
 		this.originalHeight = height;
-		this.originalWidth = width;;
+		this.originalWidth = width;
+
 		this.scrolling();
 	}
 
-
-	Agile.Utils.inherits(ScrollingBg, Agile.Image);
-	ScrollingBg.prototype.__defineGetter__('backgroundWidth', function() {
+	get backgroundWidth() {
 		return this._avatar.backgroundWidth;
-	});
+	}
 
-	ScrollingBg.prototype.__defineSetter__('backgroundWidth', function(backgroundWidth) {
+	set backgroundWidth(backgroundWidth) {
 		this._avatar.backgroundWidth = backgroundWidth;
 		this.scrolling();
-	});
-	
-	ScrollingBg.prototype.__defineGetter__('backgroundHeight', function() {
-		return this._avatar.backgroundHeight;
-	});
+	}
 
-	ScrollingBg.prototype.__defineSetter__('backgroundHeight', function(backgroundHeight) {
+	get backgroundHeight() {
+		return this._avatar.backgroundHeight;
+	}
+
+	set backgroundHeight(backgroundHeight) {
 		this._avatar.backgroundHeight = backgroundHeight;
 		this.scrolling();
-	});
+	}
 
-	ScrollingBg.prototype.__defineGetter__('speed', function() {
+	get speed() {
 		return this._avatar.speed;
-	});
+	}
 
-	ScrollingBg.prototype.__defineSetter__('speed', function(speed) {
+	set speed(speed) {
 		this._avatar.speed = speed;
 		this.scrolling();
-	});
+	}
 
-	ScrollingBg.prototype.__defineGetter__('direction', function() {
+	get direction() {
 		return this._avatar.direction;
-	});
+	}
 
-	ScrollingBg.prototype.__defineSetter__('direction', function(direction) {
+	set direction(direction) {
 		this._avatar.direction = direction;
 		this.scrolling();
-	});
+	}
 
-	ScrollingBg.prototype.scrolling = function(speed, ease) {
-		var ease = ease || Agile.ease.linear;
-		var speed = speed || this.speed;
+	scrolling(speed, ease) {
+		speed = speed || this.speed;
+		ease = ease || Ease.linear;
 
 		if (this.scrollframes) {
 			this.removeFrame(this.scrollframes);
 			this.scrollframes.destroy();
 		}
 
-		this.scrollframes = new Agile.Keyframes();
+		this.scrollframes = new Keyframes();
 		this.scrollframes.add(0, {
-			'background-position' : '0% 0%'
+			'background-position': '0% 0%'
 		});
-		if (this.direction == 'left') {
-			var h = this.backgroundWidth ? 1 * this.backgroundWidth + 'px' : '200%';
+
+		if (this.direction === 'left') {
+			const h = this.backgroundWidth ? 1 * this.backgroundWidth + 'px' : '200%';
 			this.scrollframes.add(100, {
-				'background-position' : h + ' 0%'
+				'background-position': h + ' 0%'
 			});
-		} else if (this.direction == 'right') {
-			var h = this.backgroundWidth ? -1 * this.backgroundWidth + 'px' : '-200%';
+		} else if (this.direction === 'right') {
+			const h = this.backgroundWidth ? -1 * this.backgroundWidth + 'px' : '-200%';
 			this.scrollframes.add(100, {
-				'background-position' : h + ' 0%'
+				'background-position': h + ' 0%'
 			});
-		} else if (this.direction == 'up') {
-			var h = this.backgroundHeight ? -1 * this.backgroundHeight + 'px' : '0%';
+		} else if (this.direction === 'up') {
+			const h = this.backgroundHeight ? -1 * this.backgroundHeight + 'px' : '0%';
 			this.scrollframes.add(100, {
-				'background-position' : '0% ' + h
+				'background-position': '0% ' + h
 			});
-		} else if (this.direction == 'down' || this.direction == 'bottom') {
-			var h = this.backgroundHeight ? 1 * this.backgroundHeight + 'px' : '0%';
+		} else if (this.direction === 'down' || this.direction === 'bottom') {
+			const h = this.backgroundHeight ? 1 * this.backgroundHeight + 'px' : '0%';
 			this.scrollframes.add(100, {
-				'background-position' : '0% ' + h
+				'background-position': '0% ' + h
 			});
 		}
 
 		this.addFrame(speed, this.scrollframes, {
-			loop : -1,
-			ease : ease
+			loop: -1,
+			ease
 		});
 	}
 
-	ScrollingBg.prototype.toString = function() {
+	toString() {
 		return 'ScrollingBg';
 	}
-
-	Agile.ScrollingBg = ScrollingBg;
-})(Agile);
+}

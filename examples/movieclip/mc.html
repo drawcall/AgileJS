@@ -1,164 +1,170 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>MovieClip</title>
-		<meta charset="utf-8">
-		<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.5, maximum-scale=.5">
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black">
-		<style type="text/css">
-			html, body {
-				width: 100%;
-				height: 100%;
-				margin: 0;
-				padding: 0;
-				overflow: hidden;
-				background-color: #00BCE9;
-			}
-			#container {
-				width: 100%;
-				height: 100%;
-			}
-		</style>
-	</head>
-	<body>
-		<div id="container"></div>
-		<script src="../lib/qrcode.min.js"></script>
-		<script src="../lib/TweenMax.min.js"></script>
-		<script src="../../build/agile.min.js"></script>
-		<script src="../../plugs/agile_toolkit.js"></script>
-		<script>
-			var container, master, cat;
 
-			Main();
-			function Main() {
-				Agile.lockTouch();
-				addAgile();
-				addQR();
-			}
+<head>
+	<title>MovieClip</title>
+	<meta charset="utf-8">
+	<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.5, maximum-scale=.5">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<style type="text/css">
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+			background-color: #00BCE9;
+		}
 
-			function addAgile() {
-				Agile.mode = '3d';
-				container = new Agile.Container('container');
-				container.select = false;
-				container.perspective = 1000;
-				container.backface = false;
+		#container {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+</head>
 
-				var girl = new Agile.MovieClip('img/girl.png', 131, 143);
-				girl.x = 100;
-				girl.y = 200;
-				//control loop
-				//girl.loop=false;
-				girl.setLabel('hello', {
-					x : 0,
-					y : 0
-				}, {
-					x : 788,
-					y : 0
+<body>
+	<div id="container"></div>
+	<script src="../lib/qrcode.min.js"></script>
+	<script src="../lib/TweenMax.min.js"></script>
+	<script src="../lib/ppo.min.js"></script>
+	<script src="//localhost:3001/build/agile.js"></script>
+
+	<script>
+		var container, master, cat;
+
+		main();
+		function main() {
+			ppo.lockTouch();
+			addAgile();
+			addQR();
+		}
+
+		function addAgile() {
+			Agile.mode = '3d';
+			container = new Agile.Container('container');
+			container.select = false;
+			container.perspective = 1000;
+			container.backface = false;
+
+			var girl = new Agile.MovieClip('img/girl.png', 131, 143);
+			girl.x = 100;
+			girl.y = 200;
+			//control loop
+			//girl.loop=false;
+			girl.setLabel('hello', {
+				x: 0,
+				y: 0
+			}, {
+					x: 788,
+					y: 0
 				}, 6);
-				girl.speed = .8;
-				//girl.play();
-				container.addChild(girl);
-				var keyframe = new Agile.Keyframes();
-				keyframe.add(100, 'x', 550);
-				girl.addFrame(2, keyframe, {
-					loop : -1
-				});
+			girl.speed = .8;
+			//girl.play();
+			container.addChild(girl);
+			var keyframe = new Agile.Keyframes();
+			keyframe.add(100, 'x', 550);
+			girl.addFrame(2, keyframe, {
+				loop: -1
+			});
 
-				//
-				var kof = new Agile.MovieClip('img/kof.png', 159, 196);
-				kof.x = container.width / 2;
-				kof.y = 400;
-				kof.setLabel('stand', {
-					x : 0,
-					y : 0
-				}, {
-					x : 2544,
-					y : 0
+			//
+			var kof = new Agile.MovieClip('img/kof.png', 159, 196);
+			kof.x = container.width / 2;
+			kof.y = 400;
+			kof.setLabel('stand', {
+				x: 0,
+				y: 0
+			}, {
+					x: 2544,
+					y: 0
 				}, 16);
-				kof.speed = .8;
-				kof.play();
-				container.addChild(kof);
-				kof.gotoAndStop(Math.floor(Math.random() * 16) + 1);
+			kof.speed = .8;
+			kof.play();
+			container.addChild(kof);
+			kof.gotoAndStop(Math.floor(Math.random() * 16) + 1);
 
-				var keyframe = new Agile.Keyframes();
-				keyframe.add(100, 'x', kof.x + 50);
-				kof.addFrame(1, keyframe, {
-					yoyo : true,
-					loop : -1
-				});
-				kof.gotoAndPlay(Math.floor(Math.random() * 16) + 1);
+			var keyframe = new Agile.Keyframes();
+			keyframe.add(100, 'x', kof.x + 50);
+			kof.addFrame(1, keyframe, {
+				yoyo: true,
+				loop: -1
+			});
+			kof.gotoAndPlay(Math.floor(Math.random() * 16) + 1);
 
-				//
-				cat = new Agile.MovieClip('img/cat.png', 60, 50);
-				cat.x = container.width / 2;
-				cat.y = 540;
-				cat.setLabel('run', {
-					x : 0,
-					y : 0
-				}, {
-					x : 240,
-					y : 0
+			//
+			cat = new Agile.MovieClip('img/cat.png', 60, 50);
+			cat.x = container.width / 2;
+			cat.y = 540;
+			cat.setLabel('run', {
+				x: 0,
+				y: 0
+			}, {
+					x: 240,
+					y: 0
 				}, 4);
 
-				cat.speed = .6;
-				cat.gotoAndStop(3);
-				container.addChild(cat);
+			cat.speed = .6;
+			cat.gotoAndStop(3);
+			container.addChild(cat);
 
-				cat.gotoAndPlay('run');
-				cat.play();
+			cat.gotoAndPlay('run');
+			cat.play();
 
-				//
-				master = new Agile.MovieClip('img/master.png', 133, 139);
-				var mcLabel = new Agile.MovieClipLabel('run', 0, 0, 1064, 0, 8);
-				master.setLabel(mcLabel);
-				master.speed = 1;
-				container.addChild(master);
-				master.x = 100;
-				master.y = 100;
+			//
+			master = new Agile.MovieClip('img/master.png', 133, 139);
+			var mcLabel = new Agile.MovieClipLabel('run', 0, 0, 1064, 0, 8);
+			master.setLabel(mcLabel);
+			master.speed = 1;
+			container.addChild(master);
+			master.x = 100;
+			master.y = 100;
 
-				container.touchStart(function(x, y) {
-					cat.y = 540;
-					TweenMax.to(cat, .3, {
-						y : 520,
-						yoyo : true,
-						repeat : 1,
-						overwrite : 1
-					});
+			container.touchStart(function (x, y) {
+				cat.y = 540;
+				TweenMax.to(cat, .3, {
+					y: 520,
+					yoyo: true,
+					repeat: 1,
+					overwrite: 1
 				});
+			});
 
-				tick();
+			tick();
+		}
+
+		function tick() {
+			requestAnimationFrame(tick);
+			cat.x -= .5;
+			if (cat.x + cat.width / 2 < 0)
+				cat.x = container.width + cat.width / 2;
+
+			master.x += 1;
+			if (master.x > container.width + master.width / 2)
+				master.x = -master.width / 2;
+		}
+
+		function addQR() {
+			if (!ppo.isMobile()) {
+				var qrcode = document.createElement('div');
+				qrcode.style.position = 'absolute';
+				qrcode.style.right = '10px';
+				qrcode.style.top = '10px';
+				qrcode.style.zIndex = 20;
+				document.body.appendChild(qrcode);
+				var qrcode = new QRCode(qrcode, {
+					text: window.location.href,
+					width: 128,
+					height: 128,
+					colorDark: "#000000",
+					colorLight: "rgba(0,0,0,0)",
+					correctLevel: QRCode.CorrectLevel.L
+				});
 			}
+		}
+	</script>
+</body>
 
-			function tick() {
-				requestAnimationFrame(tick);
-				cat.x -= .5;
-				if (cat.x + cat.width / 2 < 0)
-					cat.x = container.width + cat.width / 2;
-
-				master.x += 1;
-				if (master.x > container.width + master.width / 2)
-					master.x = -master.width / 2;
-			}
-
-			function addQR() {
-				if (Agile.Device.isPC()) {
-					var qrcode = document.createElement('div');
-					qrcode.style.position = 'absolute';
-					qrcode.style.right = '10px';
-					qrcode.style.top = '10px';
-					qrcode.style.zIndex = 20;
-					document.body.appendChild(qrcode);
-					var qrcode = new QRCode(qrcode, {
-						text : window.location.href,
-						width : 128,
-						height : 128,
-						colorDark : "#000000",
-						colorLight : "rgba(0,0,0,0)",
-						correctLevel : QRCode.CorrectLevel.L
-					});
-				}
-			}
-		</script>
-	</body>
 </html>

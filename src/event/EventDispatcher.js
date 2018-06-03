@@ -1,115 +1,44 @@
-(function(Agile, undefined) {
-	var EventDispatcher = function() {
+const array = [];
+
+export default class EventDispatcher {
+
+	constructor() {
+		this._listeners = null;
 	}
 
-	EventDispatcher.prototype = {
+	addEventListener(type, listener) {
+		if (!this._listeners) this._listeners = {};
+		if (this._listeners[type] === undefined) this._listeners[type] = [];
+		if (this._listeners[type].indexOf(listener) === -1) this._listeners[type].push(listener);
+	}
 
-		constructor : EventDispatcher,
+	removeEventListener(type, listener) {
+		if (!this._listeners) return;
 
-		apply : function(object) {
+		const listeners = this._listeners;
+		const listenerArray = listeners[type];
 
-			object.addEventListener = EventDispatcher.prototype.addEventListener;
-			object.hasEventListener = EventDispatcher.prototype.hasEventListener;
-			object.removeEventListener = EventDispatcher.prototype.removeEventListener;
-			object.dispatchEvent = EventDispatcher.prototype.dispatchEvent;
+		if (listenerArray !== undefined) {
+			const index = listenerArray.indexOf(listener);
+			if (index !== -1) listenerArray.splice(index, 1);
+		}
+	}
 
-		},
+	dispatchEvent(event) {
+		if (!this._listeners) return;
 
-		addEventListener : function(type, listener) {
+		array.length = 0;
+		const listeners = this._listeners;
+		const listenerArray = listeners[event.type];
 
-			if (this._listeners === undefined)
-				this._listeners = {};
+		if (listenerArray !== undefined) {
+			event.target = this;
 
-			var listeners = this._listeners;
+			for (let i = 0; i < listenerArray.length; i++)
+				array[i] = listenerArray[i];
 
-			if (listeners[type] === undefined) {
-
-				listeners[type] = [];
-
-			}
-
-			if (listeners[type].indexOf(listener) === -1) {
-
-				listeners[type].push(listener);
-
-			}
-
-		},
-
-		hasEventListener : function(type, listener) {
-
-			if (this._listeners === undefined)
-				return false;
-
-			var listeners = this._listeners;
-
-			if (listeners[type] !== undefined && listeners[type].indexOf(listener) !== -1) {
-
-				return true;
-
-			}
-
-			return false;
-
-		},
-
-		removeEventListener : function(type, listener) {
-
-			if (this._listeners === undefined)
-				return;
-
-			var listeners = this._listeners;
-			var listenerArray = listeners[type];
-
-			if (listenerArray !== undefined) {
-
-				var index = listenerArray.indexOf(listener);
-
-				if (index !== -1) {
-
-					listenerArray.splice(index, 1);
-
-				}
-
-			}
-
-		},
-
-		dispatchEvent : function() {
-
-			var array = [];
-
-			return function(event) {
-
-				if (this._listeners === undefined)
-					return;
-
-				var listeners = this._listeners;
-				var listenerArray = listeners[event.type];
-
-				if (listenerArray !== undefined) {
-
-					event.target = this;
-
-					var length = listenerArray.length;
-
-					for (var i = 0; i < length; i++) {
-
-						array[i] = listenerArray[i];
-
-					}
-
-					for (var i = 0; i < length; i++) {
-
-						array[i].call(this, event);
-
-					}
-
-				}
-
-			};
-
-		}()
-	};
-	Agile.EventDispatcher = EventDispatcher;
-})(Agile);
+			for (let i = 0; i < listenerArray.length; i++)
+				array[i].call(this, event);
+		}
+	}
+}

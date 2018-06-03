@@ -22,9 +22,10 @@
 	</head>
 	<body>
 		<div id="container"></div>
+		<script src="../lib/ppo.min.js"></script>
 		<script src="../lib/qrcode.min.js"></script>
-		<script src="../../build/agile.min.js"></script>
-		<script src="../../plugs/agile_toolkit.js"></script>
+		<script src="//localhost:3001/build/agile.js"></script>
+		
 		<script>
 			var container;
 			
@@ -35,8 +36,9 @@
 			}
 
 			function addAgile() {
-				Agile.lockTouch();
+				ppo.lockTouch();
 				Agile.mode = '3d';
+
 				container = new Agile.Dom('#container');
 				container.select = false;
 				container.color = '#bbb';
@@ -121,7 +123,7 @@
 			}
 
 			function addQR() {
-				if (Agile.Device.isPC()) {
+				if (!ppo.isMobile()) {
 					var qrcode = document.createElement('div');
 					qrcode.style.position = 'absolute';
 					qrcode.style.left = '10px';

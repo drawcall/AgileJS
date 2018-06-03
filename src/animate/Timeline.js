@@ -1,361 +1,408 @@
-(function(Agile, undefined) {
-	var Timeline = Timeline || {
-		index : 0,
-		callbacks : {},
-		currentTime : 0,
-		nextTween : [],
-		replace : false,
-		remove : true,
-		get avatar() {
-            if (!this.avatarmc) this.avatarmc = new Agile.Avatar(1, 1);
-            return this.avatarmc;
-        }
-	}
+import Avatar from './Avatar';
+import Css from '../core/Css';
+import Keyframes from './Keyframes';
+import Text from '../display/Text';
+import Utils from '../utils/Utils';
+import JsonUtils from '../utils/JsonUtils';
 
-	/*
-	 * Timeline.addFrame(mc,1.5,myKeyframe);
-	 * Timeline.addFrame(mc,1.5,{frame:myKeyframe,delay:.5});
-	 * Timeline.addFrame(mc,1.5,myKeyframe,{delay:.5,loop:12});
-	 * Timeline.addFrame(mc,1.5,{delay:.5,loop:12},myKeyframe);
-	 */
-	Timeline.addFrame = function(agile, duration, frameObj, paramsObj) {
-		if ( frameObj instanceof Agile.Keyframes) {
-			if (!paramsObj)
-				paramsObj = {}
-			Timeline.insertKeyframes(agile, frameObj, paramsObj['replace']);
-			Timeline.apply(agile, duration, frameObj, paramsObj);
-		} else if ( typeof frameObj == 'object') {
+export default {
+	index: 0,
+	callbacks: {},
+	currentTime: 0,
+	nextTween: [],
+	replace: false,
+	remove: true,
+
+	get avatar() {
+		if (!this.avatarmc) this.avatarmc = new Avatar(1, 1);
+		return this.avatarmc;
+	},
+
+	addFrame(agile, duration, frameObj, paramsObj) {
+		let keyframe;
+
+		if (frameObj instanceof Keyframes) {
+			if (!paramsObj) paramsObj = {};
+
+			this.insertKeyframes(agile, frameObj, paramsObj['replace']);
+			this.apply(agile, duration, frameObj, paramsObj);
+		} else if (typeof frameObj === 'object') {
 			if (frameObj.hasOwnProperty('frame'))
-				var keyframe = frameObj['frame'];
+				keyframe = frameObj['frame'];
 			else
-				var keyframe = paramsObj;
+				keyframe = paramsObj;
 
-			Timeline.insertKeyframes(agile, keyframe, frameObj['replace']);
-			Timeline.apply(agile, duration, keyframe, frameObj);
+			this.insertKeyframes(agile, keyframe, frameObj['replace']);
+			this.apply(agile, duration, keyframe, frameObj);
 		}
-		
-		return Timeline.index++;
-	}
 
-	Timeline.playFrame = function(agile, duration, frameObj, paramsObj) {
-		if ( frameObj instanceof Agile.Keyframes) {
-			if (!paramsObj)
-				paramsObj = {}
-			Timeline.apply(agile, duration, frameObj, paramsObj);
-		} else if ( typeof frameObj == 'object') {
+		return this.index++;
+	},
+
+	playFrame(agile, duration, frameObj, paramsObj) {
+		let keyframe;
+
+		if (frameObj instanceof Keyframes) {
+			if (!paramsObj) paramsObj = {}
+			this.apply(agile, duration, frameObj, paramsObj);
+		} else if (typeof frameObj === 'object') {
 			if (frameObj.hasOwnProperty('frame'))
-				var keyframe = frameObj['frame'];
+				keyframe = frameObj['frame'];
 			else
-				var keyframe = paramsObj;
+				keyframe = paramsObj;
 
-			Timeline.apply(agile, duration, keyframe, frameObj);
+			this.apply(agile, duration, keyframe, frameObj);
 		}
-		
-		return Timeline.index++;
-	}
 
-	Timeline.insertKeyframes = function(agile, keyframes, replace) {
-		if (replace || Timeline.replace)
-			Timeline.removeKeyframes(agile.id + '_' + keyframes.label);
+		return this.index++;
+	},
 
-		var prefix = Agile.Css.getPrefix(2);
-		Timeline.avatar.clearStyle();
-		Timeline.avatar.copySelf(agile, 'all');
-		var keys = {};
-		for (var time in keyframes.keyframes) {
-			var timeObj = keyframes.keyframes[time];
+	insertKeyframes(agile, keyframes, replace) {
+		if (replace || this.replace) this.removeKeyframes(agile.id + '_' + keyframes.label);
+
+		const prefix = Css.getPrefix(2);
+		this.avatar.clearStyle();
+		this.avatar.copySelf(agile, 'all');
+
+		const keys = {};
+		for (let time in keyframes.keyframes) {
+			let timeObj = keyframes.keyframes[time];
 			keys[time] = {};
 
-			for (var style in timeObj) {
-				var newIndex = '_' + style + '_';
-				var i = Agile.keyword.search(new RegExp(newIndex, 'i'));
+			for (let style in timeObj) {
+				let newIndex = `_${style}_`;
+				let i = Agile.keyword.search(new RegExp(newIndex, 'i'));
+
 				if (i <= -1) {
 					if (style.indexOf('-') > -1) {
-						var arr = style.split('-');
-						for (var i = 0; i < arr.length; i++) {
-							if (i != 0)
-								arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].substr(1);
+						let arr = style.split('-');
+						for (let i = 0; i < arr.length; i++) {
+							if (i !== 0) arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].substr(1);
 						}
-						Timeline.avatar.css2(arr.join(''), timeObj[style]);
+
+						this.avatar.css2(arr.join(''), timeObj[style]);
 					} else {
-						Timeline.avatar.css2(style, timeObj[style]);
+						this.avatar.css2(style, timeObj[style]);
 					}
 				} else {
-					Timeline.avatar[style] = timeObj[style];
+					this.avatar[style] = timeObj[style];
 				}
 
-				if (style == 'alpha') {
-					keys[time]['opacity'] = Timeline.avatar[style];
-				} else if (style == 'color' && !( agile instanceof Agile.Text)) {
-					keys[time]['background-color'] = Timeline.avatar[style];
-				} else if (style == 'x' || style == 'y' || style == 'z') {
-					keys[time][prefix + 'transform'] = Timeline.avatar.css3('transform');
-				} else if (style == 'scaleX' || style == 'scaleY' || style == 'scaleZ') {
-					keys[time][prefix + 'transform'] = Timeline.avatar.css3('transform');
-				} else if (style == 'rotationX' || style == 'rotationY' || style == 'rotationZ' || style == 'rotation') {
-					keys[time][prefix + 'transform'] = Timeline.avatar.css3('transform');
-				} else if (style == 'skewX' || style == 'skewY') {
-					keys[time][prefix + 'transform'] = Timeline.avatar.css3('transform');
-				} else if (style == 'width' || style == 'height') {
-					keys[time][prefix + 'transform'] = Timeline.avatar.css3('transform');
-				} else if (style == 'regX' || style == 'regY') {
-					keys[time][prefix + 'transform-origin'] = Timeline.avatar.css3('transformOrigin');
-				} else if (style == 'originalWidth') {
-					keys[time]['width'] = Timeline.avatar.css2('width');
-				} else if (style == 'originalHeight') {
-					keys[time]['height'] = Timeline.avatar.css2('height');
-				} else if(style == 'round') {
-					keys[time]['border-radius'] = Timeline.avatar[style] + 'px';
-				} else {
-					keys[time][style] = Timeline.avatar.css2(style);
+				switch (style) {
+					case 'alpha':
+						keys[time]['opacity'] = this.avatar[style];
+						break;
+
+					case 'color':
+						if (!(agile instanceof Text)) {
+							keys[time]['background-color'] = this.avatar[style];
+						}
+						break;
+
+					case 'x':
+					case 'y':
+					case 'z':
+					case 'scaleX':
+					case 'scaleY':
+					case 'scaleZ':
+					case 'rotation':
+					case 'rotationX':
+					case 'rotationY':
+					case 'rotationZ':
+					case 'skewX':
+					case 'skewY':
+					case 'width':
+					case 'height':
+						keys[time][prefix + 'transform'] = this.avatar.css3('transform');
+						break;
+
+					case 'regX':
+					case 'regY':
+						keys[time][prefix + 'transform-origin'] = this.avatar.css3('transformOrigin');
+						break;
+
+					case 'originalWidth':
+						keys[time]['width'] = this.avatar.css2('width');
+						break;
+
+					case 'originalHeight':
+						keys[time]['height'] = this.avatar.css2('height');
+						break;
+
+					case 'round':
+						keys[time]['border-radius'] = this.avatar[style] + 'px';
+						break;
+
+					default:
+						keys[time][style] = this.avatar.css2(style);
 				}
 			}
 		}
 
-		var keyframesTag = '@' + Agile.Css.getPrefix(2) + 'keyframes';
-		var styles = Agile.Css.getDynamicSheet();
-		var paramsObj = Agile.JsonUtils.object2Json(keys);
-		paramsObj = Agile.JsonUtils.replaceChart(paramsObj);
-		var css = keyframesTag + ' ' + agile.id + '_' + keyframes.label + paramsObj;
+		const keyframesTag = `@${prefix}keyframes`;
+		let styles = Css.getDynamicSheet();
+		let paramsObj = JsonUtils.object2Json(keys);
+		paramsObj = JsonUtils.replaceChart(paramsObj);
+
+		const css = keyframesTag + ' ' + agile.id + '_' + keyframes.label + paramsObj;
 		styles.insertRule(css, styles.cssRules.length);
 		styles = null;
-	}
+	},
 
-	Timeline.apply = function(agile, duration, keyframe, paramsObj) {
-		var animation = '';
-		var label = typeof keyframe == 'string' ? keyframe : keyframe.label;
+	apply(agile, duration, keyframe, paramsObj) {
+		let animation = '';
+		const label = typeof keyframe === 'string' ? keyframe : keyframe.label;
 		animation += agile.id + '_' + label + ' ';
 		animation += duration + 's ';
+
 		if (paramsObj['ease'])
 			animation += paramsObj['ease'] + ' ';
 		if (paramsObj['delay'])
 			animation += paramsObj['delay'] + 's ';
 
 		if (paramsObj['loop']) {
-			if (paramsObj['loop'] <= 0)
-				paramsObj['loop'] = 'infinite';
+			if (paramsObj['loop'] <= 0) paramsObj['loop'] = 'infinite';
 			animation += paramsObj['loop'] + ' ';
 		} else if (paramsObj['repeat']) {
-			if (paramsObj['repeat'] <= 0)
-				paramsObj['repeat'] = 'infinite';
+			if (paramsObj['repeat'] <= 0) paramsObj['repeat'] = 'infinite';
 			animation += paramsObj['repeat'] + ' ';
 		}
+
 		if (paramsObj['yoyo']) {
-			if (paramsObj['yoyo'] == true)
-				paramsObj['yoyo'] = 'alternate';
-			if (paramsObj['yoyo'] == false)
-				paramsObj['yoyo'] = 'normal';
+			if (paramsObj['yoyo'] === true) paramsObj['yoyo'] = 'alternate';
+			if (paramsObj['yoyo'] === false) paramsObj['yoyo'] = 'normal';
 			animation += paramsObj['yoyo'] + ' ';
 		}
 
 		animation += 'forwards';
 
-		var preTransition = Agile.Utils.isEmpty(agile.animations) ? '' : Agile.Css.css3(agile.element, 'animation') + ', ';
-		agile.animations[Timeline.index + ''] = animation;
+		const preTransition = Utils.isEmpty(agile.animations) ? '' : Css.css3(agile.element, 'animation') + ', ';
+		agile.animations[`${this.index}`] = animation;
 		animation = preTransition + animation;
 		agile.css3('animation', animation);
 
-		Timeline.addCallback(agile);
-		Timeline.callbacks[agile.id].sets[Timeline.index + ''] = keyframe.merge();
-		Timeline.callbacks[agile.id].removes[Timeline.index + ''] = (paramsObj['remove'] || Timeline.remove);
+		this.addCallback(agile);
+
+		const callback = this.callbacks[agile.id];
+		callback.sets[`${this.index}`] = keyframe.merge();
+		callback.removes[`${this.index}`] = (paramsObj['remove'] || this.remove);
+
+		// add complete handler
 		if (paramsObj['onComplete']) {
 			if (paramsObj['onCompleteParams'])
-				Timeline.callbacks[agile.id].completes[Timeline.index + ''] = [paramsObj['onComplete'], paramsObj['onCompleteParams']];
+				callback.completes[`${this.index}`] = [paramsObj['onComplete'], paramsObj['onCompleteParams']];
 			else
-				Timeline.callbacks[agile.id].completes[Timeline.index + ''] = [paramsObj['onComplete']];
+				callback.completes[`${this.index}`] = [paramsObj['onComplete']];
 		}
-	}
+	},
 
-	Timeline.removeKeyframes = function(frame) {
-		var name = typeof frame == 'string' ? frame : frame.label;
-		var styles = Agile.Css.getDynamicSheet();
-		var rules = styles.cssRules || styles.rules || [];
-		for (var i = 0; i < rules.length; i++) {
-			var rule = rules[i];
+	removeKeyframes(frame) {
+		const keyName = typeof frame === 'string' ? frame : frame.label;
+		this.eachStyles((rule, i, styles) => {
+			if (rule.name === keyName) styles.deleteRule(i);
+		});
+	},
+
+	indexOf(frame) {
+		let index = -100;
+
+		const keyName = typeof frame === 'string' ? frame : frame.label;
+		this.eachStyles((rule, i) => {
+			if (rule.name === keyName) index = 100;
+		});
+
+		return index;
+	},
+
+	eachStyles(callback) {
+		const styles = Css.getDynamicSheet();
+		const rules = styles.cssRules || styles.rules || [];
+
+		for (let i = 0; i < rules.length; i++) {
+			const rule = rules[i];
 			if (rule.type === CSSRule.KEYFRAMES_RULE || rule.type === CSSRule.MOZ_KEYFRAMES_RULE || rule.type === CSSRule.WEBKIT_KEYFRAMES_RULE || rule.type === CSSRule.O_KEYFRAMES_RULE || rule.type === CSSRule.MS_KEYFRAMES_RULE) {
-				if (rule.name == name) {
-					styles.deleteRule(i);
-				}
+				callback(rule, i, styles, rules);
 			}
 		}
-	}
+	},
 
-	Timeline.indexOf = function(keyName) {
-		var name = typeof keyName == 'string' ? keyName : keyName.label;
-		var styles = Agile.Css.getDynamicSheet();
-		var rules = styles.cssRules || styles.rules || [];
-		for (var i = 0; i < rules.length; i++) {
-			var rule = rules[i];
-			if (rule.type === CSSRule.KEYFRAMES_RULE || rule.type === CSSRule.MOZ_KEYFRAMES_RULE || rule.type === CSSRule.WEBKIT_KEYFRAMES_RULE || rule.type === CSSRule.O_KEYFRAMES_RULE || rule.type === CSSRule.MS_KEYFRAMES_RULE) {
-				if (rule.name == keyName) {
-					return 100;
-				}
-			}
-		}
+	pause(agile) {
+		Css.css3(agile.element, 'animationPlayState', 'paused');
+	},
 
-		return -100;
-	}
+	resume(agile) {
+		Css.css3(agile.element, 'animationPlayState', 'running');
+	},
 
-	Timeline.pause = function(agile) {
-		Agile.Css.css3(agile.element, 'animationPlayState', 'paused');
-	}
-
-	Timeline.resume = function(agile) {
-		Agile.Css.css3(agile.element, 'animationPlayState', 'running');
-	}
-
-	Timeline.toggle = function(agile) {
-		if (Agile.Css.css3(agile.element, 'animationPlayState') == 'running')
-			Timeline.pause(agile);
+	toggle(agile) {
+		if (Css.css3(agile.element, 'animationPlayState') === 'running')
+			this.pause(agile);
 		else
-			Timeline.resume(agile);
-	}
+			this.resume(agile);
+	},
 
-	Timeline.removeFrameByIndex = function(agile, index) {
+	removeFrameByIndex(agile, index) {
 		index = index + '';
-		var deleteItem = agile.animations[index];
+		const deleteItem = agile.animations[index];
+
 		if (deleteItem) {
 			agile.animations[index] = '0';
-			var animation = Agile.JsonUtils.object2String(agile.animations);
-			if (Agile.Utils.replace(animation, ['0,', '0', ' '], '') == '')
-				Timeline.removeAllFrames(agile);
+			let animation = JsonUtils.object2String(agile.animations);
+
+			if (Utils.replace(animation, ['0,', '0', ' '], '') === '')
+				this.removeAllFrames(agile);
 			else
 				agile.css3('animation', animation);
 		}
+
 		return deleteItem;
-	}
+	},
 
-	Timeline.removeFrame = function(agile, frame, removeStyle) {
-		if (Agile.Utils.isNumber(frame)) {
-			var timelineIndex = frame;
-			var keyframes = agile.animations[timelineIndex + ''];
-		} else if ( typeof frame == 'string') {
+	removeFrame(agile, frame, removeStyle) {
+		let timelineIndex;
+		let keyframes;
+
+		if (Utils.isNumber(frame)) {
+			timelineIndex = frame;
+			keyframes = agile.animations[timelineIndex + ''];
+		} else if (typeof frame === 'string') {
 			if (frame.indexOf(agile.id) > -1)
-				var keyframes = frame;
+				keyframes = frame;
 			else
-				var keyframes = agile.id + '_' + frame;
-			var timelineIndex = Agile.Utils.objectforkey(agile.animations, keyframes);
+				keyframes = agile.id + '_' + frame;
+
+			timelineIndex = Utils.objectforkey(agile.animations, keyframes);
 		} else {
-			var keyframes = agile.id + '_' + frame.label;
-			var timelineIndex = Agile.Utils.objectforkey(agile.animations, keyframes);
+			keyframes = agile.id + '_' + frame.label;
+			timelineIndex = Utils.objectforkey(agile.animations, keyframes);
 		}
-		if (removeStyle)
-			Timeline.removeKeyframes(keyframes);
-		return Timeline.removeFrameByIndex(agile, timelineIndex);
-	}
 
-	Timeline.removeFrameAfter = function(agile, frame, complete, removeStyle) {
-		Timeline.prefixEvent();
-		agile.element.addEventListener(Timeline.animationiteration, animationiterationHandler, false);
+		if (removeStyle) this.removeKeyframes(keyframes);
+		return this.removeFrameByIndex(agile, timelineIndex);
+	},
+
+	removeFrameAfter(agile, frame, complete, removeStyle) {
+		this.getPrefixEvent();
+		agile.element.addEventListener(this.animationiteration, animationiterationHandler, false);
+
 		function animationiterationHandler(e) {
-			Timeline.removeFrame(agile, frame, removeStyle);
-			agile.element.removeEventListener(Timeline.animationiteration, animationiterationHandler);
-            if(complete)
-                complete();
+			this.removeFrame(agile, frame, removeStyle);
+			agile.element.removeEventListener(this.animationiteration, animationiterationHandler);
+
+			complete && complete();
 		}
 
-	}
+	},
 
-	Timeline.removeAllFrames = function(agile) {
-		for (var index in agile.animations)
-		delete agile.animations[index];
-		Agile.Css.css3(agile.element, 'animation', '');
-	}
+	removeAllFrames(agile) {
+		for (let index in agile.animations) delete agile.animations[index];
+		Css.css3(agile.element, 'animation', '');
+	},
 
-	Timeline.kill = function(agile) {
-		Timeline.removeAllFrames(agile);
-		if (Timeline.callbacks[agile.id]) {
-			Timeline.prefixEvent();
-			agile.element.removeEventListener(Timeline.animationend, Timeline.callbacks[agile.id].fun);
-			delete Timeline.callbacks[agile.id];
+	kill(agile) {
+		this.removeAllFrames(agile);
+
+		if (this.callbacks[agile.id]) {
+			this.getPrefixEvent();
+			agile.element.removeEventListener(this.animationend, this.callbacks[agile.id].fun);
+			delete this.callbacks[agile.id];
 		}
-	}
+	},
 
-	Timeline.set = function(agile, frameObj) {
-		if (!frameObj)
-			return;
-		for (var style in frameObj) {
-			var newIndex = '_' + style + '_';
-			var i = Agile.keyword.search(new RegExp(newIndex, 'i'));
-			if (i <= -1) {
-				if (style.indexOf('-') > -1) {
-					var arr = style.split('-');
-					for (var i = 0; i < arr.length; i++) {
-						if (i != 0)
-							arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].substr(1);
-					}
-					agile.css2(arr.join(''), frameObj[style]);
-				} else {
-					agile.css2(style, frameObj[style]);
-				}
-			} else {
+	set(agile, frameObj) {
+		if (!frameObj) return;
+
+		for (let style in frameObj) {
+			let newIndex = `_${style}_`;
+			let i = Agile.keyword.search(new RegExp(newIndex, 'i'));
+
+			if (i > -1) {
 				agile[style] = frameObj[style];
+				continue;
+			}
+
+			if (style.indexOf('-') > -1) {
+				let arr = style.split('-');
+				for (let i = 0; i < arr.length; i++) {
+					if (i !== 0) arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].substr(1);
+				}
+
+				agile.css2(arr.join(''), frameObj[style]);
+			} else {
+				agile.css2(style, frameObj[style]);
 			}
 		}
-	}
+	},
 
-	Timeline.addCallback = function(agile) {
-		if (!Timeline.callbacks[agile.id]) {
-			Timeline.callbacks[agile.id] = {
-				fun : function(e) {
-					for (var timelineIndex in agile.animations) {
-						if (agile.animations[timelineIndex].indexOf(e.animationName) == 0) {
-							Timeline.removeFrame(agile, timelineIndex, Timeline.callbacks[agile.id].removes[timelineIndex]);
-							delete Timeline.callbacks[agile.id].removes[timelineIndex];
+	addCallback(agile) {
+		if (this.callbacks[agile.id]) return this.callbacks[agile.id];
 
-							Timeline.set(agile, Timeline.callbacks[agile.id].sets[timelineIndex]);
-							delete Timeline.callbacks[agile.id].sets[timelineIndex];
+		this.callbacks[agile.id] = {
+			fun: e => {
+				const callback = this.callbacks[agile.id];
 
-							if (Timeline.callbacks[agile.id].completes[timelineIndex]) {
-								if (Timeline.callbacks[agile.id].completes[timelineIndex].length == 1)
-									Timeline.callbacks[agile.id].completes[timelineIndex][0].apply(agile);
-								else
-									Timeline.callbacks[agile.id].completes[timelineIndex][0].apply(agile, Timeline.callbacks[agile.id].completes[timelineIndex][1]);
-								try{
-									delete Timeline.callbacks[agile.id].completes[timelineIndex];
-								}catch(e){}
-							}
-						}
+				for (let index in agile.animations) {
+					if (agile.animations[index].indexOf(e.animationName) !== 0) continue;
+
+					this.removeFrame(agile, index, callback.removes[index]);
+					delete callback.removes[index];
+
+					this.set(agile, callback.sets[index]);
+					delete callback.sets[index];
+
+					if (callback.completes[index]) {
+						if (callback.completes[index].length === 1)
+							callback.completes[index][0].apply(agile);
+						else
+							callback.completes[index][0].apply(agile, callback.completes[index][1]);
+
+						try {
+							delete callback.completes[index];
+						} catch (e) { }
 					}
-				},
-				completes : {},
-				removes : {},
-				sets : {}
-			}
-
-			Timeline.prefixEvent();
-			agile.element.addEventListener(Timeline.animationend, Timeline.callbacks[agile.id].fun, false);
+				}
+			},
+			completes: {},
+			removes: {},
+			sets: {}
 		}
 
-		return Timeline.callbacks[agile.id];
-	}
+		this.getPrefixEvent();
+		agile.element.addEventListener(this.animationend, this.callbacks[agile.id].fun, false);
 
-	Timeline.prefixEvent = function() {
-		if (!Timeline.animationend) {
-			var prefix = Agile.Css.getPrefix();
-			switch(prefix) {
-				case 'Webkit':
-					Timeline.animationend = 'webkitAnimationEnd';
-					Timeline.animationiteration = 'webkitAnimationIteration';
-					break;
-				case 'ms':
-					Timeline.animationend = 'MSAnimationEnd';
-					Timeline.animationiteration = 'MSAnimationIteration';
-					break;
-				case 'O':
-					Timeline.animationend = 'oanimationend';
-					Timeline.animationiteration = 'oanimationiteration';
-					break;
-				case 'Moz':
-					Timeline.animationend = 'animationend';
-					Timeline.animationiteration = 'animationiteration';
-					break;
-				default:
-					Timeline.animationend = 'animationend';
-					Timeline.animationiteration = 'animationiteration';
-			}
+		return this.callbacks[agile.id];
+	},
+
+	getPrefixEvent() {
+		if (this.animationend) return this.animationend;
+
+		const prefix = Css.getPrefix();
+		switch (prefix) {
+			case 'Webkit':
+				this.animationend = 'webkitAnimationEnd';
+				this.animationiteration = 'webkitAnimationIteration';
+				break;
+
+			case 'ms':
+				this.animationend = 'MSAnimationEnd';
+				this.animationiteration = 'MSAnimationIteration';
+				break;
+
+			case 'O':
+				this.animationend = 'oanimationend';
+				this.animationiteration = 'oanimationiteration';
+				break;
+
+			case 'Moz':
+				this.animationend = 'animationend';
+				this.animationiteration = 'animationiteration';
+				break;
+
+			default:
+				this.animationend = 'animationend';
+				this.animationiteration = 'animationiteration';
 		}
-	}
 
-	Agile.Timeline = Timeline;
-})(Agile);
+		return this.animationend;
+	}
+}

@@ -1,95 +1,107 @@
-(function(Agile, undefined) {
-	function MovieClip(image, width, height, labels, speed) {
+import Image from './Image';
+import Utils from '../utils/Utils';
+import JsonUtils from '../utils/JsonUtils';
+import Keyframes from '../animate/Keyframes';
+import Timeline from '../animate/Timeline';
+
+export default class MovieClip extends Image {
+
+	constructor(image, width, height, labels, speed) {
+		super(image, width, height);
+
 		this.widthSize = true;
 		this.heightSize = true;
-		MovieClip._super_.call(this, image, width, height);
-		this.originalHeight = height;
-		this.originalWidth = width;
+
+		this._avatar.originalHeight = height;
+		this._avatar.originalWidth = width;
 
 		this._avatar.currentFrame = 1;
-		if (labels)
-			this.setLabel(labels);
+		if (labels) this.setLabel(labels);
+
 		this.labels = {};
 		this.speed = speed || .6;
 		this.loop = true;
+
 		this.stop();
 	}
 
+	get currentFrame() {
+		// sorry this have a lot of bugs i am fixing
+		const props = this.labels[this.label];
+		const totalframes = props['totalframes'];
+		const w = props['width'];
+		const h = props['height'];
+		let length;
 
-	Agile.Utils.inherits(MovieClip, Agile.Image);
-
-	MovieClip.prototype.__defineGetter__('currentFrame', function() {
-		//sorry this have a lot of bugs i am fixing
-		var totalframes = this.labels[this.label]['totalframes'];
-		var w = this.labels[this.label]['width'];
-		var h = this.labels[this.label]['height'];
-		if (h == 0) {
-			var length = Agile.Utils.getCssValue(this, 'backgroundPosition', 0, 2);
+		if (h === 0) {
+			length = Utils.getCssValue(this, 'backgroundPosition', 0, 2);
 			this._avatar.currentFrame = length * totalframes / w;
 		} else {
-			var length = Agile.Utils.getCssValue(this, 'backgroundPosition', 1, 2);
+			length = Utils.getCssValue(this, 'backgroundPosition', 1, 2);
 			this._avatar.currentFrame = length * totalframes / h;
 		}
 
 		return this._avatar.currentFrame;
-	});
+	}
 
-	MovieClip.prototype.__defineGetter__('label', function() {
+	get label() {
 		return this._avatar.label;
-	});
+	}
 
-	MovieClip.prototype.__defineSetter__('label', function(label) {
+	set label(label) {
 		if (this.labels[label]) {
 			this._avatar.label = label;
-			var frame = this.labels[label]['frame'];
-			var totalframes = this.labels[label]['totalframes'];
+			const frame = this.labels[label]['frame'];
+			const totalframes = this.labels[label]['totalframes'];
 
-			if (Agile.Timeline.indexOf(frame) <= -1)
-				Agile.Timeline.insertKeyframes(this, frame);
+			if (Timeline.indexOf(frame) <= -1) Timeline.insertKeyframes(this, frame);
 
-			var loop = this.loop ? -1 : 0;
-			Agile.Timeline.removeFrameByIndex(this, this.currentTimelineIndex);
-			this.currentTimelineIndex = Agile.Timeline.playFrame(this, this.speed, frame, {
-				loop : loop,
-				ease : 'steps(' + totalframes + ')'
+			const loop = this.loop ? -1 : 0;
+
+			Timeline.removeFrameByIndex(this, this.currentTimelineIndex);
+			this.currentTimelineIndex = Timeline.playFrame(this, this.speed, frame, {
+				loop: loop,
+				ease: `steps(${totalframes})`
 			});
 
 			this.totalframes = totalframes;
 			this.play();
 		}
-	});
+	}
 
-	MovieClip.prototype.__defineGetter__('speed', function() {
+	get speed() {
 		return this._avatar.speed;
-	});
+	}
 
-	MovieClip.prototype.__defineSetter__('speed', function(speed) {
+	set speed(speed) {
 		this._avatar.speed = speed;
-		if (this.labels[this.label]) {
-			Agile.Timeline.removeFrameByIndex(this, this.currentTimelineIndex);
 
-			var loop = this.loop ? -1 : 0;
-			var frame = this.labels[this.label]['frame'];
-			var totalframes = this.labels[this.label]['totalframes'];
-			Agile.Timeline.removeFrameByIndex(this, this.currentTimelineIndex);
-			this.currentTimelineIndex = Agile.Timeline.playFrame(this, this.speed, frame, {
-				loop : loop,
-				ease : 'steps(' + totalframes + ')'
+		if (this.labels[this.label]) {
+			Timeline.removeFrameByIndex(this, this.currentTimelineIndex);
+
+			const loop = this.loop ? -1 : 0;
+			const frame = this.labels[this.label]['frame'];
+			const totalframes = this.labels[this.label]['totalframes'];
+			Timeline.removeFrameByIndex(this, this.currentTimelineIndex);
+
+			this.currentTimelineIndex = Timeline.playFrame(this, this.speed, frame, {
+				loop,
+				ease: `steps(${totalframes})`
 			});
 		}
 
 		this.play();
-	});
+	}
 
-	MovieClip.prototype.stop = function() {
+	stop() {
 		this.playing = false;
 		this.pause();
 	}
 
-	MovieClip.prototype.play = function(label) {
+	play(label) {
 		if (this.recordLabel) {
 			this.animations[this.recordLabel.index] = this.recordLabel.frame;
-			var animation = Agile.JsonUtils.object2String(this.animations);
+			const animation = JsonUtils.object2String(this.animations);
 			this.css3('animation', animation);
 		}
 
@@ -97,70 +109,90 @@
 		this.resume();
 	}
 
-	MovieClip.prototype.gotoAndPlay = function(frameNumber) {
-		if ( typeof frameNumber == 'string') {
+	gotoAndPlay(frameNumber) {
+		if (typeof frameNumber === 'string') {
 			this.label = frameNumber;
 		} else {
 			frameNumber--;
-			var to = this.labels[this.label]['to'];
-			var totalframes = this.labels[this.label]['totalframes'];
-			var w = this.labels[this.label]['width'];
-			var h = this.labels[this.label]['height'];
-			if (h == 0) {
-				var length = w * frameNumber / totalframes;
-				var position = -length + 'px ' + -to.y + 'px';
+
+			const props = this.labels[this.label];
+			const to = props['to'];
+			const totalframes = props['totalframes'];
+			const w = props['width'];
+			const h = props['height'];
+
+			let length;
+			let position;
+
+			if (h === 0) {
+				length = w * frameNumber / totalframes;
+				position = -length + 'px ' + -to.y + 'px';
 			} else {
-				var length = h * frameNumber / totalframes;
-				var position = -to.x + 'px ' + -length + 'px';
+				length = h * frameNumber / totalframes;
+				position = -to.x + 'px ' + -length + 'px';
 			}
 
 			this.css2('backgroundPosition', position);
-			var animation = Agile.JsonUtils.object2String(this.animations);
+			const animation = JsonUtils.object2String(this.animations);
 			this.css3('animation', animation);
+
 			this.play();
 		}
 	}
 
-	MovieClip.prototype.gotoAndStop = function(frameNumber) {
-		if ( typeof frameNumber == 'string') {
+	gotoAndStop(frameNumber) {
+		if (typeof frameNumber === 'string') {
 			this.label = frameNumber;
 		} else {
 			frameNumber--;
-			var to = this.labels[this.label]['to'];
-			var totalframes = this.labels[this.label]['totalframes'];
-			var w = this.labels[this.label]['width'];
-			var h = this.labels[this.label]['height'];
-			if (h == 0) {
-				var length = w * frameNumber / totalframes;
-				var position = -length + 'px ' + -to.y + 'px';
+
+			const props = this.labels[this.label];
+			const to = props['to'];
+			const totalframes = props['totalframes'];
+			const w = props['width'];
+			const h = props['height'];
+
+			let length;
+			let position;
+
+			if (h === 0) {
+				length = w * frameNumber / totalframes;
+				position = -length + 'px ' + -to.y + 'px';
 			} else {
-				var length = h * frameNumber / totalframes;
-				var position = -to.x + 'px ' + -length + 'px';
+				length = h * frameNumber / totalframes;
+				position = -to.x + 'px ' + -length + 'px';
 			}
 
 			this.css2('backgroundPosition', position);
-			var frames = Agile.Timeline.removeFrameByIndex(this, this.currentTimelineIndex);
+			const frame = Timeline.removeFrameByIndex(this, this.currentTimelineIndex);
 
 			this.recordLabel = {
-				frame : frames,
-				index : this.currentTimelineIndex
+				frame,
+				index: this.currentTimelineIndex
 			};
 		}
 	}
 
-	MovieClip.prototype.setLabel = function(label, from, to, totalframes) {
-		if ( typeof label == 'object') {
+	setLabel(label, from, to, totalframes) {
+		if (typeof label === 'object') {
+			let frome;
+			let to;
+			let frame;
+			let l;
+
 			if (label['from'] && label['to']) {
-				var frome = label['from'];
-				var to = label['to'];
-				var l = label['label'];
-				var frame = label['totalframes']
+				frome = label['from'];
+				to = label['to'];
+				l = label['label'];
+				frame = label['totalframes'];
+
 				return this.setLabel(l, frome, to, frame);
 			} else {
-				for (var l in label) {
-					var frome = label[l]['from'];
-					var to = label[l]['to'];
-					var frame = label[l]['totalframes']
+				for (let l in label) {
+					frome = label[l]['from'];
+					to = label[l]['to'];
+					frame = label[l]['totalframes'];
+
 					return this.setLabel(l, frome, to, frame);
 				}
 			}
@@ -172,45 +204,28 @@
 		return this.labels[label];
 	}
 
-	MovieClip.prototype.makeFrame = function(from, to, totalframes) {
-		var from = from || {
-			x : '0px',
-			y : '0px'
-		};
-		var to = to || {
-			x : '-200%',
-			y : '0px'
-		};
-		var width = Math.abs(parseFloat(to.x - from.x));
-		var height = Math.abs(parseFloat(to.y - from.y));
-		var keyframes = new Agile.Keyframes();
+	makeFrame(from, to, totalframes) {
+		from = from || { x: '0px', y: '0px' };
+		to = to || { x: '-200%', y: '0px' };
 
-		var fromX = -from.x;
-		var fromY = -from.y;
-		var toX = -to.x;
-		var toY = -to.y;
+		const width = Math.abs(parseFloat(to.x - from.x));
+		const height = Math.abs(parseFloat(to.y - from.y));
+		const frame = new Keyframes();
 
-		keyframes.add(0, {
-			'background-position' : fromX + 'px ' + fromY + 'px'
-		});
+		const fromX = -from.x;
+		const fromY = -from.y;
+		const toX = -to.x;
+		const toY = -to.y;
 
-		keyframes.add(100, {
-			'background-position' : toX + 'px ' + toY + 'px'
-		});
+		frame.add(0, { 'background-position': fromX + 'px ' + fromY + 'px' });
+		frame.add(100, { 'background-position': toX + 'px ' + toY + 'px' });
 
 		return {
-			frame : keyframes,
-			totalframes : totalframes,
-			width : width,
-			height : height,
-			from : from,
-			to : to
+			frame, totalframes, width, height, from, to
 		};
 	}
 
-	MovieClip.prototype.toString = function() {
+	toString() {
 		return 'MovieClip';
 	}
-
-	Agile.MovieClip = MovieClip;
-})(Agile);
+}

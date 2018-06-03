@@ -1,48 +1,66 @@
-(function(Agile, undefined) {
-	var Color = Agile.Color || {
-		gradient : function(type) {
-			var type = type || 'linear'
-			if (type == 'linear' || type == 'line') {
-				var color = 'linear-gradient(';
-				for (var i = 1, length = arguments.length; i < length; i++) {
-					if (i == 1 && Agile.Utils.isNumber(arguments[i]))
-						color += arguments[i] + 'deg,';
-					else if (i == length - 1)
-						color += arguments[i] + ')';
-					else
-						color += arguments[i] + ',';
-				}
-				return color;
-			} else if (type == 'radial' || type == 'rad') {
-				var color = 'radial-gradient(';
-				for (var i = 1, length = arguments.length; i < length; i++) {
-					if (i == length - 1)
-						color += arguments[i] + ')';
-					else
-						color += arguments[i] + ',';
-				}
-				return color;
-			}
-		},
-		rgba : function(r, g, b, a) {
-			var a = Agile.Utils.initValue(a, 1);
-			var color = 'rbga(' + r + ',' + g + ',' + b + ',' + a + ')';
-		},
-		hsl : function(h, s, l, a) {
-			var s = Agile.Utils.initValue(s, '100');
-			var l = Agile.Utils.initValue(l, '100');
-			var a = Agile.Utils.initValue(a, 1);
-			var color = 'hsl(' + h + ',' + s + '%,' + l + '%,' + a + ')';
-		},
-		randomColor : function() {
-			return '#' + ('00000' + (Math.random() * 0x1000000 << 0).toString(16)).slice(-6);
-		},
-		random : function() {
-			return '#' + ('00000' + (Math.random() * 0x1000000 << 0).toString(16)).slice(-6);
-		},
-		alpha0 : 'transparent'
-	}
+import Utils from './Utils';
 
-	Agile.Color = Color;
-	Agile.gradient = Color.gradient;
-})(Agile);
+export default {
+
+	gradient(type = 'linear', ...rest) {
+		let color;
+
+		if (type === 'linear' || type === 'line') {
+			color = 'linear-gradient(';
+			for (let i = 0, length = rest.length; i < length; i++) {
+				if (i === 0 && Utils.isNumber(rest[i])) {
+					color += this.getDirection(rest[i]);
+				} else if (i === length - 1) {
+					color += rest[i] + ')';
+				} else {
+					color += rest[i] + ',';
+				}
+			}
+
+			return color;
+		} else if (type === 'radial' || type === 'rad') {
+			color = 'radial-gradient(';
+			for (let i = 0, length = rest.length; i < length; i++) {
+				if (i === length - 1)
+					color += rest[i] + ')';
+				else
+					color += rest[i] + ',';
+			}
+
+			return color;
+		}
+	},
+
+	getDirection(deg) {
+		let dir;
+		if (deg === 0) {
+			dir = 'to bottom,'
+		} else if (deg === 180) {
+			dir = deg + 'to up,'
+		} else if (deg === 90) {
+			dir = deg + 'to right,'
+		} else if (deg === 270) {
+			dir = deg + 'to left,'
+		} else {
+			dir = deg + 'deg,'
+		}
+
+		return dir;
+	},
+
+	rgba(r, g, b, a) {
+		a = Utils.initValue(a, 1);
+		return 'rbga(' + r + ',' + g + ',' + b + ',' + a + ')';
+
+	},
+
+	hsl(h, s = 100, l = 100, a = 1) {
+		return `hsl(${h}, ${s}%, ${l}%, a)`;
+	},
+
+	randomColor() {
+		return '#' + ('00000' + (Math.random() * 0x1000000 << 0).toString(16)).slice(-6);
+	},
+
+	alpha0: 'transparent'
+}

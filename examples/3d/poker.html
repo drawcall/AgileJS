@@ -1,141 +1,147 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>poker</title>
-		<meta charset="utf-8">
-		<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.6, maximum-scale=.6">
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black">
-		<style type="text/css">
-			html, body {
-				width: 100%;
-				height: 100%;
-				margin: 0;
-				padding: 0;
-				background: #99CC66;
-				overflow: hidden;
-			}
-			#container {
-				width: 100%;
-				height: 100%;
-			}
-		</style>
-	</head>
-	<body>
-		<div id="container"></div>
-		<script src="../lib/qrcode.min.js"></script>
-		<script src="../../build/agile.min.js"></script>
-		<script src="../../plugs/agile_toolkit.js"></script>
-		<script>
-			var container, stage3d, plane;
-			var _mouseX = 0, _mouseY = 0;
-			var faceMe = true;
-			
-			Main();
-			function Main() {
-				loadImage();
-				addQR();
-			}
 
-			function loadImage() {
-				var loader = new Agile.LoadManager();
-				var obj = {
-					'face1' : 'image/q.jpg',
-					'face2' : 'image/k.jpg'
-				}
-				loader.load(obj);
-				loader.addEventListener(Agile.GROUP_LOADED, function() {
-					addAgile(loader.targetList);
+<head>
+	<title>poker</title>
+	<meta charset="utf-8">
+	<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=.6, maximum-scale=.6">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<style type="text/css">
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			background: #99CC66;
+			overflow: hidden;
+		}
+
+		#container {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="container"></div>
+	<script src="../lib/ppo.min.js"></script>
+	<script src="../lib/qrcode.min.js"></script>
+	<script src="//localhost:3001/build/agile.js"></script>
+
+	<script>
+		var container, stage3d, plane;
+		var _mouseX = 0, _mouseY = 0;
+		var faceMe = true;
+
+		Main();
+		function Main() {
+			loadImage();
+			addQR();
+		}
+
+		function loadImage() {
+			var loader = new Agile.LoadManager();
+			var obj = {
+				'face1': 'image/q.jpg',
+				'face2': 'image/k.jpg'
+			}
+			loader.load(obj);
+			loader.addEventListener(Agile.GROUP_LOADED, function () {
+				addAgile(loader.targetList);
+			});
+		}
+
+		function addAgile(images) {
+			ppo.lockTouch();
+			Agile.mode = '3d';
+			container = new Agile.Container('#container');
+			container.select = false;
+			container.perspective = 1000;
+			
+			stage3d = new Agile.Container('3d');
+			stage3d.x = container.width / 2;
+			stage3d.y = container.height / 2;
+			container.addChild(stage3d);
+
+			plane = new Agile.Container('3d');
+			plane.perspective = 0;
+			plane.cursor = true;
+			stage3d.addChild(plane);
+
+			var width = 325, height = 520;
+			var face1 = new Agile.Image(images['face1'], width, height);
+			var face2 = new Agile.Image(images['face2'], width, height);
+			face1.z = -0.2;
+			face2.z = 0.2;
+			face2.rotationY = 180;
+			plane.addChild(face1);
+			plane.addChild(face2);
+
+			addInteractive();
+			tick();
+		}
+
+		function addInteractive() {
+			if (!ppo.isMobile()) {
+				container.addEventListener('mousemove', function (e) {
+					_mouseX = e.pageX;
+					_mouseY = e.pageY;
+				});
+				plane.addEventListener('mousedown', mouseDownHandler);
+			} else {
+				window.addEventListener("deviceorientation", function (e) {
+					var angle = 39;
+					_mouseY = (angle + e.beta) * (container.width / 2) / angle;
+					_mouseX = (angle + e.gamma) * (container.height / 2) / angle;
+				}, true);
+
+				plane.addEventListener('touchstart', mouseDownHandler);
+			}
+		}
+
+		function mouseDownHandler(e) {
+			if (!faceMe) {
+				Agile.Tween.to(plane, .5, {
+					rotationY: 360
+				});
+			} else {
+				Agile.Tween.to(plane, .5, {
+					rotationY: 180
 				});
 			}
 
-			function addAgile(images) {
-				Agile.lockTouch();
-				Agile.mode = '3d';
-				container = new Agile.Container('#container');
-				container.select = false;
-				container.perspective = 1000;
+			faceMe = !faceMe;
+		}
 
-				stage3d = new Agile.Container('3d');
-				stage3d.x = container.width / 2;
-				stage3d.y = container.height / 2;
-				container.addChild(stage3d);
+		function tick() {
+			requestAnimationFrame(tick);
+			stage3d.rotationY += ((container.width / 2 - _mouseX) / 6 - stage3d.rotationY) / 5;
+			stage3d.rotationX += (-(container.height / 2 - _mouseY) / 6 - stage3d.rotationX) / 5;
+		}
 
-				plane = new Agile.Container('3d');
-				plane.perspective = 0;
-				plane.cursor = true;
-				stage3d.addChild(plane);
-
-				var width = 325, height = 520;
-				var face1 = new Agile.Image(images['face1'], width, height);
-				var face2 = new Agile.Image(images['face2'], width, height);
-				face1.z = -0.2;
-				face2.z = 0.2;
-				face2.rotationY = 180;
-				plane.addChild(face1);
-				plane.addChild(face2);
-				
-				addInteractive();
-				tick();
+		function addQR() {
+			if (!ppo.isMobile()) {
+				var qrcode = document.createElement('div');
+				qrcode.style.position = 'absolute';
+				qrcode.style.left = '10px';
+				qrcode.style.top = '10px';
+				qrcode.style.zIndex = 20;
+				qrcode.style.border = '10px solid #fff';
+				document.body.appendChild(qrcode);
+				var qrcode = new QRCode(qrcode, {
+					text: window.location.href,
+					width: 128,
+					height: 128,
+					colorDark: "#003300",
+					colorLight: "#fff",
+					correctLevel: QRCode.CorrectLevel.L
+				});
 			}
+		}
+	</script>
+</body>
 
-			function addInteractive() {
-				if (Agile.Device.isPC()) {
-					container.addEventListener('mousemove', function(e) {
-						_mouseX = e.pageX;
-						_mouseY = e.pageY;
-					});
-					plane.addEventListener('mousedown', mouseDownHandler);
-				} else {
-					window.addEventListener("deviceorientation", function(e) {
-						var angle = 39;
-						_mouseY = (angle + e.beta) * (container.width / 2) / angle;
-						_mouseX = (angle + e.gamma) * (container.height / 2) / angle;
-					}, true);
-					
-					plane.addEventListener('touchstart', mouseDownHandler);
-				}
-			}
-
-			function mouseDownHandler(e) {
-				if (!faceMe) {
-					Agile.Tween.to(plane, .5, {
-						rotationY : 360
-					});
-				} else {
-					Agile.Tween.to(plane, .5, {
-						rotationY : 180
-					});
-				}
-
-				faceMe = !faceMe;
-			}
-
-			function tick() {
-				requestAnimationFrame(tick);
-				stage3d.rotationY += ((container.width / 2 - _mouseX) / 6 - stage3d.rotationY) / 5;
-				stage3d.rotationX += (-(container.height / 2 - _mouseY) / 6 - stage3d.rotationX) / 5;
-			}
-
-			function addQR() {
-				if (Agile.Device.isPC()) {
-					var qrcode = document.createElement('div');
-					qrcode.style.position = 'absolute';
-					qrcode.style.left = '10px';
-					qrcode.style.top = '10px';
-					qrcode.style.zIndex = 20;
-					qrcode.style.border = '10px solid #fff';
-					document.body.appendChild(qrcode);
-					var qrcode = new QRCode(qrcode, {
-						text : window.location.href,
-						width : 128,
-						height : 128,
-						colorDark : "#003300",
-						colorLight : "#fff",
-						correctLevel : QRCode.CorrectLevel.L
-					});
-				}
-			}
-		</script>
-	</body>
 </html>
