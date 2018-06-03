@@ -4,7 +4,7 @@
 	(global.Agile = factory());
 }(this, (function () { 'use strict';
 
-var Agile$1 = {
+var Agile = {
     GROUP_LOADED: 'groupLoaded',
     SINGLE_LOADED: 'singleLoaded',
     LOAD_ERROR: 'loadError',
@@ -400,7 +400,7 @@ var Utils = {
 		return str.replace(new RegExp(s, 'gm'), b);
 	},
 	browser: function browser() {
-		var isOpera = !!window.opr && !!opr.addons || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+		var isOpera = window.opr && window.opr.addons || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
 		var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 		var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 		var isIE = !!navigator.userAgent.match(/Trident/g) || !!navigator.userAgent.match(/MSIE/g);
@@ -410,7 +410,7 @@ var Utils = {
 	}
 };
 
-var Color$1 = {
+var Color = {
 	gradient: function gradient() {
 		var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'linear';
 
@@ -528,8 +528,8 @@ var DisplayObject = function () {
         this.createElement();
 
         this.position = 'absolute';
-        this.zIndex = Agile$1.DEFAULT_DEPTH;
-        if (this.id !== '') Agile$1.agileObjs[this.id] = this;
+        this.zIndex = Agile.DEFAULT_DEPTH;
+        if (this.id !== '') Agile.agileObjs[this.id] = this;
 
         this.x = 0;
         this.y = 0;
@@ -592,33 +592,33 @@ var DisplayObject = function () {
     }, {
         key: 'addFrame',
         value: function addFrame(duration, frameObj, parmObj) {
-            return Agile$1.Timeline.addFrame(this, duration, frameObj, parmObj);
+            return Agile.Timeline.addFrame(this, duration, frameObj, parmObj);
         }
     }, {
         key: 'removeFrame',
         value: function removeFrame(frame, removeStyle) {
-            return Agile$1.Timeline.removeFrame(this, frame, removeStyle);
+            return Agile.Timeline.removeFrame(this, frame, removeStyle);
         }
     }, {
         key: 'removeFrameAfter',
         value: function removeFrameAfter(frame, complete, removeStyle) {
-            Agile$1.Timeline.removeFrameAfter(this, frame, complete, removeStyle);
+            Agile.Timeline.removeFrameAfter(this, frame, complete, removeStyle);
         }
     }, {
         key: 'pause',
         value: function pause() {
-            Agile$1.Timeline.pause(this);
+            Agile.Timeline.pause(this);
         }
     }, {
         key: 'resume',
         value: function resume() {
-            Agile$1.Timeline.resume(this);
+            Agile.Timeline.resume(this);
         }
     }, {
         key: 'addChild',
         value: function addChild(child) {
             this._avatar.maxChildrenDepth++;
-            child.zIndex = Agile$1.DEFAULT_DEPTH + this._avatar.maxChildrenDepth;
+            child.zIndex = Agile.DEFAULT_DEPTH + this._avatar.maxChildrenDepth;
 
             if (child.parent !== this) {
                 this.element.appendChild(child.element);
@@ -658,7 +658,7 @@ var DisplayObject = function () {
                 this.numChildren--;
                 Utils.arrayRemove(this.childrens, child);
 
-                child.zIndex = Agile$1.DEFAULT_DEPTH;
+                child.zIndex = Agile.DEFAULT_DEPTH;
                 child.parent = null;
                 child.transform();
             }
@@ -697,7 +697,7 @@ var DisplayObject = function () {
                 scale = void 0,
                 skew = void 0;
 
-            if (Agile$1.mode === '3d' && Agile$1.support3d) {
+            if (Agile.mode === '3d' && Agile.support3d) {
                 parentOffsetX = this.parent ? this.parent.regX * this.parent.originalWidth : 0;
                 parentOffsetY = this.parent ? this.parent.regY * this.parent.originalHeight : 0;
                 thisOffsetX = this.regX * this.originalWidth;
@@ -788,13 +788,13 @@ var DisplayObject = function () {
             for (var i = 0; i < this.childrens.length; i++) {
                 this.childrens[i].destroy();
             }Utils.destroyObject(this.childrens);
-            delete Agile$1.agileObjs[this.id];
+            delete Agile.agileObjs[this.id];
 
             this.parent = null;
             this.filters = null;
 
-            Agile$1.Timeline.kill(this);
-            Agile$1.Tween.killTweensOf(this);
+            Agile.Timeline.kill(this);
+            Agile.Tween.killTweensOf(this);
         }
     }, {
         key: 'toString',
@@ -1025,7 +1025,7 @@ var DisplayObject = function () {
     }, {
         key: 'color',
         set: function set$$1(color) {
-            if (color === 'random' || color === '#random') color = Color$1.randomColor();
+            if (color === 'random' || color === '#random') color = Color.randomColor();
             this._avatar.color = color;
 
             if (color.indexOf('gradient') > -1) this.css3j('background', this.color);else this.css2('backgroundColor', this.color);
@@ -1223,7 +1223,7 @@ var Container = function (_Dom) {
 
 		if (dom === '3d' || mode === '3d') _this.mode = '3d';else _this.mode = '2d';
 
-		Agile$1.containers.push(_this);
+		Agile.containers.push(_this);
 		return _this;
 	}
 
@@ -1242,7 +1242,7 @@ var Container = function (_Dom) {
 			get(Container.prototype.__proto__ || Object.getPrototypeOf(Container.prototype), 'addChild', this).call(this, obj);
 			obj.backface = this.backface;
 
-			if (Agile$1.backface === false) obj.backface = false;
+			if (Agile.backface === false) obj.backface = false;
 		}
 	}, {
 		key: 'toString',
@@ -1253,7 +1253,7 @@ var Container = function (_Dom) {
 		key: 'destroy',
 		value: function destroy() {
 			get(Container.prototype.__proto__ || Object.getPrototypeOf(Container.prototype), 'destroy', this).call(this);
-			Utils.arrayRemove(Agile$1.containers, this);
+			Utils.arrayRemove(Agile.containers, this);
 		}
 	}, {
 		key: 'mode',
@@ -1281,10 +1281,10 @@ var Container = function (_Dom) {
 		},
 		set: function set$$1(perspectiveOriginX) {
 			this._avatar.perspectiveOriginX = perspectiveOriginX;
-			perspectiveOriginX = this.perspectiveOriginX * 100 + '%';
-			perspectiveOriginY = this.perspectiveOriginY * 100 + '%';
+			var ox = this.perspectiveOriginX * 100 + '%';
+			var oy = this.perspectiveOriginY * 100 + '%';
 
-			this.css3('perspectiveOrigin', perspectiveOriginX + ' ' + perspectiveOriginY);
+			this.css3('perspectiveOrigin', ox + ' ' + oy);
 		}
 	}, {
 		key: 'perspectiveOriginY',
@@ -1293,10 +1293,10 @@ var Container = function (_Dom) {
 		},
 		set: function set$$1(perspectiveOriginY) {
 			this._avatar.perspectiveOriginY = perspectiveOriginY;
-			perspectiveOriginX = this.perspectiveOriginX * 100 + '%';
-			perspectiveOriginY = this.perspectiveOriginY * 100 + '%';
+			var ox = this.perspectiveOriginX * 100 + '%';
+			var oy = this.perspectiveOriginY * 100 + '%';
 
-			this.css3('perspectiveOrigin', perspectiveOriginX + ' ' + perspectiveOriginY);
+			this.css3('perspectiveOrigin', ox + ' ' + oy);
 		}
 	}, {
 		key: 'perspectiveOriginZ',
@@ -1305,11 +1305,11 @@ var Container = function (_Dom) {
 		},
 		set: function set$$1(perspectiveOriginZ) {
 			this._avatar.perspectiveOriginZ = perspectiveOriginZ;
-			perspectiveOriginX = this.perspectiveOriginX * 100 + '%';
-			perspectiveOriginY = this.perspectiveOriginY * 100 + '%';
-			perspectiveOriginZ = this.perspectiveOriginZ + 'px';
+			var ox = this.perspectiveOriginX * 100 + '%';
+			var oy = this.perspectiveOriginY * 100 + '%';
+			var oz = this.perspectiveOriginZ + 'px';
 
-			this.css3('perspectiveOrigin', perspectiveOriginX + ' ' + perspectiveOriginY + ' ' + perspectiveOriginZ);
+			this.css3('perspectiveOrigin', ox + ' ' + oy + ' ' + oz);
 		}
 	}]);
 	return Container;
@@ -1362,6 +1362,227 @@ var Ellipse = function (_DisplayObject) {
 	}]);
 	return Ellipse;
 }(DisplayObject);
+
+var array = [];
+
+var EventDispatcher = function () {
+	function EventDispatcher() {
+		classCallCheck(this, EventDispatcher);
+
+		this._listeners = null;
+	}
+
+	createClass(EventDispatcher, [{
+		key: "addEventListener",
+		value: function addEventListener(type, listener) {
+			if (!this._listeners) this._listeners = {};
+			if (this._listeners[type] === undefined) this._listeners[type] = [];
+			if (this._listeners[type].indexOf(listener) === -1) this._listeners[type].push(listener);
+		}
+	}, {
+		key: "removeEventListener",
+		value: function removeEventListener(type, listener) {
+			if (!this._listeners) return;
+
+			var listeners = this._listeners;
+			var listenerArray = listeners[type];
+
+			if (listenerArray !== undefined) {
+				var index = listenerArray.indexOf(listener);
+				if (index !== -1) listenerArray.splice(index, 1);
+			}
+		}
+	}, {
+		key: "dispatchEvent",
+		value: function dispatchEvent(event) {
+			if (!this._listeners) return;
+
+			array.length = 0;
+			var listeners = this._listeners;
+			var listenerArray = listeners[event.type];
+
+			if (listenerArray !== undefined) {
+				event.target = this;
+
+				for (var i = 0; i < listenerArray.length; i++) {
+					array[i] = listenerArray[i];
+				}for (var _i = 0; _i < listenerArray.length; _i++) {
+					array[_i].call(this, event);
+				}
+			}
+		}
+	}]);
+	return EventDispatcher;
+}();
+
+var imageBuffer = {};
+
+var LoadManager = function (_EventDispatcher) {
+	inherits(LoadManager, _EventDispatcher);
+
+	function LoadManager() {
+		classCallCheck(this, LoadManager);
+
+		var _this = possibleConstructorReturn(this, (LoadManager.__proto__ || Object.getPrototypeOf(LoadManager)).call(this));
+
+		_this._urls = [];
+		_this._loaderList = [];
+		_this._targetList = {};
+		_this._fileSize = [];
+		_this._totalSize = 0;
+
+		_this.index = 0;
+		_this.loadIndex = 0;
+		_this.loaded = false;
+		_this.baseURL = '';
+		_this.parallel = 4;
+
+		_this.completeHandler = _this.completeHandler.bind(_this);
+		_this.ioErrorHandler = _this.ioErrorHandler.bind(_this);
+		return _this;
+	}
+
+	createClass(LoadManager, [{
+		key: 'ioErrorHandler',
+		value: function ioErrorHandler(e) {
+			this.loadIndex++;
+			this._targetList.push(null);
+
+			this.dispatchEvent({ type: Agile.LOAD_ERROR });
+			this.checkLoaded();
+			this.singleLoad();
+		}
+	}, {
+		key: 'completeHandler',
+		value: function completeHandler(e) {
+			var num = Css.attr(e.target, 'data-index');
+			var targetList = this._targetList;
+			var loaderList = this._loaderList;
+			var img = loaderList[num];
+
+			for (var index in targetList) {
+				if (Css.attr(img, 'data-url') === targetList[index]) targetList[index] = img;
+			}
+
+			this.loadIndex++;
+			this.dispatchEvent({ type: Agile.SINGLE_LOADED });
+			this.checkLoaded();
+			this.singleLoad();
+		}
+	}, {
+		key: 'checkLoaded',
+		value: function checkLoaded() {
+			if (this.loadIndex >= this._urls.length && !this.loaded) {
+				this.loaded = true;
+				this.dispatchEvent({ type: Agile.GROUP_LOADED });
+			}
+		}
+	}, {
+		key: 'load',
+		value: function load() {
+			var index = 0;
+
+			for (var _len = arguments.length, rest = Array(_len), _key = 0; _key < _len; _key++) {
+				rest[_key] = arguments[_key];
+			}
+
+			for (var i = 0; i < rest.length; i++) {
+				var url = rest[i];
+
+				if (typeof url === 'string') {
+					this._targetList['' + index] = url;
+					this._urls.push(url);
+
+					index++;
+				} else if (Utils.isArray(url)) {
+					for (var j = 0; j < url.length; j++) {
+						this._targetList['' + index] = url[j];
+						this._urls.push(url[j]);
+
+						index++;
+					}
+				} else {
+					for (var _index in url) {
+						this._targetList[_index] = url[_index];
+						this._urls.push(url[_index]);
+					}
+				}
+			}
+
+			var length = Math.min(this.parallel, this._urls.length);
+			for (var _i = 0; _i < length; _i++) {
+				this.singleLoad();
+			}
+		}
+	}, {
+		key: 'singleLoad',
+		value: function singleLoad() {
+			if (this.loaded) return;
+			if (this.index >= this._urls.length) return;
+
+			var url = String(this._urls[this.index]);
+			var image = new Image();
+
+			image.onerror = this.ioErrorHandler;
+			image.onload = this.completeHandler;
+			image.src = this.baseURL + url;
+			Css.attr(image, 'data-url', url);
+			Css.attr(image, 'data-index', this.index);
+
+			this.index++;
+			this._loaderList.push(image);
+		}
+	}, {
+		key: 'loadScale',
+		get: function get$$1() {
+			return this.loadIndex / this._urls.length;
+		}
+	}, {
+		key: 'targetList',
+		get: function get$$1() {
+			return this._targetList;
+		}
+	}, {
+		key: 'loaderList',
+		get: function get$$1() {
+			return this._loaderList;
+		}
+	}, {
+		key: 'fileSize',
+		set: function set$$1(size) {
+			this._fileSize = size;
+			this._totalSize = 0;
+
+			for (var i = 0; i < this._fileSize.length; i++) {
+				this._totalSize += this._fileSize[i];
+			}
+		}
+	}], [{
+		key: 'getImage',
+		value: function getImage(img, callback) {
+			if (typeof img === 'string') {
+				if (imageBuffer[img]) {
+					callback(imageBuffer[img]);
+				} else {
+					var myImage = new Image();
+					myImage.onload = function (e) {
+						imageBuffer[img] = myImage;
+						callback(imageBuffer[img]);
+					};
+					myImage.src = img;
+				}
+
+				return img;
+			} else if ((typeof img === 'undefined' ? 'undefined' : _typeof(img)) === 'object') {
+				imageBuffer[img.src] = img;
+				callback(imageBuffer[img.src]);
+
+				return img.src;
+			}
+		}
+	}]);
+	return LoadManager;
+}(EventDispatcher);
 
 var AgileImage = function (_DisplayObject) {
 	inherits(AgileImage, _DisplayObject);
@@ -1457,7 +1678,7 @@ var AgileImage = function (_DisplayObject) {
 			var _this4 = this;
 
 			this.loaded = false;
-			this._avatar.image = Agile.LoadManager.getImage(image, function (imgObj) {
+			this._avatar.image = LoadManager.getImage(image, function (imgObj) {
 				if (!_this4.widthSize) {
 					_this4._avatar.width = imgObj.width;
 					_this4._avatar.originalWidth = imgObj.width;
@@ -1825,7 +2046,7 @@ var Keyframes = function () {
 		key: 'setColor',
 		value: function setColor(obj) {
 			if (obj.color) {
-				if (obj.color === 'random') obj.color = Color$1.randomColor();
+				if (obj.color === 'random') obj.color = Color.randomColor();
 			}
 		}
 	}, {
@@ -2878,7 +3099,7 @@ var Triangle = function (_DisplayObject) {
 			    scale = void 0,
 			    skew = void 0;
 
-			if (Agile$1.mode === '3d' && Agile$1.support3d) {
+			if (Agile.mode === '3d' && Agile.support3d) {
 				parentOffsetX = this.parent ? this.parent.regX * this.parent.originalWidth : 0;
 				parentOffsetY = this.parent ? this.parent.regY * this.parent.originalHeight : 0;
 				thisOffsetX = this.regX * this.originalWidth;
@@ -3261,8 +3482,8 @@ var Filter = function () {
 						break;
 
 					case 'blur':
-						Css.css2(agileEle.element, 'color', Color$1.alpha0);
-						Css.css3(agileEle.element, 'background', Color$1.alpha0);
+						Css.css2(agileEle.element, 'color', Color.alpha0);
+						Css.css3(agileEle.element, 'background', Color.alpha0);
 						this.styleObj[agileEle.id].value = '0 0 ' + this.a + 'px ' + this.b;
 						break;
 
@@ -3303,227 +3524,6 @@ var Filter = function () {
 	}]);
 	return Filter;
 }();
-
-var array = [];
-
-var EventDispatcher = function () {
-	function EventDispatcher() {
-		classCallCheck(this, EventDispatcher);
-
-		this._listeners = null;
-	}
-
-	createClass(EventDispatcher, [{
-		key: "addEventListener",
-		value: function addEventListener(type, listener) {
-			if (!this._listeners) this._listeners = {};
-			if (this._listeners[type] === undefined) this._listeners[type] = [];
-			if (this._listeners[type].indexOf(listener) === -1) this._listeners[type].push(listener);
-		}
-	}, {
-		key: "removeEventListener",
-		value: function removeEventListener(type, listener) {
-			if (!this._listeners) return;
-
-			var listeners = this._listeners;
-			var listenerArray = listeners[type];
-
-			if (listenerArray !== undefined) {
-				var index = listenerArray.indexOf(listener);
-				if (index !== -1) listenerArray.splice(index, 1);
-			}
-		}
-	}, {
-		key: "dispatchEvent",
-		value: function dispatchEvent(event) {
-			if (!this._listeners) return;
-
-			array.length = 0;
-			var listeners = this._listeners;
-			var listenerArray = listeners[event.type];
-
-			if (listenerArray !== undefined) {
-				event.target = this;
-
-				for (var i = 0; i < listenerArray.length; i++) {
-					array[i] = listenerArray[i];
-				}for (var _i = 0; _i < listenerArray.length; _i++) {
-					array[_i].call(this, event);
-				}
-			}
-		}
-	}]);
-	return EventDispatcher;
-}();
-
-var imageBuffer = {};
-
-var LoadManager = function (_EventDispatcher) {
-	inherits(LoadManager, _EventDispatcher);
-
-	function LoadManager() {
-		classCallCheck(this, LoadManager);
-
-		var _this = possibleConstructorReturn(this, (LoadManager.__proto__ || Object.getPrototypeOf(LoadManager)).call(this));
-
-		_this._urls = [];
-		_this._loaderList = [];
-		_this._targetList = {};
-		_this._fileSize = [];
-		_this._totalSize = 0;
-
-		_this.index = 0;
-		_this.loadIndex = 0;
-		_this.loaded = false;
-		_this.baseURL = '';
-		_this.parallel = 4;
-
-		_this.completeHandler = _this.completeHandler.bind(_this);
-		_this.ioErrorHandler = _this.ioErrorHandler.bind(_this);
-		return _this;
-	}
-
-	createClass(LoadManager, [{
-		key: 'ioErrorHandler',
-		value: function ioErrorHandler(e) {
-			this.loadIndex++;
-			this._targetList.push(null);
-
-			this.dispatchEvent({ type: Agile.LOAD_ERROR });
-			this.checkLoaded();
-			this.singleLoad();
-		}
-	}, {
-		key: 'completeHandler',
-		value: function completeHandler(e) {
-			var num = Css.attr(e.target, 'data-index');
-			var targetList = this._targetList;
-			var loaderList = this._loaderList;
-			var img = loaderList[num];
-
-			for (var index in targetList) {
-				if (Css.attr(img, 'data-url') === targetList[index]) targetList[index] = img;
-			}
-
-			this.loadIndex++;
-			this.dispatchEvent({ type: Agile.SINGLE_LOADED });
-			this.checkLoaded();
-			this.singleLoad();
-		}
-	}, {
-		key: 'checkLoaded',
-		value: function checkLoaded() {
-			if (this.loadIndex >= this._urls.length && !this.loaded) {
-				this.loaded = true;
-				this.dispatchEvent({ type: Agile.GROUP_LOADED });
-			}
-		}
-	}, {
-		key: 'load',
-		value: function load() {
-			var index = 0;
-
-			for (var _len = arguments.length, rest = Array(_len), _key = 0; _key < _len; _key++) {
-				rest[_key] = arguments[_key];
-			}
-
-			for (var i = 0; i < rest.length; i++) {
-				var url = rest[i];
-
-				if (typeof url === 'string') {
-					this._targetList['' + index] = url;
-					this._urls.push(url);
-
-					index++;
-				} else if (Utils.isArray(url)) {
-					for (var j = 0; j < url.length; j++) {
-						this._targetList['' + index] = url[j];
-						this._urls.push(url[j]);
-
-						index++;
-					}
-				} else {
-					for (var _index in url) {
-						this._targetList[_index] = url[_index];
-						this._urls.push(url[_index]);
-					}
-				}
-			}
-
-			var length = Math.min(this.parallel, this._urls.length);
-			for (var _i = 0; _i < length; _i++) {
-				this.singleLoad();
-			}
-		}
-	}, {
-		key: 'singleLoad',
-		value: function singleLoad() {
-			if (this.loaded) return;
-			if (this.index >= this._urls.length) return;
-
-			var url = String(this._urls[this.index]);
-			var image = new Image();
-
-			image.onerror = this.ioErrorHandler;
-			image.onload = this.completeHandler;
-			image.src = this.baseURL + url;
-			Css.attr(image, 'data-url', url);
-			Css.attr(image, 'data-index', this.index);
-
-			this.index++;
-			this._loaderList.push(image);
-		}
-	}, {
-		key: 'loadScale',
-		get: function get$$1() {
-			return this.loadIndex / this._urls.length;
-		}
-	}, {
-		key: 'targetList',
-		get: function get$$1() {
-			return this._targetList;
-		}
-	}, {
-		key: 'loaderList',
-		get: function get$$1() {
-			return this._loaderList;
-		}
-	}, {
-		key: 'fileSize',
-		set: function set$$1(size) {
-			this._fileSize = size;
-			this._totalSize = 0;
-
-			for (var i = 0; i < this._fileSize.length; i++) {
-				this._totalSize += this._fileSize[i];
-			}
-		}
-	}], [{
-		key: 'getImage',
-		value: function getImage(img, callback) {
-			if (typeof img === 'string') {
-				if (imageBuffer[img]) {
-					callback(imageBuffer[img]);
-				} else {
-					var myImage = new Image();
-					myImage.onload = function (e) {
-						imageBuffer[img] = myImage;
-						callback(imageBuffer[img]);
-					};
-					myImage.src = img;
-				}
-
-				return img;
-			} else if ((typeof img === 'undefined' ? 'undefined' : _typeof(img)) === 'object') {
-				imageBuffer[img.src] = img;
-				callback(imageBuffer[img.src]);
-
-				return img.src;
-			}
-		}
-	}]);
-	return LoadManager;
-}(EventDispatcher);
 
 var MovieClipLabel = function () {
 	function MovieClipLabel(label, x1, y1, x2, y2) {
@@ -3858,39 +3858,41 @@ var Tween = {
 	}
 };
 
-Agile$1.Css = Css;
+Agile.Css = Css;
 
-Agile$1.DisplayObject = DisplayObject;
-Agile$1.Container = Container;
-Agile$1.Circle = Circle;
-Agile$1.Dom = Dom;
-Agile$1.Ellipse = Ellipse;
-Agile$1.Image = AgileImage;
-Agile$1.Line = Line;
-Agile$1.MovieClip = MovieClip;
-Agile$1.Rect = Rect;
-Agile$1.SpriteSheet = SpriteSheet;
-Agile$1.Text = Text;
-Agile$1.Triangle = Triangle;
-Agile$1.ScrollingBg = ScrollingBg;
-Agile$1.Semicircle = Semicircle;
+Agile.DisplayObject = DisplayObject;
+Agile.Container = Container;
+Agile.Circle = Circle;
+Agile.Dom = Dom;
+Agile.Ellipse = Ellipse;
+Agile.Image = AgileImage;
+Agile.Line = Line;
+Agile.MovieClip = MovieClip;
+Agile.Rect = Rect;
+Agile.SpriteSheet = SpriteSheet;
+Agile.Text = Text;
+Agile.Triangle = Triangle;
+Agile.ScrollingBg = ScrollingBg;
+Agile.Semicircle = Semicircle;
 
-Agile$1.Color = Color$1;
-Agile$1.Filter = Filter;
-Agile$1.Utils = Utils;
-Agile$1.LoadManager = LoadManager;
+Agile.Color = Color;
+Agile.Filter = Filter;
+Agile.Utils = Utils;
+Agile.LoadManager = LoadManager;
 
-Agile$1.MovieClipLabel = MovieClipLabel;
-Agile$1.Keyframes = Keyframes;
-Agile$1.Timeline = Timeline;
-Agile$1.Tween = Tween;
-Agile$1.ease = ease;
+Agile.MovieClipLabel = MovieClipLabel;
+Agile.Keyframes = Keyframes;
+Agile.Timeline = Timeline;
+Agile.Tween = Tween;
+Agile.ease = ease;
 
-Agile$1.gradient = Color$1.gradient.bind(Color$1);
+Agile.gradient = Color.gradient.bind(Color);
 
-Object.assign(Agile$1, ease);
+Object.assign(Agile, ease);
 
-return Agile$1;
+// export
+
+return Agile;
 
 })));
 //# sourceMappingURL=agile.js.map
