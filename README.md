@@ -4,7 +4,7 @@ Agile - The Css3 Creation Engine
 [![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](./LICENSE)
 [![Release Version](https://img.shields.io/badge/release-2.1.0-red.svg)](https://github.com/a-jie/Agile/releases)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/a-jie/Agile/pulls)
-[![npm](https://img.shields.io/badge/npm-2.1.0-brightgreen.svg)](https://www.npmjs.com/)
+[![npm](https://img.shields.io/badge/npm-2.1.0-brightgreen.svg)](https://www.npmjs.com/package/agilejs)
 
 ![Agile banner](https://github.com/a-jie/Agile/blob/master/image/banner.png?raw=true)
 
