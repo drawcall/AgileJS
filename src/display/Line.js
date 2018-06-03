@@ -1,4 +1,5 @@
 import Css from '../core/Css';
+import Agile from '../core/Agile';
 import DisplayObject from './DisplayObject';
 
 export default class Line extends DisplayObject {

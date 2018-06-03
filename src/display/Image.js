@@ -1,4 +1,6 @@
 import DisplayObject from './DisplayObject';
+import LoadManager from '../utils/LoadManager';
+import Agile from '../core/Agile';
 
 export default class AgileImage extends DisplayObject {
 
@@ -60,7 +62,7 @@ export default class AgileImage extends DisplayObject {
 
 	set image(image) {
 		this.loaded = false;
-		this._avatar.image = Agile.LoadManager.getImage(image, (imgObj) => {
+		this._avatar.image = LoadManager.getImage(image, (imgObj) => {
 			if (!this.widthSize) {
 				this._avatar.width = imgObj.width;
 				this._avatar.originalWidth = imgObj.width;

@@ -1,5 +1,6 @@
 import EventDispatcher from '../event/EventDispatcher';
 import Utils from './Utils';
+import Agile from '../core/Agile';
 import Css from '../core/Css';
 
 const imageBuffer = {};

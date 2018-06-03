@@ -76,7 +76,7 @@ export default class Container extends Dom {
 		this._avatar.perspectiveOriginY = perspectiveOriginY;
 		perspectiveOriginX = this.perspectiveOriginX * 100 + '%';
 		perspectiveOriginY = this.perspectiveOriginY * 100 + '%';
-		
+
 		this.css3('perspectiveOrigin', perspectiveOriginX + ' ' + perspectiveOriginY);
 	}
 

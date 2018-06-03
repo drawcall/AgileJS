@@ -1163,7 +1163,7 @@ var Dom = function (_DisplayObject) {
 
 		_this.transform();
 
-		Agile.agileObjs[_this.id] = _this;
+		Agile$1.agileObjs[_this.id] = _this;
 		if (resetPosition) _this.resetPosition();
 		return _this;
 	}
@@ -1363,6 +1363,227 @@ var Ellipse = function (_DisplayObject) {
 	return Ellipse;
 }(DisplayObject);
 
+var array = [];
+
+var EventDispatcher = function () {
+	function EventDispatcher() {
+		classCallCheck(this, EventDispatcher);
+
+		this._listeners = null;
+	}
+
+	createClass(EventDispatcher, [{
+		key: "addEventListener",
+		value: function addEventListener(type, listener) {
+			if (!this._listeners) this._listeners = {};
+			if (this._listeners[type] === undefined) this._listeners[type] = [];
+			if (this._listeners[type].indexOf(listener) === -1) this._listeners[type].push(listener);
+		}
+	}, {
+		key: "removeEventListener",
+		value: function removeEventListener(type, listener) {
+			if (!this._listeners) return;
+
+			var listeners = this._listeners;
+			var listenerArray = listeners[type];
+
+			if (listenerArray !== undefined) {
+				var index = listenerArray.indexOf(listener);
+				if (index !== -1) listenerArray.splice(index, 1);
+			}
+		}
+	}, {
+		key: "dispatchEvent",
+		value: function dispatchEvent(event) {
+			if (!this._listeners) return;
+
+			array.length = 0;
+			var listeners = this._listeners;
+			var listenerArray = listeners[event.type];
+
+			if (listenerArray !== undefined) {
+				event.target = this;
+
+				for (var i = 0; i < listenerArray.length; i++) {
+					array[i] = listenerArray[i];
+				}for (var _i = 0; _i < listenerArray.length; _i++) {
+					array[_i].call(this, event);
+				}
+			}
+		}
+	}]);
+	return EventDispatcher;
+}();
+
+var imageBuffer = {};
+
+var LoadManager = function (_EventDispatcher) {
+	inherits(LoadManager, _EventDispatcher);
+
+	function LoadManager() {
+		classCallCheck(this, LoadManager);
+
+		var _this = possibleConstructorReturn(this, (LoadManager.__proto__ || Object.getPrototypeOf(LoadManager)).call(this));
+
+		_this._urls = [];
+		_this._loaderList = [];
+		_this._targetList = {};
+		_this._fileSize = [];
+		_this._totalSize = 0;
+
+		_this.index = 0;
+		_this.loadIndex = 0;
+		_this.loaded = false;
+		_this.baseURL = '';
+		_this.parallel = 4;
+
+		_this.completeHandler = _this.completeHandler.bind(_this);
+		_this.ioErrorHandler = _this.ioErrorHandler.bind(_this);
+		return _this;
+	}
+
+	createClass(LoadManager, [{
+		key: 'ioErrorHandler',
+		value: function ioErrorHandler(e) {
+			this.loadIndex++;
+			this._targetList.push(null);
+
+			this.dispatchEvent({ type: Agile$1.LOAD_ERROR });
+			this.checkLoaded();
+			this.singleLoad();
+		}
+	}, {
+		key: 'completeHandler',
+		value: function completeHandler(e) {
+			var num = Css.attr(e.target, 'data-index');
+			var targetList = this._targetList;
+			var loaderList = this._loaderList;
+			var img = loaderList[num];
+
+			for (var index in targetList) {
+				if (Css.attr(img, 'data-url') === targetList[index]) targetList[index] = img;
+			}
+
+			this.loadIndex++;
+			this.dispatchEvent({ type: Agile$1.SINGLE_LOADED });
+			this.checkLoaded();
+			this.singleLoad();
+		}
+	}, {
+		key: 'checkLoaded',
+		value: function checkLoaded() {
+			if (this.loadIndex >= this._urls.length && !this.loaded) {
+				this.loaded = true;
+				this.dispatchEvent({ type: Agile$1.GROUP_LOADED });
+			}
+		}
+	}, {
+		key: 'load',
+		value: function load() {
+			var index = 0;
+
+			for (var _len = arguments.length, rest = Array(_len), _key = 0; _key < _len; _key++) {
+				rest[_key] = arguments[_key];
+			}
+
+			for (var i = 0; i < rest.length; i++) {
+				var url = rest[i];
+
+				if (typeof url === 'string') {
+					this._targetList['' + index] = url;
+					this._urls.push(url);
+
+					index++;
+				} else if (Utils.isArray(url)) {
+					for (var j = 0; j < url.length; j++) {
+						this._targetList['' + index] = url[j];
+						this._urls.push(url[j]);
+
+						index++;
+					}
+				} else {
+					for (var _index in url) {
+						this._targetList[_index] = url[_index];
+						this._urls.push(url[_index]);
+					}
+				}
+			}
+
+			var length = Math.min(this.parallel, this._urls.length);
+			for (var _i = 0; _i < length; _i++) {
+				this.singleLoad();
+			}
+		}
+	}, {
+		key: 'singleLoad',
+		value: function singleLoad() {
+			if (this.loaded) return;
+			if (this.index >= this._urls.length) return;
+
+			var url = String(this._urls[this.index]);
+			var image = new Image();
+
+			image.onerror = this.ioErrorHandler;
+			image.onload = this.completeHandler;
+			image.src = this.baseURL + url;
+			Css.attr(image, 'data-url', url);
+			Css.attr(image, 'data-index', this.index);
+
+			this.index++;
+			this._loaderList.push(image);
+		}
+	}, {
+		key: 'loadScale',
+		get: function get$$1() {
+			return this.loadIndex / this._urls.length;
+		}
+	}, {
+		key: 'targetList',
+		get: function get$$1() {
+			return this._targetList;
+		}
+	}, {
+		key: 'loaderList',
+		get: function get$$1() {
+			return this._loaderList;
+		}
+	}, {
+		key: 'fileSize',
+		set: function set$$1(size) {
+			this._fileSize = size;
+			this._totalSize = 0;
+
+			for (var i = 0; i < this._fileSize.length; i++) {
+				this._totalSize += this._fileSize[i];
+			}
+		}
+	}], [{
+		key: 'getImage',
+		value: function getImage(img, callback) {
+			if (typeof img === 'string') {
+				if (imageBuffer[img]) {
+					callback(imageBuffer[img]);
+				} else {
+					var myImage = new Image();
+					myImage.onload = function (e) {
+						imageBuffer[img] = myImage;
+						callback(imageBuffer[img]);
+					};
+					myImage.src = img;
+				}
+
+				return img;
+			} else if ((typeof img === 'undefined' ? 'undefined' : _typeof(img)) === 'object') {
+				imageBuffer[img.src] = img;
+				callback(imageBuffer[img.src]);
+
+				return img.src;
+			}
+		}
+	}]);
+	return LoadManager;
+}(EventDispatcher);
+
 var AgileImage = function (_DisplayObject) {
 	inherits(AgileImage, _DisplayObject);
 
@@ -1412,11 +1633,11 @@ var AgileImage = function (_DisplayObject) {
 				var customEvent = void 0;
 				try {
 					customEvent = document.createEvent('CustomEvent');
-					customEvent.initCustomEvent(Agile.IMAGE_LOADED, false, false);
+					customEvent.initCustomEvent(Agile$1.IMAGE_LOADED, false, false);
 					_this3.element.dispatchEvent(customEvent);
 				} catch (e) {
 					customEvent = document.createEvent('HTMLEvents');
-					customEvent.initEvent(Agile.IMAGE_LOADED, false, false);
+					customEvent.initEvent(Agile$1.IMAGE_LOADED, false, false);
 					_this3.element.dispatchEvent(customEvent);
 				}
 
@@ -1457,7 +1678,7 @@ var AgileImage = function (_DisplayObject) {
 			var _this4 = this;
 
 			this.loaded = false;
-			this._avatar.image = Agile.LoadManager.getImage(image, function (imgObj) {
+			this._avatar.image = LoadManager.getImage(image, function (imgObj) {
 				if (!_this4.widthSize) {
 					_this4._avatar.width = imgObj.width;
 					_this4._avatar.originalWidth = imgObj.width;
@@ -1526,7 +1747,7 @@ var Line = function (_DisplayObject) {
 
 			var translate = void 0,
 			    rotate = void 0;
-			if (Agile.mode === '3d') {
+			if (Agile$1.mode === '3d') {
 				translate = 'translate3d(' + this._avatar.fromX + 'px,' + this._avatar.fromY + 'px,0px) ';
 				rotate = 'rotateZ(' + angle + 'deg)';
 			} else {
@@ -1589,7 +1810,7 @@ var Line = function (_DisplayObject) {
 			var translate = void 0,
 			    rotate = void 0,
 			    scale = void 0;
-			if (Agile.mode === '3d') {
+			if (Agile$1.mode === '3d') {
 				translate = 'translate3d(' + (this._avatar.fromX - offsetX) + 'px,' + (this._avatar.fromY - offsetY) + 'px,0px) ';
 				rotate = 'rotateZ(' + angle + 'deg) ';
 				scale = 'scale3d(1,' + s + ',1)';
@@ -3304,227 +3525,6 @@ var Filter = function () {
 	return Filter;
 }();
 
-var array = [];
-
-var EventDispatcher = function () {
-	function EventDispatcher() {
-		classCallCheck(this, EventDispatcher);
-
-		this._listeners = null;
-	}
-
-	createClass(EventDispatcher, [{
-		key: "addEventListener",
-		value: function addEventListener(type, listener) {
-			if (!this._listeners) this._listeners = {};
-			if (this._listeners[type] === undefined) this._listeners[type] = [];
-			if (this._listeners[type].indexOf(listener) === -1) this._listeners[type].push(listener);
-		}
-	}, {
-		key: "removeEventListener",
-		value: function removeEventListener(type, listener) {
-			if (!this._listeners) return;
-
-			var listeners = this._listeners;
-			var listenerArray = listeners[type];
-
-			if (listenerArray !== undefined) {
-				var index = listenerArray.indexOf(listener);
-				if (index !== -1) listenerArray.splice(index, 1);
-			}
-		}
-	}, {
-		key: "dispatchEvent",
-		value: function dispatchEvent(event) {
-			if (!this._listeners) return;
-
-			array.length = 0;
-			var listeners = this._listeners;
-			var listenerArray = listeners[event.type];
-
-			if (listenerArray !== undefined) {
-				event.target = this;
-
-				for (var i = 0; i < listenerArray.length; i++) {
-					array[i] = listenerArray[i];
-				}for (var _i = 0; _i < listenerArray.length; _i++) {
-					array[_i].call(this, event);
-				}
-			}
-		}
-	}]);
-	return EventDispatcher;
-}();
-
-var imageBuffer = {};
-
-var LoadManager = function (_EventDispatcher) {
-	inherits(LoadManager, _EventDispatcher);
-
-	function LoadManager() {
-		classCallCheck(this, LoadManager);
-
-		var _this = possibleConstructorReturn(this, (LoadManager.__proto__ || Object.getPrototypeOf(LoadManager)).call(this));
-
-		_this._urls = [];
-		_this._loaderList = [];
-		_this._targetList = {};
-		_this._fileSize = [];
-		_this._totalSize = 0;
-
-		_this.index = 0;
-		_this.loadIndex = 0;
-		_this.loaded = false;
-		_this.baseURL = '';
-		_this.parallel = 4;
-
-		_this.completeHandler = _this.completeHandler.bind(_this);
-		_this.ioErrorHandler = _this.ioErrorHandler.bind(_this);
-		return _this;
-	}
-
-	createClass(LoadManager, [{
-		key: 'ioErrorHandler',
-		value: function ioErrorHandler(e) {
-			this.loadIndex++;
-			this._targetList.push(null);
-
-			this.dispatchEvent({ type: Agile.LOAD_ERROR });
-			this.checkLoaded();
-			this.singleLoad();
-		}
-	}, {
-		key: 'completeHandler',
-		value: function completeHandler(e) {
-			var num = Css.attr(e.target, 'data-index');
-			var targetList = this._targetList;
-			var loaderList = this._loaderList;
-			var img = loaderList[num];
-
-			for (var index in targetList) {
-				if (Css.attr(img, 'data-url') === targetList[index]) targetList[index] = img;
-			}
-
-			this.loadIndex++;
-			this.dispatchEvent({ type: Agile.SINGLE_LOADED });
-			this.checkLoaded();
-			this.singleLoad();
-		}
-	}, {
-		key: 'checkLoaded',
-		value: function checkLoaded() {
-			if (this.loadIndex >= this._urls.length && !this.loaded) {
-				this.loaded = true;
-				this.dispatchEvent({ type: Agile.GROUP_LOADED });
-			}
-		}
-	}, {
-		key: 'load',
-		value: function load() {
-			var index = 0;
-
-			for (var _len = arguments.length, rest = Array(_len), _key = 0; _key < _len; _key++) {
-				rest[_key] = arguments[_key];
-			}
-
-			for (var i = 0; i < rest.length; i++) {
-				var url = rest[i];
-
-				if (typeof url === 'string') {
-					this._targetList['' + index] = url;
-					this._urls.push(url);
-
-					index++;
-				} else if (Utils.isArray(url)) {
-					for (var j = 0; j < url.length; j++) {
-						this._targetList['' + index] = url[j];
-						this._urls.push(url[j]);
-
-						index++;
-					}
-				} else {
-					for (var _index in url) {
-						this._targetList[_index] = url[_index];
-						this._urls.push(url[_index]);
-					}
-				}
-			}
-
-			var length = Math.min(this.parallel, this._urls.length);
-			for (var _i = 0; _i < length; _i++) {
-				this.singleLoad();
-			}
-		}
-	}, {
-		key: 'singleLoad',
-		value: function singleLoad() {
-			if (this.loaded) return;
-			if (this.index >= this._urls.length) return;
-
-			var url = String(this._urls[this.index]);
-			var image = new Image();
-
-			image.onerror = this.ioErrorHandler;
-			image.onload = this.completeHandler;
-			image.src = this.baseURL + url;
-			Css.attr(image, 'data-url', url);
-			Css.attr(image, 'data-index', this.index);
-
-			this.index++;
-			this._loaderList.push(image);
-		}
-	}, {
-		key: 'loadScale',
-		get: function get$$1() {
-			return this.loadIndex / this._urls.length;
-		}
-	}, {
-		key: 'targetList',
-		get: function get$$1() {
-			return this._targetList;
-		}
-	}, {
-		key: 'loaderList',
-		get: function get$$1() {
-			return this._loaderList;
-		}
-	}, {
-		key: 'fileSize',
-		set: function set$$1(size) {
-			this._fileSize = size;
-			this._totalSize = 0;
-
-			for (var i = 0; i < this._fileSize.length; i++) {
-				this._totalSize += this._fileSize[i];
-			}
-		}
-	}], [{
-		key: 'getImage',
-		value: function getImage(img, callback) {
-			if (typeof img === 'string') {
-				if (imageBuffer[img]) {
-					callback(imageBuffer[img]);
-				} else {
-					var myImage = new Image();
-					myImage.onload = function (e) {
-						imageBuffer[img] = myImage;
-						callback(imageBuffer[img]);
-					};
-					myImage.src = img;
-				}
-
-				return img;
-			} else if ((typeof img === 'undefined' ? 'undefined' : _typeof(img)) === 'object') {
-				imageBuffer[img.src] = img;
-				callback(imageBuffer[img.src]);
-
-				return img.src;
-			}
-		}
-	}]);
-	return LoadManager;
-}(EventDispatcher);
-
 var MovieClipLabel = function () {
 	function MovieClipLabel(label, x1, y1, x2, y2) {
 		var frames = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 1;
@@ -3673,7 +3673,7 @@ var Tween = {
 			if (i <= -1) {
 				this.getOldAttribute(agile, tweenIndex)[index] = agile[index];
 
-				if (index === 'alpha') index = 'opacity';else if (index === 'color' && !(agile instanceof Text)) index = 'background-color';else if (index === 'x' || index === 'y' || index === 'z') index = Agile.transform;else if (index === 'scaleX' || index === 'scaleY' || index === 'scaleZ') index = Agile.transform;else if (index === 'rotationX' || index === 'rotation' || index === 'rotationY' || index === 'rotationZ') index = Agile.transform;else if (index === 'skewX' || index === 'skewY') index = Agile.transform;else if (index === 'regX' || index === 'regY') index = this.Agile.transformOrigin;else if (index === 'width' || index === 'height') index = Agile.transform;else if (index === 'originalWidth') index = 'width';else if (index === 'originalHeight') index = 'height';
+				if (index === 'alpha') index = 'opacity';else if (index === 'color' && !(agile instanceof Text)) index = 'background-color';else if (index === 'x' || index === 'y' || index === 'z') index = Agile$1.transform;else if (index === 'scaleX' || index === 'scaleY' || index === 'scaleZ') index = Agile$1.transform;else if (index === 'rotationX' || index === 'rotation' || index === 'rotationY' || index === 'rotationZ') index = Agile$1.transform;else if (index === 'skewX' || index === 'skewY') index = Agile$1.transform;else if (index === 'regX' || index === 'regY') index = this.Agile.transformOrigin;else if (index === 'width' || index === 'height') index = Agile$1.transform;else if (index === 'originalWidth') index = 'width';else if (index === 'originalHeight') index = 'height';
 
 				if (propertys.indexOf(index) < 0) propertys.push(index);
 			}
@@ -3737,7 +3737,7 @@ var Tween = {
 	},
 	killAll: function killAll(complete) {
 		for (var agileID in this.oldAttribute) {
-			var agile = Agile.getEleById(agileID);
+			var agile = Agile$1.getEleById(agileID);
 			this.killTweensOf(agile, complete);
 		}
 	},
@@ -3749,7 +3749,7 @@ var Tween = {
 			var i = this.getKeywordString().search(new RegExp(newIndex, 'i'));
 
 			if (i <= -1) {
-				var j = Agile.keyword.search(new RegExp(newIndex, 'i'));
+				var j = Agile$1.keyword.search(new RegExp(newIndex, 'i'));
 				if (j <= -1) {
 					if (index.indexOf('-') > -1) {
 						var arr = index.split('-');

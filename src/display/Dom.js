@@ -1,5 +1,6 @@
 import DisplayObject from './DisplayObject';
 import Css from '../core/Css';
+import Agile from '../core/Agile';
 import IDUtils from '../utils/IDUtils';
 
 export default class Dom extends DisplayObject {

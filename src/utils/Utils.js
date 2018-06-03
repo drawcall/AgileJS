@@ -91,7 +91,7 @@ export default {
 		const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 		const isIE = !!navigator.userAgent.match(/Trident/g) || !!navigator.userAgent.match(/MSIE/g);
 		const isChrome = !!window.chrome && !!window.chrome.webstore;
-		
+
 		return { isOpera, isFirefox, isSafari, isIE, isChrome };
 	}
 }
