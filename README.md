@@ -18,13 +18,24 @@ Check out examples at [http://a-jie.github.io/Agile/](http://a-jie.github.io/Agi
 - Agile’s API has high similar characteristic with actionscript 3.0, you can learn it in 10 minutes.
 
 ## Usage
-Download the [minified library](https://github.com/a-jie/Agile/blob/master/build/agile.min.js) and include it in your html document.  
+#### Download the [minified library](https://github.com/a-jie/Agile/blob/master/build/agile.min.js) and include it in your html document.  
 
 ```html
 <script src="js/agile.min.js"></script>
 ```
 
-Create and move a circle:
+
+#### Or install using npm 
+[![anix](https://nodei.co/npm/agilejs.png)](https://npmjs.org/package/agilejs)
+
+``` 
+npm install agilejs --save
+... 
+
+import Agile from 'agilejs';
+```
+
+#### Create and move a circle:
 
 ```javascript
 //init Agile
