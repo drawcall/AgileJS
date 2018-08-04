@@ -3890,8 +3890,6 @@ Agile.gradient = Color.gradient.bind(Color);
 
 Object.assign(Agile, ease);
 
-// export
-
 return Agile;
 
 })));
