@@ -1,4 +1,4 @@
-Agile - The Css3 Creation Engine
+AgileJS - The Css3 Creation Engine
 ======
 
 [![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](./LICENSE)
@@ -9,13 +9,13 @@ Agile - The Css3 Creation Engine
 ![Agile banner](https://github.com/a-jie/Agile/blob/master/image/banner.png?raw=true)
 
 ## Using javascript generated pure CSS3
-Agile is a simple, fast and easy to use engine which uses javascript generated pure CSS3.
+AgileJS is a simple, fast and easy to use engine which uses javascript generated pure CSS3.
 Check out examples at [http://a-jie.github.io/Agile/](http://a-jie.github.io/Agile/)
 
 ## Features
-- Agile uses javascript to generate pure CSS3, without canvas, webGL or SVG.
+- AgileJS uses javascript to generate pure CSS3, without canvas, webGL or SVG.
 - Performant on mobile devices, being truly cross platform.
-- Agile’s API has high similar characteristic with actionscript 3.0, you can learn it in 10 minutes.
+- AgileJS’s API has high similar characteristic with actionscript 3.0, you can learn it in 10 minutes.
 
 ## Usage
 #### Download the [minified library](https://github.com/a-jie/Agile/blob/master/build/agile.min.js) and include it in your html document.  
@@ -38,7 +38,7 @@ import Agile from 'agilejs';
 #### Create and move a circle:
 
 ```javascript
-//init Agile
+//init AgileJS
 Agile.mode = '3d';
 var container = new Agile.Container('container');
 container.select = false;
@@ -61,7 +61,7 @@ circle.addFrame(1, keyframes, {
 }); 
 ```
 
-## Building Agile
+## Building AgileJS
 Node is a dependency, use terminal to install it with with:  
 
 ```javascript
