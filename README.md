@@ -10,7 +10,7 @@ AgileJS - The Css3 Creation Engine
 
 ## Using javascript generated pure CSS3
 AgileJS is a simple, fast and easy to use engine which uses javascript generated pure CSS3.
-Check out examples at [http://a-jie.github.io/Agile/](http://a-jie.github.io/Agile/)
+Check out examples at [http://a-jie.github.io/AgileJS/](http://a-jie.github.io/AgileJS/)
 
 ## Features
 - AgileJS uses javascript to generate pure CSS3, without canvas, webGL or SVG.
@@ -65,7 +65,7 @@ circle.addFrame(1, keyframes, {
 Node is a dependency, use terminal to install it with with:  
 
 ```javascript
-git clone git://github.com/a-jie/Proton.git
+git clone git://github.com/a-jie/AgileJS.git
 ...
 npm install
 npm run build
