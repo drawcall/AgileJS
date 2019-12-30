@@ -1,7 +1,7 @@
 {
     "name": "agilejs",
-    "version": "2.1.5",
-    "description": "Agile is a simple, fast and easy to use engine which uses javascript generated pure CSS.",
+    "version": "2.1.6",
+    "description": "AgileJS is a simple, fast and easy to use engine which uses javascript generated pure CSS.",
     "main": "./build/agile.min.js",
     "scripts": {
         "start": "concurrently --names \"ROLLUP,HTTP\" -c \"bgBlue.bold,bgGreen.bold\" \"rollup -c -w -m inline\" \"serve --listen 3001\"",
@@ -11,16 +11,16 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/a-jie/Agile.git"
+        "url": "git+https://github.com/drawcall/Agile.git"
     },
     "authors": [
-        "a-jie <a-jie.cn@msn.com>"
+        "drawcall <ajiemath@gmail.com>"
     ],
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/a-jie/Agile/issues"
+        "url": "https://github.com/drawcall/Agile/issues"
     },
-    "homepage": "http://a-jie.github.io/Agile",
+    "homepage": "http://drawcall.github.io/Agile",
     "devDependencies": {
         "babel-core": "^6.26.0",
         "babel-eslint": "^8.2.3",

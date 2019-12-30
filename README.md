@@ -2,15 +2,15 @@ AgileJS - The Css3 Creation Engine
 ======
 
 [![license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](./LICENSE)
-[![Release Version](https://img.shields.io/badge/release-2.1.0-red.svg)](https://github.com/a-jie/Agile/releases)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/a-jie/Agile/pulls)
+[![Release Version](https://img.shields.io/badge/release-2.1.0-red.svg)](https://github.com/drawcall/Agile/releases)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/drawcall/Agile/pulls)
 [![npm](https://img.shields.io/badge/npm-2.1.0-brightgreen.svg)](https://www.npmjs.com/package/agilejs)
 
-![Agile banner](https://github.com/a-jie/Agile/blob/master/image/banner.png?raw=true)
+![Agile banner](https://github.com/drawcall/Agile/blob/master/image/banner.png?raw=true)
 
 ## Using javascript generated pure CSS3
 AgileJS is a simple, fast and easy to use engine which uses javascript generated pure CSS3.
-Check out examples at [http://a-jie.github.io/AgileJS/](http://a-jie.github.io/AgileJS/)
+Check out examples at [http://drawcall.github.io/AgileJS/](http://drawcall.github.io/AgileJS/)
 
 ## Features
 - AgileJS uses javascript to generate pure CSS3, without canvas, webGL or SVG.
@@ -18,7 +18,7 @@ Check out examples at [http://a-jie.github.io/AgileJS/](http://a-jie.github.io/A
 - AgileJS’s API has high similar characteristic with actionscript 3.0, you can learn it in 10 minutes.
 
 ## Usage
-#### Download the [minified library](https://github.com/a-jie/Agile/blob/master/build/agile.min.js) and include it in your html document.  
+#### Download the [minified library](https://github.com/drawcall/Agile/blob/master/build/agile.min.js) and include it in your html document.  
 
 ```html
 <script src="js/agile.min.js"></script>
@@ -65,7 +65,7 @@ circle.addFrame(1, keyframes, {
 Node is a dependency, use terminal to install it with with:  
 
 ```javascript
-git clone git://github.com/a-jie/AgileJS.git
+git clone git://github.com/drawcall/AgileJS.git
 ...
 npm install
 npm run build

@@ -8,7 +8,7 @@ import pkjson from './package.json';
 
 const banner = `/*!
 * Agile v${pkjson.version}
-* https://github.com/a-jie/Agile
+* https://github.com/drawcall/Agile
 *
 * Copyright 2012-${new Date().getFullYear()}, A-JIE
 * Licensed under the MIT license
