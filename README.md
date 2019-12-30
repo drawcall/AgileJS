@@ -6,7 +6,7 @@ AgileJS - The Css3 Creation Engine
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/drawcall/Agile/pulls)
 [![npm](https://img.shields.io/badge/npm-2.1.0-brightgreen.svg)](https://www.npmjs.com/package/agilejs)
 
-![Agile banner](https://github.com/drawcall/Agile/blob/master/image/banner.png?raw=true)
+![Agile banner](https://github.com/drawcall/AgileJS/blob/master/image/banner.png?raw=true)
 
 ## Using javascript generated pure CSS3
 AgileJS is a simple, fast and easy to use engine which uses javascript generated pure CSS3.
