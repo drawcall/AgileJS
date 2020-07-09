@@ -40,21 +40,22 @@ import Agile from 'agilejs';
 ```javascript
 //init AgileJS
 Agile.mode = '3d';
-var container = new Agile.Container('container');
+const container = new Agile.Container('container');
 container.select = false;
 container.perspective = 1000;
 
 //create a displayobject
-var circle = new Agile.Circle(80, '#ff0000');
+const circle = new Agile.Circle(80, '#ff0000');
 circle.x = 100;
 circle.y = 120;
 container.addChild(circle);
 
 //add a keyframes
-var keyframes = new Agile.Keyframes(100, {
+const keyframes = new Agile.Keyframes(100, {
 	scaleX : .5,
 	scaleY : .5
 });
+
 circle.addFrame(1, keyframes, {
 	yoyo : true,
 	loop : -1
