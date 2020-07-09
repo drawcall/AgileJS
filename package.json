@@ -1,6 +1,6 @@
 {
     "name": "agilejs",
-    "version": "2.1.6",
+    "version": "2.2.0",
     "description": "AgileJS is a simple, fast and easy to use engine which uses javascript generated pure CSS.",
     "main": "./build/agile.min.js",
     "scripts": {
