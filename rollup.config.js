@@ -10,7 +10,7 @@ const banner = `/*!
 * Agile v${pkjson.version}
 * https://github.com/drawcall/Agile
 *
-* Copyright 2012-${new Date().getFullYear()}, A-JIE
+* Copyright 2012-${new Date().getFullYear()}, drawcall
 * Licensed under the MIT license
 * http://www.opensource.org/licenses/mit-license
 *
